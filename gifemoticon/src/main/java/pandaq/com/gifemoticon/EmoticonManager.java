@@ -41,6 +41,7 @@ public class EmoticonManager {
     private static String STICKER_PATH = null; //默认路径在 /data/data/包名/files/sticker 下
     private int CACHE_MAX_SIZE = 1024;
     private Pattern mPattern;
+    @SuppressLint("StaticFieldLeak")
     private static Context mContext;
     private String mConfigName = "emoji.xml";
     private static final List<ImageEntry> mDefaultEntries = new ArrayList<>();
@@ -92,6 +93,10 @@ public class EmoticonManager {
 
     public static int getDisplayCount() {
         return mDefaultEntries.size();
+    }
+
+    static String getDisplayText(int index) {
+        return index >= 0 && index < mDefaultEntries.size() ? mDefaultEntries.get(index).text : null;
     }
 
     public static Drawable getDisplayDrawable(Context context, int index) {
@@ -206,10 +211,10 @@ public class EmoticonManager {
     private void load(Context context, String xmlPath) {
         new EntryLoader().load(context, xmlPath);
         //补充最后一页少的表情,空白占位
-        int tmp = mDefaultEntries.size() % EmotionView.EMOJI_PER_PAGE;
+        int tmp = mDefaultEntries.size() % EmoticonView.EMOJI_PER_PAGE;
         if (tmp != 0) {
-            int tmp2 = EmotionView.EMOJI_PER_PAGE - (mDefaultEntries.size() - (mDefaultEntries.size()
-                    / EmotionView.EMOJI_PER_PAGE) * EmotionView.EMOJI_PER_PAGE);
+            int tmp2 = EmoticonView.EMOJI_PER_PAGE - (mDefaultEntries.size() - (mDefaultEntries.size()
+                    / EmoticonView.EMOJI_PER_PAGE) * EmoticonView.EMOJI_PER_PAGE);
             for (int i = 0; i < tmp2; i++) {
                 mDefaultEntries.add(new ImageEntry("", ""));
             }

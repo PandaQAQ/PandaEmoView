@@ -12,7 +12,7 @@ import android.widget.RelativeLayout;
 
 import pandaq.com.gifemoticon.EmoticonManager;
 import pandaq.com.gifemoticon.EmoticonUtils;
-import pandaq.com.gifemoticon.EmotionView;
+import pandaq.com.gifemoticon.EmoticonView;
 import pandaq.com.gifemoticon.R;
 
 public class EmojiAdapter extends BaseAdapter {
@@ -26,8 +26,8 @@ public class EmojiAdapter extends BaseAdapter {
         mContext = context;
         mStartIndex = startIndex;
         int mEmotionLayoutHeight = emotionLayoutHeight - EmoticonUtils.dp2px(mContext, 35 + 26 + 50);
-        float perWidth = emotionLayoutWidth * 1f / EmotionView.EMOJI_COLUMN;
-        mPerHeight = mEmotionLayoutHeight * 1f / EmotionView.EMOJI_ROW;
+        float perWidth = emotionLayoutWidth * 1f / EmoticonView.EMOJI_COLUMN;
+        mPerHeight = mEmotionLayoutHeight * 1f / EmoticonView.EMOJI_ROW;
         float ivWidth = perWidth * .6f;
         float ivHeight = mPerHeight * .6f;
         mIvSize = Math.min(ivWidth, ivHeight);
@@ -36,7 +36,7 @@ public class EmojiAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         int count = EmoticonManager.getDisplayCount() - mStartIndex + 1;
-        count = Math.min(count, EmotionView.EMOJI_PER_PAGE + 1);
+        count = Math.min(count, EmoticonView.EMOJI_PER_PAGE + 1);
         return count;
     }
 
@@ -58,7 +58,7 @@ public class EmojiAdapter extends BaseAdapter {
         ImageView emojiThumb = new ImageView(mContext);
         int count = EmoticonManager.getDisplayCount();
         int index = mStartIndex + position;
-        if (position == EmotionView.EMOJI_PER_PAGE || index == count) {
+        if (position == EmoticonView.EMOJI_PER_PAGE || index == count) {
             emojiThumb.setBackgroundResource(R.drawable.ic_emoji_del);
         } else if (index < count) {
             emojiThumb.setBackground(EmoticonManager.getDisplayDrawable(mContext, index));

@@ -47,9 +47,9 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
         mTabPosi = tabPosi;
 
         if (mTabPosi == 0)
-            mPageCount = (int) Math.ceil(EmoticonManager.getDisplayCount() / (float) EmotionView.EMOJI_PER_PAGE);
+            mPageCount = (int) Math.ceil(EmoticonManager.getDisplayCount() / (float) EmoticonView.EMOJI_PER_PAGE);
         else
-            mPageCount = (int) Math.ceil(StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1).getStickers().size() / (float) EmotionView.STICKER_PER_PAGE);
+            mPageCount = (int) Math.ceil(StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1).getStickers().size() / (float) EmoticonView.STICKER_PER_PAGE);
 
         this.listener = listener;
     }
@@ -79,13 +79,13 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
         gridView.setTag(position);//标记自己是第几页
         if (mTabPosi == 0) {
             gridView.setOnItemClickListener(emojiListener);
-            gridView.setAdapter(new EmojiAdapter(context, mEmotionLayoutWidth, mEmotionLayoutHeight, position * EmotionView.EMOJI_PER_PAGE));
-            gridView.setNumColumns(EmotionView.EMOJI_COLUMN);
+            gridView.setAdapter(new EmojiAdapter(context, mEmotionLayoutWidth, mEmotionLayoutHeight, position * EmoticonView.EMOJI_PER_PAGE));
+            gridView.setNumColumns(EmoticonView.EMOJI_COLUMN);
         } else {
             StickerCategory category = StickerManager.getInstance().getCategory(StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1).getName());
             gridView.setOnItemClickListener(stickerListener);
-            gridView.setAdapter(new StickerAdapter(context, category, mEmotionLayoutWidth, mEmotionLayoutHeight, position * EmotionView.STICKER_PER_PAGE));
-            gridView.setNumColumns(EmotionView.STICKER_COLUMN);
+            gridView.setAdapter(new StickerAdapter(context, category, mEmotionLayoutWidth, mEmotionLayoutHeight, position * EmoticonView.STICKER_PER_PAGE));
+            gridView.setNumColumns(EmoticonView.STICKER_COLUMN);
         }
 
         rl.addView(gridView);
@@ -103,9 +103,9 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            int index = position + (Integer) parent.getTag() * EmotionView.EMOJI_PER_PAGE;
+            int index = position + (Integer) parent.getTag() * EmoticonView.EMOJI_PER_PAGE;
             int count = EmoticonManager.getDisplayCount();
-            if (position == EmotionView.EMOJI_PER_PAGE || index >= count) {
+            if (position == EmoticonView.EMOJI_PER_PAGE || index >= count) {
                 if (listener != null) {
                     listener.onEmojiSelected("/DEL");
                 }
@@ -127,7 +127,7 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
 
             StickerCategory category = StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1);
             List<StickerItem> stickers = category.getStickers();
-            int index = position + (Integer) parent.getTag() * EmotionView.STICKER_PER_PAGE;
+            int index = position + (Integer) parent.getTag() * EmoticonView.STICKER_PER_PAGE;
 
             if (index >= stickers.size()) {
                 Log.i("CSDN_LQR", "index " + index + " larger than size " + stickers.size());

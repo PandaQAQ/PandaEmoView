@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 
 import pandaq.com.gifemoticon.EmoticonManager;
 import pandaq.com.gifemoticon.EmoticonUtils;
-import pandaq.com.gifemoticon.EmotionView;
+import pandaq.com.gifemoticon.EmoticonView;
 import pandaq.com.gifemoticon.R;
 import pandaq.com.gifemoticon.StickerManager;
 
@@ -31,8 +31,8 @@ public class StickerAdapter extends BaseAdapter {
         mCategory = category;
         this.startIndex = startIndex;
         int emotionLayoutHeight1 = emotionLayoutHeight - EmoticonUtils.dp2px(mContext, 35 + 26 + 50);
-        float perWidth = emotionLayoutWidth * 1f / EmotionView.STICKER_COLUMN;
-        mPerHeight = emotionLayoutHeight1 * 1f / EmotionView.STICKER_ROW;
+        float perWidth = emotionLayoutWidth * 1f / EmoticonView.STICKER_COLUMN;
+        mPerHeight = emotionLayoutHeight1 * 1f / EmoticonView.STICKER_ROW;
 
         float ivWidth = perWidth * .8f;
         float ivHeight = mPerHeight * .8f;
@@ -43,7 +43,7 @@ public class StickerAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         int count = mCategory.getStickers().size() - startIndex;
-        count = Math.min(count, EmotionView.STICKER_PER_PAGE);
+        count = Math.min(count, EmoticonView.STICKER_PER_PAGE);
         return count;
     }
 

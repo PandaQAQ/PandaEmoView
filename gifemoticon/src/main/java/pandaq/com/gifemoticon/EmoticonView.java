@@ -22,15 +22,15 @@ import pandaq.com.gifemoticon.sticker.StickerCategory;
  * description : 表情输入键盘视图 View
  */
 
-public class EmotionView extends RelativeLayout {
+public class EmoticonView extends RelativeLayout {
     /* column of emoticon per page */
-    protected final static int EMOJI_COLUMN = 7;
+    public final static int EMOJI_COLUMN = 7;
     /* row of emoticon per page */
-    protected final static int EMOJI_ROW = 3;
+    public final static int EMOJI_ROW = 3;
     /* members of emoticon per page
      * the last one is delete button;
      */
-    protected final static int EMOJI_PER_PAGE = EMOJI_COLUMN * EMOJI_ROW - 1;
+    public final static int EMOJI_PER_PAGE = EMOJI_COLUMN * EMOJI_ROW - 1;
     /* column of sticker per page*/
     public final static int STICKER_COLUMN = 4;
     /* row of sticker per page*/
@@ -56,24 +56,23 @@ public class EmotionView extends RelativeLayout {
     private IEmotionSelectedListener mEmotionSelectedListener;
     private IEmotionExtClickListener mEmotionExtClickListener;
 
-
-    public EmotionView(Context context) {
+    public EmoticonView(Context context) {
         this(context, null);
     }
 
-    public EmotionView(Context context, AttributeSet attrs) {
+    public EmoticonView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public EmotionView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public EmoticonView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
-        init();
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        init();
     }
 
     @Override
@@ -186,10 +185,10 @@ public class EmotionView extends RelativeLayout {
 
     private void setCurPageCommon(int position) {
         if (mTabPosi == 0) {
-            setCurPage(position, (int) Math.ceil(EmoticonManager.getDisplayCount() / (float) EmotionView.EMOJI_PER_PAGE));
+            setCurPage(position, (int) Math.ceil(EmoticonManager.getDisplayCount() / (float) EmoticonView.EMOJI_PER_PAGE));
         } else {
             StickerCategory category = StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1);
-            setCurPage(position, (int) Math.ceil(category.getStickers().size() / (float) EmotionView.STICKER_PER_PAGE));
+            setCurPage(position, (int) Math.ceil(category.getStickers().size() / (float) EmoticonView.STICKER_PER_PAGE));
         }
     }
 
