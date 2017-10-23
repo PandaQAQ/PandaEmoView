@@ -1,6 +1,6 @@
 package pandaq.com.gifemoticon;
 
-public interface IEmotionSelectedListener {
+public interface IEmoticonSelectedListener {
     void onEmojiSelected(String key);
 
     void onStickerSelected(String categoryName, String stickerName, String stickerBitmapPath);

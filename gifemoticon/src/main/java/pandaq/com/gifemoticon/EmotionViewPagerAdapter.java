@@ -34,23 +34,22 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
     private int mEmotionLayoutWidth;
     private int mEmotionLayoutHeight;
 
-    private IEmotionSelectedListener listener;
+    private IEmoticonSelectedListener listener;
     private EditText mMessageEditText;
 
     public void attachEditText(EditText messageEditText) {
         mMessageEditText = messageEditText;
     }
 
-    public EmotionViewPagerAdapter(int emotionLayoutWidth, int emotionLayoutHeight, int tabPosi, IEmotionSelectedListener listener) {
+    public EmotionViewPagerAdapter(int emotionLayoutWidth, int emotionLayoutHeight, int tabPosi, IEmoticonSelectedListener listener) {
         mEmotionLayoutWidth = emotionLayoutWidth;
         mEmotionLayoutHeight = emotionLayoutHeight;
         mTabPosi = tabPosi;
-
-        if (mTabPosi == 0)
+        if (mTabPosi == 0) { // 默认的 emoji 或者 gif emoji
             mPageCount = (int) Math.ceil(EmoticonManager.getDisplayCount() / (float) EmoticonView.EMOJI_PER_PAGE);
-        else
+        } else { //贴图表情
             mPageCount = (int) Math.ceil(StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1).getStickers().size() / (float) EmoticonView.STICKER_PER_PAGE);
-
+        }
         this.listener = listener;
     }
 
@@ -66,7 +65,6 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-
         Context context = container.getContext();
         RelativeLayout rl = new RelativeLayout(context);
         rl.setGravity(Gravity.CENTER);

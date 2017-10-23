@@ -2,13 +2,16 @@ package pandaq.com.gifemoticonpro;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pandaq.com.gifemoticon.EmoticonView;
+import pandaq.com.gifemoticon.IEmoticonMenuClickListener;
 import pandaq.com.gifemoticon.KeyBoardCoordinator;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,6 +34,17 @@ public class MainActivity extends AppCompatActivity {
         initEmotionKeyboard();
         mEmoticonView.attachEditText(mEtInput);
         mEmoticonView.setEmotionAddVisiable(true);
+        mEmoticonView.setEmoticonExtClickListener(new IEmoticonMenuClickListener() {
+            @Override
+            public void onTabAddClick(View view) {
+                Toast.makeText(MainActivity.this, "点击添加按钮", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onTabSettingClick(View view) {
+                Toast.makeText(MainActivity.this, "点击设置按钮", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initEmotionKeyboard() {

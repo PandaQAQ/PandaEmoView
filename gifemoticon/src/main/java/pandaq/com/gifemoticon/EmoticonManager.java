@@ -56,7 +56,7 @@ public class EmoticonManager {
         if (STICKER_PATH == null) {
             STICKER_PATH = new File(mContext.getFilesDir(), "sticker").getAbsolutePath();
         }
-        load(mContext, EMOT_DIR + mConfigName);
+        load(mContext, EMOT_DIR + File.separator + mConfigName);
         mPattern = makePattern();
         mDrawableCache = new LruCache<String, Bitmap>(CACHE_MAX_SIZE) {
             @Override
@@ -269,7 +269,7 @@ public class EmoticonManager {
             } else if (localName.equals("Emoticon")) {
                 String tag = attributes.getValue(uri, "Tag");
                 String fileName = attributes.getValue(uri, "File");
-                ImageEntry entry = new ImageEntry(tag, EMOT_DIR + catalog + File.separator + fileName);
+                ImageEntry entry = new ImageEntry(tag, EMOT_DIR + File.separator + catalog + File.separator + fileName);
                 mText2Entry.put(entry.text, entry);
                 if (catalog.equals(SOUCRE_DIR)) {
                     mDefaultEntries.add(entry);
@@ -340,10 +340,10 @@ public class EmoticonManager {
                 mEmoticonManager.CACHE_MAX_SIZE = this.CACHE_MAX_SIZE;
             }
             if (this.EMOT_DIR != null) {
-                mEmoticonManager.EMOT_DIR = this.EMOT_DIR;
+                EmoticonManager.EMOT_DIR = this.EMOT_DIR;
             }
             if (this.mContext != null) {
-                mEmoticonManager.mContext = this.mContext;
+                EmoticonManager.mContext = this.mContext;
             }
             if (this.mIImageLoader != null) {
                 EmoticonManager.mIImageLoader = this.mIImageLoader;
@@ -352,11 +352,11 @@ public class EmoticonManager {
                 mEmoticonManager.mConfigName = this.mConfigName;
             }
             if (this.SOUCRE_DIR != null) {
-                mEmoticonManager.SOUCRE_DIR = this.SOUCRE_DIR;
+                EmoticonManager.SOUCRE_DIR = this.SOUCRE_DIR;
             }
 
             if (this.STICKER_PATH != null) {
-                mEmoticonManager.STICKER_PATH = this.STICKER_PATH;
+                EmoticonManager.STICKER_PATH = this.STICKER_PATH;
             }
             return mEmoticonManager.init();
         }
@@ -372,7 +372,8 @@ public class EmoticonManager {
         try {
             String[] names = assetManager.list(EMOT_DIR + File.separator + SOUCRE_DIR);
             for (String name : names) {
-                if (("emoji/source/" + name).equals(filename.trim())) {
+                String sourceName = EMOT_DIR + File.separator + SOUCRE_DIR + File.separator + name;
+                if (sourceName.equals(filename.trim())) {
                     return true;
                 }
             }

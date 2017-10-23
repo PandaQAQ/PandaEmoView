@@ -53,8 +53,8 @@ public class EmoticonView extends RelativeLayout {
     private int mTabPosi = 0;
     private EditText mMessageEditText;
     private boolean mEmoticonAddVisiable = true;
-    private IEmotionSelectedListener mEmotionSelectedListener;
-    private IEmotionExtClickListener mEmotionExtClickListener;
+    private IEmoticonSelectedListener mEmoticonSelectedListener;
+    private IEmoticonMenuClickListener mEmoticonExtClickListener;
 
     public EmoticonView(Context context) {
         this(context, null);
@@ -73,6 +73,7 @@ public class EmoticonView extends RelativeLayout {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         init();
+        initListener();
     }
 
     @Override
@@ -131,6 +132,8 @@ public class EmoticonView extends RelativeLayout {
      * 初始化底部按钮
      */
     private void initTabs() {
+        mTabs.clear();
+        mBottomTabLayout.removeAllViews();
         //添加默认表情 Tab
         EmotionTab emojiTab = new EmotionTab(mContext, R.drawable.cute);
         mBottomTabLayout.addView(emojiTab);
@@ -153,7 +156,7 @@ public class EmoticonView extends RelativeLayout {
         mSettingTab.setBackground(drawable);
         mBottomTabLayout.addView(mSettingTab);
         mTabs.add(mSettingTab);
-        selectTab(1); //默认底一个被选中
+        selectTab(0); //默认底一个被选中
     }
 
     /**
@@ -174,7 +177,7 @@ public class EmoticonView extends RelativeLayout {
     }
 
     private void fillVpEmotioin(int tabPosi) {
-        EmotionViewPagerAdapter adapter = new EmotionViewPagerAdapter(mMeasuredWidth, mMeasuredHeight, tabPosi, mEmotionSelectedListener);
+        EmotionViewPagerAdapter adapter = new EmotionViewPagerAdapter(mMeasuredWidth, mMeasuredHeight, tabPosi, mEmoticonSelectedListener);
         mEmoticonPager.setAdapter(adapter);
         mIndicatorLayout.removeAllViews();
         setCurPageCommon(0);
@@ -182,6 +185,59 @@ public class EmoticonView extends RelativeLayout {
             adapter.attachEditText(mMessageEditText);
         }
     }
+
+    private void initListener() {
+        if (mBottomTabLayout != null) {
+            mTabCount = mBottomTabLayout.getChildCount() - 1;//不包含最后的设置按钮
+            for (int position = 0; position < mTabCount; position++) {
+                View tab = mBottomTabLayout.getChildAt(position);
+                tab.setTag(position);
+                tab.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mTabPosi = (int) v.getTag();
+                        selectTab(mTabPosi);
+                    }
+                });
+            }
+        }
+
+        mEmoticonPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                setCurPageCommon(position);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        mAddTab.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mEmoticonExtClickListener != null) {
+                    mEmoticonExtClickListener.onTabAddClick(v);
+                }
+            }
+        });
+
+        mSettingTab.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mEmoticonExtClickListener != null) {
+                    mEmoticonExtClickListener.onTabSettingClick(v);
+                }
+            }
+        });
+    }
+
 
     private void setCurPageCommon(int position) {
         if (mTabPosi == 0) {
@@ -235,5 +291,13 @@ public class EmoticonView extends RelativeLayout {
         if (mAddTab != null) {
             mAddTab.setVisibility(mEmoticonAddVisiable ? View.VISIBLE : View.GONE);
         }
+    }
+
+    public void setEmoticonSelectedListener(IEmoticonSelectedListener emotionSelectedListener) {
+        mEmoticonSelectedListener = emotionSelectedListener;
+    }
+
+    public void setEmoticonExtClickListener(IEmoticonMenuClickListener emotionExtClickListener) {
+        mEmoticonExtClickListener = emotionExtClickListener;
     }
 }

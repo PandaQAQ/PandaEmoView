@@ -10,6 +10,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -198,9 +199,8 @@ public class KeyBoardCoordinator {
      * 锁定内容高度，防止跳闪
      */
     private void lockContentHeight() {
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mContentView.getLayoutParams();
+        ViewGroup.LayoutParams params = mContentView.getLayoutParams();
         params.height = mContentView.getHeight();
-        params.weight = 0.0F;
     }
 
     /**
@@ -210,7 +210,7 @@ public class KeyBoardCoordinator {
         mEditText.postDelayed(new Runnable() {
             @Override
             public void run() {
-                ((LinearLayout.LayoutParams) mContentView.getLayoutParams()).weight = 1.0F;
+                mContentView.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
             }
         }, 200L);
     }
