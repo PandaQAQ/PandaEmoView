@@ -14,14 +14,13 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 /**
  * Created by huxinyu on 2017/10/19 0019.
  * description ：表情键盘协调者类
  */
 
-public class KeyBoardCoordinator {
+public class KeyBoardManager {
 
     private static final String SHARE_PREFERENCE_NAME = "EmotionKeyBoard";
     private static final String SHARE_PREFERENCE_SOFT_INPUT_HEIGHT = "sofe_input_height";
@@ -33,8 +32,8 @@ public class KeyBoardCoordinator {
     private View mContentView;//内容布局view,即除了表情布局或者软键盘布局以外的布局，用于固定bar的高度，防止跳闪
 
 
-    public static KeyBoardCoordinator with(Activity activity) {
-        KeyBoardCoordinator emotionInputDetector = new KeyBoardCoordinator();
+    public static KeyBoardManager with(Activity activity) {
+        KeyBoardManager emotionInputDetector = new KeyBoardManager();
         emotionInputDetector.mActivity = activity;
         emotionInputDetector.mInputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         emotionInputDetector.mSp = activity.getSharedPreferences(SHARE_PREFERENCE_NAME, Context.MODE_PRIVATE);
@@ -44,7 +43,7 @@ public class KeyBoardCoordinator {
     /**
      * 绑定内容view，此view用于固定bar的高度，防止跳闪
      */
-    public KeyBoardCoordinator bindToContent(View contentView) {
+    public KeyBoardManager bindToContent(View contentView) {
         mContentView = contentView;
         return this;
     }
@@ -52,7 +51,7 @@ public class KeyBoardCoordinator {
     /**
      * 绑定编辑框
      */
-    public KeyBoardCoordinator bindToEditText(EditText editText) {
+    public KeyBoardManager bindToEditText(EditText editText) {
         mEditText = editText;
         mEditText.requestFocus();
         mEditText.setOnTouchListener(new View.OnTouchListener() {
@@ -81,7 +80,7 @@ public class KeyBoardCoordinator {
      * @param emotionButton
      * @return
      */
-    public KeyBoardCoordinator bindToEmotionButton(View... emotionButton) {
+    public KeyBoardManager bindToEmotionButton(View... emotionButton) {
         for (View view : emotionButton) {
             view.setOnClickListener(getOnEmotionButtonOnClickListener());
         }
@@ -138,18 +137,8 @@ public class KeyBoardCoordinator {
      * @param emotionLayout
      * @return
      */
-    public KeyBoardCoordinator setEmotionLayout(View emotionLayout) {
+    public KeyBoardManager setEmotionLayout(View emotionLayout) {
         mEmotionLayout = emotionLayout;
-        return this;
-    }
-
-    public KeyBoardCoordinator build() {
-        //设置软件盘的模式：SOFT_INPUT_ADJUST_RESIZE  这个属性表示Activity的主窗口总是会被调整大小，从而保证软键盘显示空间。
-        //从而方便我们计算软件盘的高度
-        mActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN |
-                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        //隐藏软件盘
-        hideSoftInput();
         return this;
     }
 
@@ -167,12 +156,11 @@ public class KeyBoardCoordinator {
     }
 
     private void showEmotionLayout() {
-        int softInputHeight = getSupportSoftInputHeight();
-        if (softInputHeight == 0) {
-            softInputHeight = mSp.getInt(SHARE_PREFERENCE_SOFT_INPUT_HEIGHT, dip2Px(270));
-        }
+        ViewGroup.LayoutParams params = mEmotionLayout.getLayoutParams();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = getKeyBoardHeight();
+        mEmotionLayout.setLayoutParams(params);
         hideSoftInput();
-        mEmotionLayout.getLayoutParams().height = softInputHeight;
         mEmotionLayout.setVisibility(View.VISIBLE);
     }
 
@@ -188,7 +176,11 @@ public class KeyBoardCoordinator {
      */
     private void hideEmotionLayout(boolean showSoftInput) {
         if (mEmotionLayout.isShown()) {
-            mEmotionLayout.setVisibility(View.GONE);
+            mEmotionLayout.setVisibility(View.INVISIBLE);
+            ViewGroup.LayoutParams params = mEmotionLayout.getLayoutParams();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = 0;
+            mEmotionLayout.setLayoutParams(params);
             if (showSoftInput) {
                 showSoftInput();
             }
@@ -303,9 +295,14 @@ public class KeyBoardCoordinator {
     /**
      * 获取软键盘高度
      *
-     * @return
+     * @return 软键盘高度 px
      */
     public int getKeyBoardHeight() {
-        return mSp.getInt(SHARE_PREFERENCE_SOFT_INPUT_HEIGHT, 400);
+        int softInputHeight = getSupportSoftInputHeight();
+        if (softInputHeight == 0) {
+            softInputHeight = mSp.getInt(SHARE_PREFERENCE_SOFT_INPUT_HEIGHT, dip2Px(270));
+        }
+        return softInputHeight;
     }
+
 }

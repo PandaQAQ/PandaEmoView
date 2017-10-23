@@ -6,13 +6,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pandaq.com.gifemoticon.EmoticonView;
 import pandaq.com.gifemoticon.IEmoticonMenuClickListener;
-import pandaq.com.gifemoticon.KeyBoardCoordinator;
+import pandaq.com.gifemoticon.KeyBoardManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,10 +22,10 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.emoticonView)
     EmoticonView mEmoticonView;
     @BindView(R.id.llIndicator)
-    LinearLayout mLlIndicator;
+    RelativeLayout mLlIndicator;
     @BindView(R.id.test_button)
     Button mTestButton;
-    private KeyBoardCoordinator emotionKeyboard;
+    private KeyBoardManager emotionKeyboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initEmotionKeyboard() {
-        emotionKeyboard = KeyBoardCoordinator.with(this);
+        emotionKeyboard = KeyBoardManager.with(this);
         emotionKeyboard.bindToContent(mLlIndicator);
         emotionKeyboard.bindToEmotionButton(mTestButton);
         emotionKeyboard.bindToEditText(mEtInput);
