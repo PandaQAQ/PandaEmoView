@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pandaq.com.gifemoticon.EmoticonManager;
-import pandaq.com.gifemoticon.EmoticonView;
+import pandaq.com.gifemoticon.view.EmoticonView;
 
 /**
  * Created by huxinyu on 2017/10/19 0019.

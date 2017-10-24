@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <pandaq.com.gifemoticon.EmotionTab
+        <pandaq.com.gifemoticon.view.EmotionTab
             android:id="@+id/tabAdd"
             android:layout_width="@dimen/bottom_tab_width"
             android:layout_height="@dimen/bottom_tab_height"

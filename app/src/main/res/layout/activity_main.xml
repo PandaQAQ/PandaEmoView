@@ -6,32 +6,42 @@
     android:layout_height="match_parent"
     tools:context="pandaq.com.gifemoticonpro.MainActivity">
 
+    <TextView
+        android:id="@+id/toptitle"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#dcba00"
+        android:gravity="center"
+        android:text="Title"
+        android:textSize="22sp"/>
+
+    <pandaq.com.gifemoticon.view.EmoticonView
+        android:id="@+id/emoticonView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="invisible"/>
+
     <RelativeLayout
         android:id="@+id/llIndicator"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_height="match_parent"
+        android:layout_above="@id/emoticonView"
+        android:layout_below="@id/toptitle"
         android:orientation="vertical">
 
-        <pandaq.com.gifemoticon.EmoticonView
-            android:id="@+id/emoticonView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_alignParentBottom="true"
-            android:visibility="visible"/>
-
-        <EditText
+        <pandaq.com.gifemoticon.view.EmoticonEditText
             android:id="@+id/et_input"
             android:layout_width="match_parent"
-            android:layout_above="@id/emoticonView"
+            android:layout_alignParentBottom="true"
             android:layout_height="50dp"
             />
 
         <Button
             android:id="@+id/test_button"
-            android:layout_above="@id/et_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@id/et_input"
             android:text="test"/>
     </RelativeLayout>
 </RelativeLayout>

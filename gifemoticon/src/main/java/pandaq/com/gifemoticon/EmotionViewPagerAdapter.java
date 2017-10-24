@@ -20,6 +20,7 @@ import pandaq.com.gifemoticon.gif.EmojiAdapter;
 import pandaq.com.gifemoticon.sticker.StickerAdapter;
 import pandaq.com.gifemoticon.sticker.StickerCategory;
 import pandaq.com.gifemoticon.sticker.StickerItem;
+import pandaq.com.gifemoticon.view.EmoticonView;
 
 
 /**

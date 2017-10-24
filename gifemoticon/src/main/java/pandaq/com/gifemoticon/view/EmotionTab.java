@@ -1,4 +1,4 @@
-package pandaq.com.gifemoticon;
+package pandaq.com.gifemoticon.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -7,6 +7,9 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import pandaq.com.gifemoticon.EmoticonManager;
+import pandaq.com.gifemoticon.R;
 
 /**
  * 表情底部 tab 对象

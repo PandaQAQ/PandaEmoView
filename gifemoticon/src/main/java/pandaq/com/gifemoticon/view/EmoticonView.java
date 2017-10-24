@@ -1,6 +1,7 @@
-package pandaq.com.gifemoticon;
+package pandaq.com.gifemoticon.view;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.support.v4.view.ViewPager;
@@ -15,6 +16,13 @@ import android.widget.RelativeLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import pandaq.com.gifemoticon.EmoticonManager;
+import pandaq.com.gifemoticon.EmoticonUtils;
+import pandaq.com.gifemoticon.EmotionViewPagerAdapter;
+import pandaq.com.gifemoticon.IEmoticonMenuClickListener;
+import pandaq.com.gifemoticon.IEmoticonSelectedListener;
+import pandaq.com.gifemoticon.R;
+import pandaq.com.gifemoticon.StickerManager;
 import pandaq.com.gifemoticon.sticker.StickerCategory;
 
 /**
@@ -55,6 +63,7 @@ public class EmoticonView extends RelativeLayout {
     private boolean mEmoticonAddVisiable = true;
     private IEmoticonSelectedListener mEmoticonSelectedListener;
     private IEmoticonMenuClickListener mEmoticonExtClickListener;
+    private boolean loadedResource = false;
 
     public EmoticonView(Context context) {
         this(context, null);
@@ -67,13 +76,17 @@ public class EmoticonView extends RelativeLayout {
     public EmoticonView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
+        setBackgroundColor(Color.RED);
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        init();
-        initListener();
+        if (getHeight() != 0 && !loadedResource) {
+            init();
+            initListener();
+            loadedResource = true;
+        }
     }
 
     @Override

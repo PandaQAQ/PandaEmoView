@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 
 import pandaq.com.gifemoticon.EmoticonManager;
 import pandaq.com.gifemoticon.EmoticonUtils;
-import pandaq.com.gifemoticon.EmoticonView;
+import pandaq.com.gifemoticon.view.EmoticonView;
 import pandaq.com.gifemoticon.R;
 import pandaq.com.gifemoticon.StickerManager;
 

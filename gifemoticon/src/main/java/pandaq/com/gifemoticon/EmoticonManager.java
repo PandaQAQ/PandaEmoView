@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import pandaq.com.gifemoticon.gif.AnimatedGifDrawable;
+import pandaq.com.gifemoticon.view.EmoticonView;
 
 /**
  * Created by huxinyu on 2017/10/19 0019.
