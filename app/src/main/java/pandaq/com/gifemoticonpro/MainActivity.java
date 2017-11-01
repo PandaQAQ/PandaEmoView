@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import butterknife.BindView;
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     RelativeLayout mLlIndicator;
     @BindView(R.id.test_button)
     Button mTestButton;
+    @BindView(R.id.scrollView)
+    ScrollView mScrollView;
     private KeyBoardManager emotionKeyboard;
 
     @Override

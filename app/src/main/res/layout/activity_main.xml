@@ -25,16 +25,15 @@
     <RelativeLayout
         android:id="@+id/llIndicator"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="100dp"
         android:layout_above="@id/emoticonView"
-        android:layout_below="@id/toptitle"
         android:orientation="vertical">
 
         <pandaq.com.gifemoticon.view.EmoticonEditText
             android:id="@+id/et_input"
             android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
             android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
             />
 
         <Button
@@ -44,4 +43,143 @@
             android:layout_above="@id/et_input"
             android:text="test"/>
     </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/llIndicator"
+        android:layout_below="@id/toptitle">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="ssssssssssssssssssssssssss
+ssssssssssssssssssssssssssssssssssssdasdasdadad
+sssssssssssssssssssssssssssssssss
+sssssssssssssssss
+ssssssssssssssssssssss
+sssssssssssssssssssssssssss
+sssssssssssssssssssssssssss
+sssssssssssssssssssssssssssssss
+sssssssssssssssssssssssssssssss
+sssssssss
+s
+s
+s
+s
+s
+sssssssssssssssssss
+ssssssss
+ssssssssssssssss
+ssssssssssssssssssssssssss
+sss
+sssssssssssssssssssssssssssssssssss
+ssssssssssssssssssssssssss
+ssssssssssssssssssssssssssssssssssssdasdasdadad
+sssssssssssssssssssssssssssssssss
+sssssssssssssssss
+ssssssssssssssssssssss
+sssssssssssssssssssssssssss
+sssssssssssssssssssssssssss
+sssssssssssssssssssssssssssssss
+sssssssssssssssssssssssssssssss
+sssssssss
+s
+s
+s
+s
+s
+sssssssssssssssssss
+ssssssss
+ssssssssssssssss
+ssssssssssssssssssssssssss
+sss
+sssssssssssssssssssssssssssssssssss
+ssssssssssssssssssssssssss
+ssssssssssssssssssssssssssssssssssssdasdasdadad
+sssssssssssssssssssssssssssssssss
+sssssssssssssssss
+ssssssssssssssssssssss
+sssssssssssssssssssssssssss
+sssssssssssssssssssssssssss
+sssssssssssssssssssssssssssssss
+sssssssssssssssssssssssssssssss
+sssssssss
+s
+s
+s
+s
+s
+sssssssssssssssssss
+ssssssss
+ssssssssssssssss
+ssssssssssssssssssssssssss
+sss
+sssssssssssssssssssssssssssssssssss
+ssssssssssssssssssssssssss
+ssssssssssssssssssssssssssssssssssssdasdasdadad
+sssssssssssssssssssssssssssssssss
+sssssssssssssssss
+ssssssssssssssssssssss
+sssssssssssssssssssssssssss
+sssssssssssssssssssssssssss
+sssssssssssssssssssssssssssssss
+sssssssssssssssssssssssssssssss
+sssssssss
+s
+s
+s
+s
+s
+sssssssssssssssssss
+ssssssss
+ssssssssssssssss
+ssssssssssssssssssssssssss
+sss
+sssssssssssssssssssssssssssssssssss
+ssssssssssssssssssssssssss
+ssssssssssssssssssssssssssssssssssssdasdasdadad
+sssssssssssssssssssssssssssssssss
+sssssssssssssssss
+ssssssssssssssssssssss
+sssssssssssssssssssssssssss
+sssssssssssssssssssssssssss
+sssssssssssssssssssssssssssssss
+sssssssssssssssssssssssssssssss
+sssssssss
+s
+s
+s
+s
+s
+sssssssssssssssssss
+ssssssss
+ssssssssssssssss
+ssssssssssssssssssssssssss
+sss
+sssssssssssssssssssssssssssssssssss
+ssssssssssssssssssssssssss
+ssssssssssssssssssssssssssssssssssssdasdasdadad
+sssssssssssssssssssssssssssssssss
+sssssssssssssssss
+ssssssssssssssssssssss
+sssssssssssssssssssssssssss
+sssssssssssssssssssssssssss
+sssssssssssssssssssssssssssssss
+sssssssssssssssssssssssssssssss
+sssssssss
+s
+s
+s
+s
+s
+sssssssssssssssssss
+ssssssss
+ssssssssssssssss
+ssssssssssssssssssssssssss
+sss
+sssssssssssssssssssssssssssssssssss++
+"/>
+    </ScrollView>
 </RelativeLayout>
