@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void initEmotionKeyboard() {
         emotionKeyboard = KeyBoardManager.with(this);
-        emotionKeyboard.bindToContent(mLlIndicator);
         emotionKeyboard.bindToEmotionButton(mTestButton);
         emotionKeyboard.bindToEditText(mEtInput);
         emotionKeyboard.setEmotionView(mEmoticonView);
