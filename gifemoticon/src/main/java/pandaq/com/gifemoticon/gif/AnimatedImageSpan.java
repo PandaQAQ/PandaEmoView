@@ -7,10 +7,10 @@ import android.graphics.drawable.Drawable;
 import android.text.style.DynamicDrawableSpan;
 
 
-class AnimatedImageSpan extends DynamicDrawableSpan {
+public class AnimatedImageSpan extends DynamicDrawableSpan {
     private AnimatedGifDrawable mGifDrawable;
 
-    AnimatedImageSpan(AnimatedGifDrawable gifDrawable, GifRunnable runnable) {
+    public AnimatedImageSpan(AnimatedGifDrawable gifDrawable, GifRunnable runnable) {
         super();
         mGifDrawable = gifDrawable;
         if (!runnable.isRunning()) {

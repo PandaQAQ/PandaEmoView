@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pandaq.com.gifemoticon.EmoticonManager;
-import pandaq.com.gifemoticon.view.EmoticonView;
+import pandaq.com.gifemoticon.view.PandaEmoView;
 
 /**
  * Created by huxinyu on 2017/10/19 0019.
@@ -99,9 +99,9 @@ public class StickerCategory {
             }
         }
         //补充最后一页缺少的贴图
-        int tmp = stickers.size() % EmoticonView.STICKER_PER_PAGE;
+        int tmp = stickers.size() % PandaEmoView.STICKER_PER_PAGE;
         if (tmp != 0) {
-            int tmp2 = EmoticonView.STICKER_PER_PAGE - (stickers.size() - (stickers.size() / EmoticonView.STICKER_PER_PAGE) * EmoticonView.STICKER_PER_PAGE);
+            int tmp2 = PandaEmoView.STICKER_PER_PAGE - (stickers.size() - (stickers.size() / PandaEmoView.STICKER_PER_PAGE) * PandaEmoView.STICKER_PER_PAGE);
             for (int i = 0; i < tmp2; i++) {
                 stickers.add(new StickerItem("", ""));
             }

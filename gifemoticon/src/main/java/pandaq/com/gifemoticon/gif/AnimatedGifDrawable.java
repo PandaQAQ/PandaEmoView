@@ -15,11 +15,11 @@ import java.io.InputStream;
 
 public class AnimatedGifDrawable extends AnimationDrawable {
 
-    private String containerTag; // 显示此表情的 Activity 的 Tag
+    private String containerTag; // 显示此表情的界面的 Tag
     private int mCurrentIndex = 0;
-    private UpdateListener mListener;
+    private RunGifCallBack mGifCallBack;
 
-    public AnimatedGifDrawable(InputStream source) {
+    public AnimatedGifDrawable(InputStream source, int bounds) {
         GifDecoder decoder = new GifDecoder();
         decoder.read(source);
         // Iterate through the gif frames, add each as animation frame
@@ -27,11 +27,11 @@ public class AnimatedGifDrawable extends AnimationDrawable {
             Bitmap bitmap = decoder.getFrame(i);
             BitmapDrawable drawable = new BitmapDrawable(bitmap);
             // Explicitly set the bounds in order for the frames to display
-            drawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            drawable.setBounds(10, 0, bounds, bounds);
             addFrame(drawable, decoder.getDelay(i));
             if (i == 0) {
                 // Also set the bounds for this container drawable
-                setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
+                setBounds(10, 0, bounds, bounds);
             }
         }
     }
@@ -61,16 +61,16 @@ public class AnimatedGifDrawable extends AnimationDrawable {
      * Interface to notify listener to update/redraw
      * Can't figure out how to invalidate the drawable (or span in which it sits) itself to force redraw
      */
-    public interface UpdateListener {
-        void update();
+    public interface RunGifCallBack {
+        void run();
     }
 
-    public UpdateListener getUpdateListener() {
-        return mListener;
+    public RunGifCallBack getUpdateListener() {
+        return mGifCallBack;
     }
 
-    public void setListener(UpdateListener listener) {
-        mListener = listener;
+    public void setRunCallBack(RunGifCallBack gifCallBack) {
+        mGifCallBack = gifCallBack;
     }
 
     public String getContainerTag() {

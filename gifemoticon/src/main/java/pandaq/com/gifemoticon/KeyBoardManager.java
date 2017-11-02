@@ -13,7 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
-import pandaq.com.gifemoticon.view.EmoticonEditText;
+import pandaq.com.gifemoticon.view.PandaEmoEditText;
+import pandaq.com.gifemoticon.view.PandaEmoView;
 
 /**
  * Created by huxinyu on 2017/10/19 0019.
@@ -27,11 +28,11 @@ public class KeyBoardManager {
     private Activity mActivity;
     private InputMethodManager mInputManager;//软键盘管理类
     private SharedPreferences mSp;
-    private View mEmotionView;//表情布局
-    private EmoticonEditText mEditText;
-    private View mContentView;//内容布局view,即除了表情布局或者软键盘布局以外的布局，用于固定bar的高度，防止跳闪
+    private PandaEmoView mEmotionView;//表情布局
+    private PandaEmoEditText mEditText;
     private boolean interceptBackPress = false;
-
+    private OnEmotionButtonOnClickListener mOnEmotionButtonOnClickListener; // 表情切换按钮点击回调
+    private OnInputShowListener mOnInputShowListener; // 输入布局显示收起回调（包括系统自带和自定义表情键盘）
 
     public static KeyBoardManager with(Activity activity) {
         KeyBoardManager emotionInputDetector = new KeyBoardManager();
@@ -42,29 +43,22 @@ public class KeyBoardManager {
     }
 
     /**
-     * 绑定内容view，此view用于固定bar的高度，防止跳闪
-     */
-    public KeyBoardManager bindToContent(View contentView) {
-        mContentView = contentView;
-        return this;
-    }
-
-    /**
      * 绑定编辑框
      */
-    public KeyBoardManager bindToEditText(EmoticonEditText editText) {
+    private KeyBoardManager bindToEditText(PandaEmoEditText editText) {
         mEditText = editText;
         mEditText.requestFocus();
         mEditText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP && mEmotionView.isShown()) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
                     hideEmotionLayout(true);//隐藏表情布局，显示软件盘
                 }
                 return false;
             }
         });
-        mEditText.setBackPressedListener(new EmoticonEditText.IBackPressedListener() {
+        // 监听返回物理按键，不用 onBackpressed 因为软键盘弹出时返回键不会走 onBackpressed
+        mEditText.setBackPressedListener(new PandaEmoEditText.IBackPressedListener() {
             @Override
             public void backPressed() {
                 interceptBackPress = mEmotionView.isShown();
@@ -76,9 +70,6 @@ public class KeyBoardManager {
 
     /**
      * 绑定表情按钮（可以有多个表情按钮）
-     *
-     * @param emotionButton
-     * @return
      */
     public KeyBoardManager bindToEmotionButton(View... emotionButton) {
         for (View view : emotionButton) {
@@ -87,7 +78,7 @@ public class KeyBoardManager {
         return this;
     }
 
-    public View.OnClickListener getOnEmotionButtonOnClickListener() {
+    private View.OnClickListener getOnEmotionButtonOnClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,43 +87,35 @@ public class KeyBoardManager {
                         return;
                     }
                 }
-                System.out.println(mEmotionView.getVisibility() + "------" + mEmotionView.isShown());
                 if (mEmotionView.isShown()) {
                     hideEmotionLayout(true);//隐藏表情布局，显示软件盘
                 } else {
-                    System.out.println(mContentView.getHeight() + "-----------show前");
-                    showEmotionLayout();
+                    if (isSoftInputShown()) { //同上
+                        showEmotionLayout();
+                    } else {
+                        showEmotionLayout();//两者都没显示，直接显示表情布局
+                    }
                 }
             }
         };
     }
 
-    /*================== 表情按钮点击事件回调 begin ==================*/
-    interface OnEmotionButtonOnClickListener {
-        /**
-         * 主要是为了适用仿微信的情况，微信有一个表情按钮和一个功能按钮，这2个按钮都是控制了底部区域的显隐
-         *
-         * @return true:拦截切换输入法，false:让输入法正常切换
-         */
-        boolean onEmotionButtonOnClickListener(View view);
-    }
-
-    private OnEmotionButtonOnClickListener mOnEmotionButtonOnClickListener;
-
-    public void setOnEmotionButtonOnClickListener(OnEmotionButtonOnClickListener onEmotionButtonOnClickListener) {
-        mOnEmotionButtonOnClickListener = onEmotionButtonOnClickListener;
-    }
-    /*================== 表情按钮点击事件回调 end ==================*/
-
     /**
      * 设置表情内容布局
      *
-     * @param emotionView
-     * @return
+     * @param emotionView 表情布局
      */
-    public KeyBoardManager setEmotionView(View emotionView) {
+    public KeyBoardManager setEmotionView(PandaEmoView emotionView) {
         mEmotionView = emotionView;
+        bindToEditText(mEmotionView.getAttachEditText());
         return this;
+    }
+
+    /**
+     * 是否显示软件盘
+     */
+    private boolean isSoftInputShown() {
+        return getSupportSoftInputHeight() != 0;
     }
 
     /**
@@ -149,15 +132,8 @@ public class KeyBoardManager {
         params.width = ViewGroup.LayoutParams.MATCH_PARENT;
         params.height = getKeyBoardHeight();
         mEmotionView.setLayoutParams(params);
-        System.out.println(mContentView.getHeight() + "-----------hide soft 前");
         hideSoftInput();
-        System.out.println(mContentView.getHeight() + "-----------hide soft 后");
         mEmotionView.setVisibility(View.VISIBLE);
-    }
-
-    private int dip2Px(int dip) {
-        float density = mActivity.getApplicationContext().getResources().getDisplayMetrics().density;
-        return (int) (dip * density + 0.5f);
     }
 
     /**
@@ -166,22 +142,22 @@ public class KeyBoardManager {
      * @param showSoftInput 是否显示软件盘
      */
     private void hideEmotionLayout(boolean showSoftInput) {
-        if (mEmotionView.isShown()) {
-            if (showSoftInput) {
-                showSoftInput();
-            }
-            mEmotionView.setVisibility(View.INVISIBLE);
-            ViewGroup.LayoutParams params = mEmotionView.getLayoutParams();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        ViewGroup.LayoutParams params = mEmotionView.getLayoutParams();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        if (showSoftInput) {
+            showSoftInput();
+            params.height = getKeyBoardHeight();
+        } else {
             params.height = 0;
-            mEmotionView.setLayoutParams(params);
         }
+        mEmotionView.setLayoutParams(params);
+        mEmotionView.setVisibility(View.INVISIBLE);
     }
 
     /**
      * 编辑框获取焦点，并显示软件盘
      */
-    public void showSoftInput() {
+    private void showSoftInput() {
         mEditText.requestFocus();
         mEditText.post(new Runnable() {
             @Override
@@ -194,7 +170,7 @@ public class KeyBoardManager {
     /**
      * 隐藏软件盘
      */
-    public void hideSoftInput() {
+    private void hideSoftInput() {
         mInputManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
     }
 
@@ -256,9 +232,34 @@ public class KeyBoardManager {
     private int getKeyBoardHeight() {
         int softInputHeight = getSupportSoftInputHeight();
         if (softInputHeight == 0) {
-            softInputHeight = mSp.getInt(SHARE_PREFERENCE_SOFT_INPUT_HEIGHT, dip2Px(270));
+            softInputHeight = mSp.getInt(SHARE_PREFERENCE_SOFT_INPUT_HEIGHT, EmoticonUtils.dp2px(mActivity, 270));
         }
         return softInputHeight;
     }
+
+    /*================== 表情按钮点击事件回调 begin ==================*/
+    interface OnEmotionButtonOnClickListener {
+        /**
+         * 主要是为了适用仿微信的情况，微信有一个表情按钮和一个功能按钮，这2个按钮都是控制了底部区域的显隐
+         *
+         * @return true:拦截切换输入法，false:让输入法正常切换
+         */
+        boolean onEmotionButtonOnClickListener(View view);
+    }
+
+    public void setOnEmotionButtonOnClickListener(OnEmotionButtonOnClickListener onEmotionButtonOnClickListener) {
+        mOnEmotionButtonOnClickListener = onEmotionButtonOnClickListener;
+    }
+    /*================== 表情按钮点击事件回调 end ==================*/
+
+    /*================== 表情按钮点击事件回调 begin ==================*/
+    interface OnInputShowListener {
+        boolean showInputView();
+    }
+
+    public void setOnInputListener(OnInputShowListener onInputShowListener) {
+        mOnInputShowListener = onInputShowListener;
+    }
+    /*================== 表情按钮点击事件回调 end ==================*/
 
 }

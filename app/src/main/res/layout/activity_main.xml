@@ -15,7 +15,7 @@
         android:text="Title"
         android:textSize="22sp"/>
 
-    <pandaq.com.gifemoticon.view.EmoticonView
+    <pandaq.com.gifemoticon.view.PandaEmoView
         android:id="@+id/emoticonView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -29,7 +29,7 @@
         android:layout_above="@id/emoticonView"
         android:orientation="vertical">
 
-        <pandaq.com.gifemoticon.view.EmoticonEditText
+        <pandaq.com.gifemoticon.view.PandaEmoEditText
             android:id="@+id/et_input"
             android:layout_width="match_parent"
             android:layout_height="50dp"

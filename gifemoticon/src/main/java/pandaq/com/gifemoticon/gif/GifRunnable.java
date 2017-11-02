@@ -14,13 +14,13 @@ import java.util.Map;
 
 public class GifRunnable implements Runnable {
     private Map<String, List<AnimatedGifDrawable>> mGifDrawableMap = new HashMap<>();// 用来存储每个 Activity 显示的Drawable
-    private Map<String, List<AnimatedGifDrawable.UpdateListener>> listenersMap = new HashMap<>();
+    private Map<String, List<AnimatedGifDrawable.RunGifCallBack>> listenersMap = new HashMap<>();
     private Handler mHandler;
     private boolean isRunning = false;
     private String currentActivity = null;
     private long frameDuration = 200;
 
-    GifRunnable(AnimatedGifDrawable gifDrawable, Handler handler) {
+    public GifRunnable(AnimatedGifDrawable gifDrawable, Handler handler) {
         addGifDrawable(gifDrawable);
         mHandler = handler;
     }
@@ -32,8 +32,8 @@ public class GifRunnable implements Runnable {
             List<AnimatedGifDrawable> runningDrawables = mGifDrawableMap.get(currentActivity);
             if (runningDrawables != null) {
                 for (AnimatedGifDrawable gifDrawable : runningDrawables) {
-                    AnimatedGifDrawable.UpdateListener listener = gifDrawable.getUpdateListener();
-                    List<AnimatedGifDrawable.UpdateListener> runningListener = listenersMap.get(currentActivity);
+                    AnimatedGifDrawable.RunGifCallBack listener = gifDrawable.getUpdateListener();
+                    List<AnimatedGifDrawable.RunGifCallBack> runningListener = listenersMap.get(currentActivity);
                     if (runningListener != null) {
                         if (!runningListener.contains(listener)) {
                             runningListener.add(listener);
@@ -46,9 +46,9 @@ public class GifRunnable implements Runnable {
                     }
                     gifDrawable.nextFrame();
                 }
-                for (AnimatedGifDrawable.UpdateListener listener : listenersMap.get(currentActivity)) {
-                    if (listener != null) {
-                        listener.update();
+                for (AnimatedGifDrawable.RunGifCallBack callBack : listenersMap.get(currentActivity)) {
+                    if (callBack != null) {
+                        callBack.run();
                     }
                 }
                 frameDuration = runningDrawables.get(0).getFrameDuration();
@@ -74,7 +74,7 @@ public class GifRunnable implements Runnable {
     /**
      * 使用了表情转换的界面退出时调用，停止动态图handler
      */
-    public void paustHandler() {
+    public void pauseHandler() {
         //暂停时空执行
         currentActivity = null;
     }

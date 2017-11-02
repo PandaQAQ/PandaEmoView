@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import pandaq.com.gifemoticon.gif.AnimatedGifDrawable;
-import pandaq.com.gifemoticon.view.EmoticonView;
+import pandaq.com.gifemoticon.view.PandaEmoView;
 
 /**
  * Created by huxinyu on 2017/10/19 0019.
@@ -37,18 +37,18 @@ import pandaq.com.gifemoticon.view.EmoticonView;
 
 public class EmoticonManager {
 
-    private static String EMOT_DIR = "emoticons";
+    private static String EMOT_DIR = "face";
     private static String SOUCRE_DIR = "source";
     private static String STICKER_PATH = null; //默认路径在 /data/data/包名/files/sticker 下
     private int CACHE_MAX_SIZE = 1024;
-    private Pattern mPattern;
+    private static Pattern mPattern;
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
     private String mConfigName = "emoji.xml";
     private static final List<ImageEntry> mDefaultEntries = new ArrayList<>();
     private static final Map<String, ImageEntry> mText2Entry = new HashMap<>();
     private static LruCache<String, Bitmap> mDrawableCache;
-    private LruCache<String, AnimatedGifDrawable> mGifDrawableCache;
+    private static LruCache<String, AnimatedGifDrawable> mGifDrawableCache;
     @SuppressLint("StaticFieldLeak")
     private static EmoticonManager mEmoticonManager;
     private static IImageLoader mIImageLoader;
@@ -84,7 +84,7 @@ public class EmoticonManager {
         return mIImageLoader;
     }
 
-    public Pattern getPattern() {
+    public static Pattern getPattern() {
         return mPattern;
     }
 
@@ -112,7 +112,7 @@ public class EmoticonManager {
      * @param text    表情对应的文本 [微笑] [再见]
      * @return 表情静态 drawable
      */
-    private static Drawable getDrawable(Context context, String text) {
+    public static Drawable getDrawable(Context context, String text) {
         ImageEntry entry = mText2Entry.get(text);
         if (entry == null || TextUtils.isEmpty(entry.text)) {
             return null;
@@ -170,16 +170,17 @@ public class EmoticonManager {
      *
      * @param context 上下文
      * @param text    表情对应的文本 [微笑] [再见]
+     * @param bounds  控制动态图显示大小的 bounds
      * @return GifDrawable 对象
      */
-    private AnimatedGifDrawable getDrawableGif(Context context, String text) {
+    public static AnimatedGifDrawable getDrawableGif(Context context, String text, int bounds) {
         ImageEntry entry = mText2Entry.get(text);
         if (entry == null || TextUtils.isEmpty(entry.text)) {
             return null;
         }
         AnimatedGifDrawable cache = mGifDrawableCache.get(entry.path);
         if (cache == null) {
-            cache = loadAssetGif(context, entry.path);
+            cache = loadAssetGif(context, entry.path,bounds);
             mGifDrawableCache.put(entry.path, cache);
         }
         return cache;
@@ -192,11 +193,11 @@ public class EmoticonManager {
      * @param assetPath 路径
      * @return GifDrawable 对象
      */
-    private AnimatedGifDrawable loadAssetGif(Context context, String assetPath) {
+    private static AnimatedGifDrawable loadAssetGif(Context context, String assetPath,int bounds) {
         InputStream is;
         try {
             is = context.getResources().getAssets().open(assetPath + ".gif");
-            return new AnimatedGifDrawable(is);
+            return new AnimatedGifDrawable(is,bounds);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -212,10 +213,10 @@ public class EmoticonManager {
     private void load(Context context, String xmlPath) {
         new EntryLoader().load(context, xmlPath);
         //补充最后一页少的表情,空白占位
-        int tmp = mDefaultEntries.size() % EmoticonView.EMOJI_PER_PAGE;
+        int tmp = mDefaultEntries.size() % PandaEmoView.EMOJI_PER_PAGE;
         if (tmp != 0) {
-            int tmp2 = EmoticonView.EMOJI_PER_PAGE - (mDefaultEntries.size() - (mDefaultEntries.size()
-                    / EmoticonView.EMOJI_PER_PAGE) * EmoticonView.EMOJI_PER_PAGE);
+            int tmp2 = PandaEmoView.EMOJI_PER_PAGE - (mDefaultEntries.size() - (mDefaultEntries.size()
+                    / PandaEmoView.EMOJI_PER_PAGE) * PandaEmoView.EMOJI_PER_PAGE);
             for (int i = 0; i < tmp2; i++) {
                 mDefaultEntries.add(new ImageEntry("", ""));
             }

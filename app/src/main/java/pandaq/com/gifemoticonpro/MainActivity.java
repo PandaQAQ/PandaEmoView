@@ -12,15 +12,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import pandaq.com.gifemoticon.IEmoticonMenuClickListener;
 import pandaq.com.gifemoticon.KeyBoardManager;
-import pandaq.com.gifemoticon.view.EmoticonEditText;
-import pandaq.com.gifemoticon.view.EmoticonView;
+import pandaq.com.gifemoticon.view.PandaEmoEditText;
+import pandaq.com.gifemoticon.view.PandaEmoView;
 
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.et_input)
-    EmoticonEditText mEtInput;
+    PandaEmoEditText mEtInput;
     @BindView(R.id.emoticonView)
-    EmoticonView mEmoticonView;
+    PandaEmoView mEmoticonView;
     @BindView(R.id.llIndicator)
     RelativeLayout mLlIndicator;
     @BindView(R.id.test_button)
@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        initEmotionKeyboard();
         mEmoticonView.attachEditText(mEtInput);
         mEmoticonView.setEmotionAddVisiable(true);
         mEmoticonView.setEmoticonExtClickListener(new IEmoticonMenuClickListener() {
@@ -48,12 +47,12 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "点击设置按钮", Toast.LENGTH_SHORT).show();
             }
         });
+        initEmotionKeyboard();
     }
 
     private void initEmotionKeyboard() {
         emotionKeyboard = KeyBoardManager.with(this);
         emotionKeyboard.bindToEmotionButton(mTestButton);
-        emotionKeyboard.bindToEditText(mEtInput);
         emotionKeyboard.setEmotionView(mEmoticonView);
     }
 
