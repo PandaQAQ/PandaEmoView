@@ -54,7 +54,6 @@ public class EmojiAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         RelativeLayout rl = new RelativeLayout(mContext);
         rl.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, (int) mPerHeight));
-//        rl.setBackgroundColor(Color.RED);
         ImageView emojiThumb = new ImageView(mContext);
         int count = EmoticonManager.getDisplayCount();
         int index = mStartIndex + position;

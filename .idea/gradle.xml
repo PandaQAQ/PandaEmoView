@@ -9,7 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/gifemoticon" />
+            <option value="$PROJECT_DIR$/emoticonlib" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

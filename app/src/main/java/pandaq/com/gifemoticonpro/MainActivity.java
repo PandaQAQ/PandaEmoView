@@ -21,12 +21,8 @@ public class MainActivity extends AppCompatActivity {
     PandaEmoEditText mEtInput;
     @BindView(R.id.emoticonView)
     PandaEmoView mEmoticonView;
-    @BindView(R.id.llIndicator)
-    RelativeLayout mLlIndicator;
     @BindView(R.id.test_button)
     Button mTestButton;
-    @BindView(R.id.scrollView)
-    ScrollView mScrollView;
     private KeyBoardManager emotionKeyboard;
 
     @Override

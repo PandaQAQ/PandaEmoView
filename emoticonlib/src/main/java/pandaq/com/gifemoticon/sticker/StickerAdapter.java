@@ -63,26 +63,21 @@ public class StickerAdapter extends BaseAdapter {
         if (convertView == null) {
             RelativeLayout rl = new RelativeLayout(mContext);
             rl.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, (int) mPerHeight));
-
             ImageView imageView = new ImageView(mContext);
-            imageView.setImageResource(R.drawable.cute);
+            imageView.setImageResource(EmoticonManager.getDefaultIconRes());
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             params.width = (int) mIvSize;
             params.height = (int) mIvSize;
             params.addRule(RelativeLayout.CENTER_IN_PARENT);
             imageView.setLayoutParams(params);
-
             rl.addView(imageView);
-
             viewHolder = new StickerViewHolder();
             viewHolder.mImageView = imageView;
-
             convertView = rl;
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (StickerViewHolder) convertView.getTag();
         }
-
         int index = startIndex + position;
         if (index >= mCategory.getStickers().size()) {
             return convertView;

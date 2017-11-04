@@ -101,7 +101,7 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
         container.removeView((View) object);
     }
 
-    public AdapterView.OnItemClickListener emojiListener = new AdapterView.OnItemClickListener() {
+    private AdapterView.OnItemClickListener emojiListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 

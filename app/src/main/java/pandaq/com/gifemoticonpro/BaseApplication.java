@@ -16,6 +16,8 @@ public class BaseApplication extends Application {
         super.onCreate();
         new EmoticonManager.Builder()
                 .setContext(getApplicationContext())
+                .setConfigName("emoji.xml")
+                .setSOUCRE_DIR("images")
                 .build();
     }
 }

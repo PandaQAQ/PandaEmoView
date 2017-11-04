@@ -1,14 +1,12 @@
 package pandaq.com.gifemoticon.view;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -76,7 +74,6 @@ public class PandaEmoView extends RelativeLayout {
     public PandaEmoView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
-        setBackgroundColor(Color.RED);
     }
 
     @Override
@@ -132,7 +129,9 @@ public class PandaEmoView extends RelativeLayout {
 
     private void init() {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.emoticon_layout, this);
+        if (inflater != null) {
+            inflater.inflate(R.layout.emoticon_layout, this);
+        }
         mEmoticonPager = (ViewPager) findViewById(R.id.vpEmoticon);
         mIndicatorLayout = (LinearLayout) findViewById(R.id.llIndicator);
         mBottomTabLayout = (LinearLayout) findViewById(R.id.llTabContainer);
@@ -148,7 +147,7 @@ public class PandaEmoView extends RelativeLayout {
         mTabs.clear();
         mBottomTabLayout.removeAllViews();
         //添加默认表情 Tab
-        EmotionTab emojiTab = new EmotionTab(mContext, R.drawable.cute);
+        EmotionTab emojiTab = new EmotionTab(mContext, EmoticonManager.getDefaultIconRes());
         mBottomTabLayout.addView(emojiTab);
         mTabs.add(emojiTab);
         //添加所有的贴图tab

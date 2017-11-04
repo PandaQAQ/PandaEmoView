@@ -43,7 +43,9 @@ public class EmotionTab extends RelativeLayout {
 
     private void init(Context context, AttributeSet attrs) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.emoticon_tab, this);
+        if (inflater != null) {
+            inflater.inflate(R.layout.emoticon_tab, this);
+        }
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.EmotionTab);
         ImageView ivIcon = (ImageView) findViewById(R.id.ivIcon);
         if (attrs != null) {

@@ -37,14 +37,15 @@ import pandaq.com.gifemoticon.view.PandaEmoView;
 
 public class EmoticonManager {
 
-    private static String EMOT_DIR = "face";
-    private static String SOUCRE_DIR = "source";
+    private static String EMOT_DIR = "face"; // assets 中默认表情文件夹
+    private static String SOUCRE_DIR = "source_default"; // assets 中默认图片资源文件夹名称，父目录为 EMOT_DIR
     private static String STICKER_PATH = null; //默认路径在 /data/data/包名/files/sticker 下
     private int CACHE_MAX_SIZE = 1024;
     private static Pattern mPattern;
+    private static int defaultIcon = R.drawable.ic_default;
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
-    private String mConfigName = "emoji.xml";
+    private String mConfigName = "emoji_default.xml";
     private static final List<ImageEntry> mDefaultEntries = new ArrayList<>();
     private static final Map<String, ImageEntry> mText2Entry = new HashMap<>();
     private static LruCache<String, Bitmap> mDrawableCache;
@@ -53,7 +54,7 @@ public class EmoticonManager {
     private static EmoticonManager mEmoticonManager;
     private static IImageLoader mIImageLoader;
 
-    private EmoticonManager init() {
+    private void init() {
         if (STICKER_PATH == null) {
             STICKER_PATH = new File(mContext.getFilesDir(), "sticker").getAbsolutePath();
         }
@@ -73,7 +74,10 @@ public class EmoticonManager {
                     oldValue.setCallback(null);
             }
         };
-        return this;
+    }
+
+    public static int getDefaultIconRes() {
+        return defaultIcon;
     }
 
     public static String getStickerPath() {
@@ -84,7 +88,7 @@ public class EmoticonManager {
         return mIImageLoader;
     }
 
-    public static Pattern getPattern() {
+    static Pattern getPattern() {
         return mPattern;
     }
 
@@ -112,7 +116,7 @@ public class EmoticonManager {
      * @param text    表情对应的文本 [微笑] [再见]
      * @return 表情静态 drawable
      */
-    public static Drawable getDrawable(Context context, String text) {
+    static Drawable getDrawable(Context context, String text) {
         ImageEntry entry = mText2Entry.get(text);
         if (entry == null || TextUtils.isEmpty(entry.text)) {
             return null;
@@ -173,14 +177,14 @@ public class EmoticonManager {
      * @param bounds  控制动态图显示大小的 bounds
      * @return GifDrawable 对象
      */
-    public static AnimatedGifDrawable getDrawableGif(Context context, String text, int bounds) {
+    static AnimatedGifDrawable getDrawableGif(Context context, String text, int bounds) {
         ImageEntry entry = mText2Entry.get(text);
         if (entry == null || TextUtils.isEmpty(entry.text)) {
             return null;
         }
         AnimatedGifDrawable cache = mGifDrawableCache.get(entry.path);
         if (cache == null) {
-            cache = loadAssetGif(context, entry.path,bounds);
+            cache = loadAssetGif(context, entry.path, bounds);
             mGifDrawableCache.put(entry.path, cache);
         }
         return cache;
@@ -193,11 +197,11 @@ public class EmoticonManager {
      * @param assetPath 路径
      * @return GifDrawable 对象
      */
-    private static AnimatedGifDrawable loadAssetGif(Context context, String assetPath,int bounds) {
+    private static AnimatedGifDrawable loadAssetGif(Context context, String assetPath, int bounds) {
         InputStream is;
         try {
             is = context.getResources().getAssets().open(assetPath + ".gif");
-            return new AnimatedGifDrawable(is,bounds);
+            return new AnimatedGifDrawable(is, bounds);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -232,7 +236,7 @@ public class EmoticonManager {
         // 表情所在的路径
         private String path;
 
-        public ImageEntry(String text, String path) {
+        ImageEntry(String text, String path) {
             this.text = text;
             this.path = path;
         }
@@ -295,6 +299,13 @@ public class EmoticonManager {
         private IImageLoader mIImageLoader;
         // 贴图表情目录路径
         private String STICKER_PATH;
+        // 默认表情的菜单栏 icon 资源 ID
+        private int defaultIcon;
+
+        public Builder setDefaultIcon(int defaultIconRes) {
+            this.defaultIcon = defaultIconRes;
+            return this;
+        }
 
         public Builder setEMOT_DIR(String EMOT_DIR) {
             this.EMOT_DIR = EMOT_DIR;
@@ -321,8 +332,8 @@ public class EmoticonManager {
             return this;
         }
 
-        public Builder setSOUCRE_DIR(String SOUCRE_DIR) {
-            this.SOUCRE_DIR = SOUCRE_DIR;
+        public Builder setSOUCRE_DIR(String sourceDir) {
+            this.SOUCRE_DIR = sourceDir;
             return this;
         }
 
@@ -330,7 +341,7 @@ public class EmoticonManager {
             this.STICKER_PATH = STICKER_PATH;
         }
 
-        public EmoticonManager build() {
+        public void build() {
             if (mEmoticonManager == null) {
                 synchronized (EmoticonManager.class) {
                     if (mEmoticonManager == null) {
@@ -360,7 +371,10 @@ public class EmoticonManager {
             if (this.STICKER_PATH != null) {
                 EmoticonManager.STICKER_PATH = this.STICKER_PATH;
             }
-            return mEmoticonManager.init();
+            if (this.defaultIcon > 0) {
+                EmoticonManager.defaultIcon = this.defaultIcon;
+            }
+            mEmoticonManager.init();
         }
     }
 
