@@ -89,7 +89,7 @@ public class StickerAdapter extends BaseAdapter {
         }
 
         String stickerBitmapUri = StickerManager.getInstance().getStickerBitmapUri(sticker.getCategory(), sticker.getName());
-        EmoticonManager.getIImageLoader().displayImage(mContext, stickerBitmapUri, viewHolder.mImageView);
+        EmoticonManager.getIImageLoader().displayImage(stickerBitmapUri, viewHolder.mImageView);
 
         return convertView;
     }

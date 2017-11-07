@@ -4,12 +4,17 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import pandaq.com.gifemoticon.IEmoticonMenuClickListener;
 import pandaq.com.gifemoticon.KeyBoardManager;
 import pandaq.com.gifemoticon.view.PandaEmoEditText;
@@ -56,6 +61,58 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!emotionKeyboard.interceptBackPress()) {
             finish();
+        }
+    }
+
+    @OnClick(R.id.load_sticker)
+    public void onViewClicked() {
+        copyStickerToSdCard("sticker_test", getApplicationContext().getFilesDir() + "/sticker/defaultSticker");
+    }
+
+    private void copyStickerToSdCard(String assetDir, String dir) {
+        String[] files;
+        try {
+            files = this.getResources().getAssets().list(assetDir);
+        } catch (IOException e1) {
+            return;
+        }
+        File mWorkingPath = new File(dir);
+        // if this directory does not exists, make one.
+        if (!mWorkingPath.exists()) {
+            mWorkingPath.mkdirs();
+        }
+        for (String file : files) {
+            try {
+                // we make sure file name not contains '.' to be a folder.
+                if (!file.contains(".")) {
+                    if (0 == assetDir.length()) {
+                        copyStickerToSdCard(file, dir + file + "/");
+                    } else {
+                        copyStickerToSdCard(assetDir + "/" + file, dir + file + "/");
+                    }
+                    continue;
+                }
+                File outFile = new File(mWorkingPath, file);
+                if (outFile.exists()) {
+                    outFile.delete();
+                }
+                InputStream in;
+                if (0 != assetDir.length()) {
+                    in = this.getAssets().open(assetDir + "/" + file);
+                } else {
+                    in = this.getAssets().open(file);
+                }
+                OutputStream out = new FileOutputStream(outFile);
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                in.close();
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

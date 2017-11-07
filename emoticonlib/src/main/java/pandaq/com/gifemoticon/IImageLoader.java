@@ -1,6 +1,5 @@
 package pandaq.com.gifemoticon;
 
-import android.content.Context;
 import android.widget.ImageView;
 
 /**
@@ -10,6 +9,6 @@ import android.widget.ImageView;
 
 public interface IImageLoader {
 
-    void displayImage(Context context, String path, ImageView imageView);
+    void displayImage(String path, ImageView imageView);
 
 }

@@ -26,7 +26,7 @@ public class EmotionTab extends RelativeLayout {
 
     public EmotionTab(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context,attrs);
+        init(context, attrs);
     }
 
     public EmotionTab(Context context, int iconSrc) {
@@ -56,7 +56,7 @@ public class EmotionTab extends RelativeLayout {
             if (TextUtils.isEmpty(mStickerCoverImgPath)) {
                 ivIcon.setImageResource(mIconSrc);
             } else {
-                EmoticonManager.getIImageLoader().displayImage(context, mStickerCoverImgPath, ivIcon);
+                EmoticonManager.getIImageLoader().displayImage(mStickerCoverImgPath, ivIcon);
             }
         }
     }

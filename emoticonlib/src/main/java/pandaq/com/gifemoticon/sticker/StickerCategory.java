@@ -25,6 +25,7 @@ public class StickerCategory {
         this.title = title;
         this.system = system;
         this.order = order;
+        loadStickerData();
     }
 
     public String getName() {
