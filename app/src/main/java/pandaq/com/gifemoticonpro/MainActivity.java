@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.load_sticker)
     public void onViewClicked() {
-        copyStickerToSdCard("sticker_test", getApplicationContext().getFilesDir() + "/sticker/defaultSticker");
+        copyStickerToSdCard("sticker_test", getApplicationContext().getFilesDir() + "/sticker/selfSticker");
     }
 
     private void copyStickerToSdCard(String assetDir, String dir) {
