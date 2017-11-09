@@ -1,5 +1,15 @@
 <resources>
-    <string name="app_name">GifEmoticonPro</string>
+    <string name="app_name">PandaEmoView</string>
     <string name="string_test_text">ssssssssssssssssssssssssss ssssssssssssssssssssssssssssssssssssdasdasdadad sssssssssssssssssssssssssssssssss sssssssssssssssss ssssssssssssssssssssss sssssssssssssssssssssssssss sssssssssssssssssssssssssss sssssssssssssssssssssssssssssss sssssssssssssssssssssssssssssss sssssssss s s s s s sssssssssssssssssss ssssssss ssssssssssssssss ssssssssssssssssssssssssss sss sssssssssssssssssssssssssssssssssss ssssssssssssssssssssssssss ssssssssssssssssssssssssssssssssssssdasdasdadad sssssssssssssssssssssssssssssssss sssssssssssssssss ssssssssssssssssssssss sssssssssssssssssssssssssss sssssssssssssssssssssssssss sssssssssssssssssssssssssssssss sssssssssssssssssssssssssssssss sssssssss s s s s s sssssssssssssssssss ssssssss ssssssssssssssss ssssssssssssssssssssssssss sss sssssssssssssssssssssssssssssssssss ssssssssssssssssssssssssss ssssssssssssssssssssssssssssssssssssdasdasdadad sssssssssssssssssssssssssssssssss sssssssssssssssss ssssssssssssssssssssss sssssssssssssssssssssssssss sssssssssssssssssssssssssss sssssssssssssssssssssssssssssss sssssssssssssssssssssssssssssss sssssssss s s s s s sssssssssssssssssss ssssssss ssssssssssssssss ssssssssssssssssssssssssss sss sssssssssssssssssssssssssssssssssss ssssssssssssssssssssssssss ssssssssssssssssssssssssssssssssssssdasdasdadad sssssssssssssssssssssssssssssssss sssssssssssssssss ssssssssssssssssssssss sssssssssssssssssssssssssss sssssssssssssssssssssssssss sssssssssssssssssssssssssssssss sssssssssssssssssssssssssssssss sssssssss s s s s s sssssssssssssssssss ssssssss ssssssssssssssss ssssssssssssssssssssssssss sss sssssssssssssssssssssssssssssssssss ssssssssssssssssssssssssss ssssssssssssssssssssssssssssssssssssdasdasdadad sssssssssssssssssssssssssssssssss sssssssssssssssss ssssssssssssssssssssss sssssssssssssssssssssssssss sssssssssssssssssssssssssss sssssssssssssssssssssssssssssss sssssssssssssssssssssssssssssss sssssssss s s s s s sssssssssssssssssss ssssssss ssssssssssssssss ssssssssssssssssssssssssss sss sssssssssssssssssssssssssssssssssss ssssssssssssssssssssssssss ssssssssssssssssssssssssssssssssssssdasdasdadad sssssssssssssssssssssssssssssssss sssssssssssssssss ssssssssssssssssssssss sssssssssssssssssssssssssss sssssssssssssssssssssssssss sssssssssssssssssssssssssssssss sssssssssssssssssssssssssssssss sssssssss s s s s s sssssssssssssssssss ssssssss ssssssssssssssss ssssssssssssssssssssssssss sss sssssssssssssssssssssssssssssssssss++</string>
     <string name="showemoticonview">ShowEmoticonView</string>
+    <string name="load_sticker">Load Sticker</string>
+
+    <string name="select_album">所有图片</string>
+    <string name="pictures">图片</string>
+    <string name="all_pictures">全部图片</string>
+    <string name="make_dir_fail">创建文件失败！</string>
+
+    <string name="content_to_request_permission">保证应用正常运行，请授予必要权限！</string>
+    <string name="attention">提示</string>
+    <string name="ok">好的~</string>
 </resources>

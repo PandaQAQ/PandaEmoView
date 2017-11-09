@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="pandaq.com.gifemoticonpro.MainActivity">
+    tools:context="com.pandaq.pandaemoview.MainActivity">
 
     <TextView
         android:id="@+id/toptitle"
@@ -15,7 +15,7 @@
         android:text="Title"
         android:textSize="22sp"/>
 
-    <pandaq.com.gifemoticon.view.PandaEmoView
+    <com.pandaq.emoticonlib.view.PandaEmoView
         android:id="@+id/emoticonView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -25,23 +25,30 @@
     <RelativeLayout
         android:id="@+id/llIndicator"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_above="@id/emoticonView"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_above="@id/emoticonView">
 
-        <pandaq.com.gifemoticon.view.PandaEmoEditText
-            android:id="@+id/et_input"
+        <Button
+            android:id="@+id/load_sticker"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            />
+            android:layout_marginBottom="10dp"
+            android:text="@string/load_sticker"/>
 
         <Button
             android:id="@+id/test_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/et_input"
+            android:layout_height="50dp"
+            android:layout_below="@id/load_sticker"
             android:text="@string/showemoticonview"/>
+
+        <com.pandaq.emoticonlib.view.PandaEmoEditText
+            android:id="@+id/et_input"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@id/test_button"
+            />
+
     </RelativeLayout>
 
     <ScrollView

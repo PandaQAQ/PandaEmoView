@@ -3,4 +3,5 @@
     <color name="line">#eeeeee</color>
     <color name="white">#ffffff</color>
     <color name="gray_text">#aaa</color>
+    <color name="trans">#00ffffff</color>
 </resources>
