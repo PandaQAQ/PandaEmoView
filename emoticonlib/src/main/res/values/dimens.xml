@@ -3,4 +3,6 @@
     <dimen name="bottom_tab_height">35dp</dimen>
     <dimen name="bottom_tab_width">55dp</dimen>
     <dimen name="bottom_iv_size">25dp</dimen>
+
+    <dimen name="margin_8dp">8dp</dimen>
 </resources>
