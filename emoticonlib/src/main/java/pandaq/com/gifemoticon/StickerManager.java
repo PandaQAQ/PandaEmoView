@@ -35,8 +35,7 @@ public class StickerManager {
         return instance;
     }
 
-    public StickerManager() {
-//        initStickerOrder();
+    private StickerManager() {
         loadStickerCategory();
     }
 
@@ -47,14 +46,16 @@ public class StickerManager {
         File stickerDir = new File(EmoticonManager.getStickerPath());
         if (stickerDir.exists()) {
             File[] files = stickerDir.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                File file = files[i];
-                //当前的目录下同名的有文件和文件夹，只需要其中的一个取其名
-                if (file.isDirectory()) {
-                    String name = file.getName();
-                    StickerCategory category = new StickerCategory(name, name, true, i);
-                    stickerCategories.add(category);
-                    stickerCategoryMap.put(name, category);
+            if (files != null) {
+                for (int i = 0; i < files.length; i++) {
+                    File file = files[i];
+                    //当前的目录下同名的有文件和文件夹，只需要其中的一个取其名
+                    if (file.isDirectory()) {
+                        String name = file.getName();
+                        StickerCategory category = new StickerCategory(name, name, true, i);
+                        stickerCategories.add(category);
+                        stickerCategoryMap.put(name, category);
+                    }
                 }
             }
 
@@ -82,7 +83,7 @@ public class StickerManager {
     }
 
     @Nullable
-    public String getStickerBitmapPath(String categoryName, String stickerName) {
+    String getStickerBitmapPath(String categoryName, String stickerName) {
         StickerManager manager = StickerManager.getInstance();
         StickerCategory category = manager.getCategory(categoryName);
         if (category == null) {

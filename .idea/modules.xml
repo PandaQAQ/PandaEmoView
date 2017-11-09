@@ -5,8 +5,8 @@
       <module fileurl="file://D:\Android\WorkSpace\PandaEmoView\GifEmoticonPro.iml" filepath="D:\Android\WorkSpace\PandaEmoView\GifEmoticonPro.iml" />
       <module fileurl="file://$PROJECT_DIR$/PandaEmoView.iml" filepath="$PROJECT_DIR$/PandaEmoView.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://D:\Android\WorkSpace\PandaEmoView\app\app.iml" filepath="D:\Android\WorkSpace\PandaEmoView\app\app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/emoticonlib/gifemoticon.iml" filepath="$PROJECT_DIR$/emoticonlib/gifemoticon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/emoticonlib/emoticonlib.iml" filepath="$PROJECT_DIR$/emoticonlib/emoticonlib.iml" />
+      <module fileurl="file://D:\Android\WorkSpace\PandaEmoView\emoticonlib\gifemoticon.iml" filepath="D:\Android\WorkSpace\PandaEmoView\emoticonlib\gifemoticon.iml" />
       <module fileurl="file://D:\Android\WorkSpace\PandaEmoView\gifemoticon\gifemoticon.iml" filepath="D:\Android\WorkSpace\PandaEmoView\gifemoticon\gifemoticon.iml" />
     </modules>
   </component>
