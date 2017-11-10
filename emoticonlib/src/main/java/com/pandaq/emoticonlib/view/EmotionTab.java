@@ -38,7 +38,6 @@ public class EmotionTab extends RelativeLayout {
     public EmotionTab(Context context, String stickerCoverImgPath) {
         super(context);
         mStickerCoverImgPath = stickerCoverImgPath;
-        System.out.println(mStickerCoverImgPath);
         init(context, null);
     }
 

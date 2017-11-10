@@ -2,66 +2,86 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parentPanel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/parentPanel"
     tools:context="com.pandaq.pandaemoview.MainActivity">
 
-    <TextView
-        android:id="@+id/toptitle"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="#dcba00"
-        android:gravity="center"
-        android:text="Title"
-        android:textSize="22sp"/>
-
-    <com.pandaq.emoticonlib.view.PandaEmoView
-        android:id="@+id/emoticonView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_alignParentBottom="true"
-        android:visibility="invisible"/>
-
     <RelativeLayout
-        android:id="@+id/llIndicator"
+        android:id="@+id/bottom_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/emoticonView">
+        android:layout_alignParentBottom="true">
 
-        <Button
-            android:id="@+id/load_sticker"
+        <com.pandaq.emoticonlib.view.PandaEmoView
+            android:id="@+id/emoticonView"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/load_sticker"/>
-
-        <Button
-            android:id="@+id/test_button"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@id/load_sticker"
-            android:text="@string/showemoticonview"/>
-
-        <com.pandaq.emoticonlib.view.PandaEmoEditText
-            android:id="@+id/et_input"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@id/test_button"
-            />
-
-    </RelativeLayout>
-
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/llIndicator"
-        android:layout_below="@id/toptitle">
+            android:layout_height="0dp"
+            android:visibility="invisible"/>
 
         <TextView
+            android:id="@+id/tv_bottom_test"
+            android:layout_width="match_parent"
+            android:layout_height="270dp"
+            android:background="@color/colorAccent"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_parent">
+
+        <TextView
+            android:id="@+id/toptitle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#dcba00"
+            android:gravity="center"
+            android:text="Title"
+            android:textSize="22sp"/>
+
+        <RelativeLayout
+            android:id="@+id/llIndicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/string_test_text"/>
-    </ScrollView>
+            android:layout_alignParentBottom="true">
+
+            <Button
+                android:id="@+id/load_sticker"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/load_sticker"/>
+
+            <Button
+                android:id="@+id/test_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@id/load_sticker"
+                android:text="@string/showemoticonview"/>
+
+            <com.pandaq.emoticonlib.view.PandaEmoEditText
+                android:id="@+id/et_input"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@id/test_button"
+                />
+
+        </RelativeLayout>
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/llIndicator"
+            android:layout_below="@id/toptitle">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/string_test_text"/>
+        </ScrollView>
+    </RelativeLayout>
 </RelativeLayout>

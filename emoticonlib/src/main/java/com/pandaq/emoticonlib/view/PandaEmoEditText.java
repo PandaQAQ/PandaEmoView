@@ -3,7 +3,6 @@ package com.pandaq.emoticonlib.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
-import android.widget.Toast;
 
 /**
  * Created by huxinyu on 2017/10/24 0024.
@@ -29,7 +28,6 @@ public class PandaEmoEditText extends android.support.v7.widget.AppCompatEditTex
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.KEYCODE_SOFT_LEFT) {
-            Toast.makeText(getContext(), "按下了返回键", Toast.LENGTH_SHORT).show();
             if (mBackPressedListener != null) {
                 mBackPressedListener.backPressed();
             }

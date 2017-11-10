@@ -330,4 +330,5 @@ public class PandaEmoView extends RelativeLayout {
         initListener();
         invalidate();
     }
+
 }

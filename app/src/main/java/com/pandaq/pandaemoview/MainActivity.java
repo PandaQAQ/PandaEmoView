@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pandaq.emoticonlib.KeyBoardManager;
@@ -36,6 +38,18 @@ public class MainActivity extends AppCompatActivity {
     Button mTestButton;
     @BindView(R.id.parentPanel)
     RelativeLayout mParentPanel;
+    @BindView(R.id.tv_bottom_test)
+    TextView mTvBottomTest;
+    @BindView(R.id.toptitle)
+    TextView mToptitle;
+    @BindView(R.id.load_sticker)
+    Button mLoadSticker;
+    @BindView(R.id.llIndicator)
+    RelativeLayout mLlIndicator;
+    @BindView(R.id.scrollView)
+    ScrollView mScrollView;
+    @BindView(R.id.rl_content)
+    RelativeLayout mRlContent;
     private KeyBoardManager emotionKeyboard;
 
     @Override
@@ -75,9 +89,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initEmotionKeyboard() {
-        emotionKeyboard = KeyBoardManager.with(this);
-        emotionKeyboard.bindToEmotionButton(mTestButton);
-        emotionKeyboard.setEmotionView(mEmoticonView);
+        emotionKeyboard = KeyBoardManager.with(this)
+                .bindToEmotionButton(mTestButton, mLoadSticker)
+                .setEmotionView(mEmoticonView)
+                .bindToLockContent(mRlContent)
+                .setOnInputListener(new KeyBoardManager.OnInputShowListener() {
+                    @Override
+                    public void showInputView(boolean show) {
+                        System.out.println("showInputLayout-------->" + show);
+                    }
+                });
+        emotionKeyboard.setOnEmotionButtonOnClickListener(new KeyBoardManager.OnEmotionButtonOnClickListener() {
+            @Override
+            public boolean onEmotionButtonOnClickListener(View view) {
+                if (view.getId() == R.id.load_sticker) {
+                    if (mTvBottomTest.isShown()) {
+                        mTvBottomTest.setVisibility(View.GONE);
+                        emotionKeyboard.showInputLayout();
+                    } else {
+                        emotionKeyboard.hideInputLayout();
+                        mEmoticonView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mTvBottomTest.setVisibility(View.VISIBLE);
+                            }
+                        }, 200);
+                    }
+                    // 重写逻辑时一定要返回 ture 拦截 KeyBoardManager 中的默认逻辑
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -89,7 +132,8 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.load_sticker)
     public void onViewClicked() {
-        copyStickerToSdCard("sticker_test", getApplicationContext().getFilesDir() + "/sticker/selfSticker");
+
+//        copyStickerToSdCard("sticker_test", getApplicationContext().getFilesDir() + "/sticker/selfSticker");
     }
 
     private void copyStickerToSdCard(String assetDir, String dir) {

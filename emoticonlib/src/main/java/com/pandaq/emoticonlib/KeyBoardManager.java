@@ -6,15 +6,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Build;
-import android.text.Editable;
-import android.text.method.KeyListener;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
 import com.pandaq.emoticonlib.view.PandaEmoEditText;
@@ -36,6 +33,8 @@ public class KeyBoardManager {
     private PandaEmoView mEmotionView;//表情布局
     private PandaEmoEditText mEditText;
     private boolean interceptBackPress = false;
+    private boolean isSoftInputShown = true;
+    private View lockView;
     private OnEmotionButtonOnClickListener mOnEmotionButtonOnClickListener; // 表情切换按钮点击回调
     private OnInputShowListener mOnInputShowListener; // 输入布局显示收起回调（包括系统自带和自定义表情键盘）
 
@@ -56,7 +55,14 @@ public class KeyBoardManager {
         mEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isSoftInputShown = true;
+                lockContentHeight();//显示软件盘时，锁定内容高度，防止跳闪。
                 hideEmotionLayout(true);//隐藏表情布局，显示软件盘
+                //软件盘显示后，释放内容高度
+                // 通知输入View显示
+                if (mOnInputShowListener != null) {
+                    mOnInputShowListener.showInputView(true);
+                }
             }
         });
         // 监听返回物理按键，不用 onBackpressed 因为软键盘弹出时返回键不会走 onBackpressed
@@ -64,9 +70,26 @@ public class KeyBoardManager {
             @Override
             public void backPressed() {
                 interceptBackPress = mEmotionView.isShown();
+                if (interceptBackPress) {
+                    // 通知输入View关闭
+                    if (mOnInputShowListener != null) {
+                        mOnInputShowListener.showInputView(false);
+                    }
+                }
                 hideEmotionLayout(false);
+                // 并不是真的软键盘在显示，只是为了标识让下一次按键打开表情界面而不是输入法
+                isSoftInputShown = true;
             }
         });
+        return this;
+    }
+
+    /**
+     * 绑定内容view，此view用于固定bar的高度，防止跳闪
+     * contentView 界面布局为 内容和表情布局分开格式，contentView 为除表情外的所有内容布局
+     */
+    public KeyBoardManager bindToLockContent(View contentView) {
+        lockView = contentView;
         return this;
     }
 
@@ -90,13 +113,21 @@ public class KeyBoardManager {
                     }
                 }
                 if (mEmotionView.isShown()) {
+                    lockContentHeight();//显示软件盘时，锁定内容高度，防止跳闪。
                     hideEmotionLayout(true);//隐藏表情布局，显示软件盘
+                    isSoftInputShown = true;
                 } else {
-                    if (isSoftInputShown()) { //同上
+                    if (isSoftInputShown) {
+                        lockContentHeight();
                         showEmotionLayout();
                     } else {
-                        showEmotionLayout();//两者都没显示，直接显示表情布局
+                        showEmotionLayout();
                     }
+                    isSoftInputShown = false;
+                }
+                // 通知输入View显示
+                if (mOnInputShowListener != null) {
+                    mOnInputShowListener.showInputView(true);
                 }
             }
         };
@@ -114,10 +145,24 @@ public class KeyBoardManager {
     }
 
     /**
-     * 是否显示软件盘
+     * 锁定内容高度，防止跳闪
      */
-    private boolean isSoftInputShown() {
-        return getSupportSoftInputHeight() != 0;
+    private void lockContentHeight() {
+        if (lockView == null) return;
+        ViewGroup.LayoutParams params = lockView.getLayoutParams();
+        params.height = lockView.getHeight();
+    }
+
+    /**
+     * 释放被锁定的内容高度
+     */
+    private void unlockContentHeightDelayed() {
+        mEditText.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ((LinearLayout.LayoutParams) lockView.getLayoutParams()).weight = 1.0F;
+            }
+        }, 200L);
     }
 
     /**
@@ -130,12 +175,18 @@ public class KeyBoardManager {
     }
 
     private void showEmotionLayout() {
-        ViewGroup.LayoutParams params = mEmotionView.getLayoutParams();
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        params.height = getKeyBoardHeight();
-        mEmotionView.setLayoutParams(params);
         hideSoftInput();
-        mEmotionView.setVisibility(View.VISIBLE);
+        mEmotionView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ViewGroup.LayoutParams params = mEmotionView.getLayoutParams();
+                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                params.height = getKeyBoardHeight();
+                mEmotionView.setLayoutParams(params);
+                mEmotionView.setVisibility(View.VISIBLE);
+                unlockContentHeightDelayed();
+            }
+        }, 20L);
     }
 
     /**
@@ -143,17 +194,22 @@ public class KeyBoardManager {
      *
      * @param showSoftInput 是否显示软件盘
      */
-    private void hideEmotionLayout(boolean showSoftInput) {
-        ViewGroup.LayoutParams params = mEmotionView.getLayoutParams();
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        if (showSoftInput) {
-            showSoftInput();
-            params.height = getKeyBoardHeight();
-        } else {
-            params.height = 0;
+    private void hideEmotionLayout(final boolean showSoftInput) {
+        if (mEmotionView.isShown()) {
+            mEmotionView.setVisibility(View.GONE);
+            mEmotionView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (showSoftInput) {
+                        showSoftInput();
+                    } else {
+                        hideSoftInput();
+                    }
+                    unlockContentHeightDelayed();
+                }
+            }, 20L);
+
         }
-        mEmotionView.setLayoutParams(params);
-        mEmotionView.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -161,12 +217,7 @@ public class KeyBoardManager {
      */
     private void showSoftInput() {
         mEditText.requestFocus();
-        mEditText.post(new Runnable() {
-            @Override
-            public void run() {
-                mInputManager.showSoftInput(mEditText, 0);
-            }
-        });
+        mInputManager.showSoftInput(mEditText, 0);
     }
 
     /**
@@ -240,7 +291,7 @@ public class KeyBoardManager {
     }
 
     /*================== 表情按钮点击事件回调 begin ==================*/
-    interface OnEmotionButtonOnClickListener {
+    public interface OnEmotionButtonOnClickListener {
         /**
          * 主要是为了适用仿微信的情况，微信有一个表情按钮和一个功能按钮，这2个按钮都是控制了底部区域的显隐
          *
@@ -249,19 +300,31 @@ public class KeyBoardManager {
         boolean onEmotionButtonOnClickListener(View view);
     }
 
-    public void setOnEmotionButtonOnClickListener(OnEmotionButtonOnClickListener onEmotionButtonOnClickListener) {
+    public KeyBoardManager setOnEmotionButtonOnClickListener(OnEmotionButtonOnClickListener onEmotionButtonOnClickListener) {
         mOnEmotionButtonOnClickListener = onEmotionButtonOnClickListener;
+        return this;
     }
     /*================== 表情按钮点击事件回调 end ==================*/
 
     /*================== 表情按钮点击事件回调 begin ==================*/
-    interface OnInputShowListener {
-        boolean showInputView();
+    public interface OnInputShowListener {
+        void showInputView(boolean show);
     }
 
-    public void setOnInputListener(OnInputShowListener onInputShowListener) {
+    public KeyBoardManager setOnInputListener(OnInputShowListener onInputShowListener) {
         mOnInputShowListener = onInputShowListener;
+        return this;
     }
     /*================== 表情按钮点击事件回调 end ==================*/
 
+    public void hideInputLayout() {
+        hideEmotionLayout(false);
+        // 并不是真的软键盘在显示，只是为了标识让下一次按键打开表情界面而不是输入法
+        isSoftInputShown = true;
+    }
+
+    public void showInputLayout() {
+        isSoftInputShown = true;
+        hideEmotionLayout(true);//隐藏表情布局，显示软件盘
+    }
 }
