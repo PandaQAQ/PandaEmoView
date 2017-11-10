@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.pandaq.emoticonlib.KeyBoardManager;
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     PandaEmoView mEmoticonView;
     @BindView(R.id.test_button)
     Button mTestButton;
+    @BindView(R.id.parentPanel)
+    RelativeLayout mParentPanel;
     private KeyBoardManager emotionKeyboard;
 
     @Override
