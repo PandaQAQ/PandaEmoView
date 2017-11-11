@@ -56,7 +56,6 @@ public class KeyBoardManager {
             @Override
             public void onClick(View v) {
                 isSoftInputShown = true;
-                lockContentHeight();//显示软件盘时，锁定内容高度，防止跳闪。
                 hideEmotionLayout(true);//隐藏表情布局，显示软件盘
                 //软件盘显示后，释放内容高度
                 // 通知输入View显示
@@ -77,6 +76,7 @@ public class KeyBoardManager {
                     }
                 }
                 hideEmotionLayout(false);
+                unlockContentHeightDelayed();
                 // 并不是真的软键盘在显示，只是为了标识让下一次按键打开表情界面而不是输入法
                 isSoftInputShown = true;
             }
@@ -115,11 +115,13 @@ public class KeyBoardManager {
                 if (mEmotionView.isShown()) {
                     lockContentHeight();//显示软件盘时，锁定内容高度，防止跳闪。
                     hideEmotionLayout(true);//隐藏表情布局，显示软件盘
+                    unlockContentHeightDelayed();
                     isSoftInputShown = true;
                 } else {
                     if (isSoftInputShown) {
                         lockContentHeight();
                         showEmotionLayout();
+                        unlockContentHeightDelayed();
                     } else {
                         showEmotionLayout();
                     }
@@ -149,8 +151,11 @@ public class KeyBoardManager {
      */
     private void lockContentHeight() {
         if (lockView == null) return;
-        ViewGroup.LayoutParams params = lockView.getLayoutParams();
-        params.height = lockView.getHeight();
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) lockView.getLayoutParams();
+        params.weight = 0F;
+        params.height = 891;
+        System.out.println(lockView.getHeight());
+        lockView.setLayoutParams(params);
     }
 
     /**
@@ -176,17 +181,11 @@ public class KeyBoardManager {
 
     private void showEmotionLayout() {
         hideSoftInput();
-        mEmotionView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ViewGroup.LayoutParams params = mEmotionView.getLayoutParams();
-                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                params.height = getKeyBoardHeight();
-                mEmotionView.setLayoutParams(params);
-                mEmotionView.setVisibility(View.VISIBLE);
-                unlockContentHeightDelayed();
-            }
-        }, 20L);
+        ViewGroup.LayoutParams params = mEmotionView.getLayoutParams();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = getKeyBoardHeight() + 21;
+        mEmotionView.setLayoutParams(params);
+        mEmotionView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -196,18 +195,17 @@ public class KeyBoardManager {
      */
     private void hideEmotionLayout(final boolean showSoftInput) {
         if (mEmotionView.isShown()) {
-            mEmotionView.setVisibility(View.GONE);
+            if (showSoftInput) {
+                showSoftInput();
+            } else {
+                hideSoftInput();
+            }
             mEmotionView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (showSoftInput) {
-                        showSoftInput();
-                    } else {
-                        hideSoftInput();
-                    }
-                    unlockContentHeightDelayed();
+                    mEmotionView.setVisibility(View.GONE);
                 }
-            }, 20L);
+            }, 200L);
 
         }
     }
