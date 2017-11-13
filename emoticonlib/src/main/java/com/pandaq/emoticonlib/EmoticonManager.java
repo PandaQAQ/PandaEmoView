@@ -76,6 +76,11 @@ public class EmoticonManager {
                     oldValue.setCallback(null);
             }
         };
+        File mWorkingPath = new File(STICKER_PATH + "/selfSticker");
+        // if this directory does not exists, make one.
+        if (!mWorkingPath.exists()) {
+            mWorkingPath.mkdirs();
+        }
     }
 
     public static int getDefaultIconRes() {

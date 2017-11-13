@@ -7,6 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,6 +37,9 @@ import com.pandaq.emoticonlib.utils.EmoticonUtils;
 import com.pandaq.pandaemoview.R;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,10 +62,11 @@ public class ChoosePhotoActivity extends AppCompatActivity implements AdapterVie
     GridView mGvPictures;
     private Map<String, ArrayList<String>> picMap = new HashMap<>();
     private CheckPicAdapter mPicAdapter;
-    private final int CROP_PHOTO = 10;
     private BottomSheetDialog mBottomSheetDialog;
     private ArrayList<ImageFileBean> mImageBeen;
     private final int ACTION_TAKE_PHOTO = 20;
+    private final int MAX_STICKER = 5;
+    private String savePath;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,6 +95,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements AdapterVie
         } else {
             initImages();
         }
+        savePath = new File(getFilesDir(), "sticker").getAbsolutePath() + "/selfSticker";
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -249,7 +257,8 @@ public class ChoosePhotoActivity extends AppCompatActivity implements AdapterVie
         if (imagePath.equals("ic_action_camera")) {
             takePhoto();
         } else {
-            cropPic(imagePath);
+            //// TODO: 2017/11/13 0013 保存路径 
+            compressAndCopyToSd(imagePath);
         }
     }
 
@@ -267,7 +276,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements AdapterVie
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                Uri contentUri = FileProvider.getUriForFile(this, "com.pandaq.pandaemoview.fileprovider", mPhotoFile);
+                Uri contentUri = FileProvider.getUriForFile(this, "com.pandaq.emoticonlib.fileprovider", mPhotoFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
             } else {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mPhotoFile));
@@ -278,43 +287,80 @@ public class ChoosePhotoActivity extends AppCompatActivity implements AdapterVie
         }
     }
 
-    private void cropPic(String imagePath) {
-        File file = new File(imagePath);
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Uri contentUri = FileProvider.getUriForFile(this, "com.pandaq.pandaemoview.fileprovider", file);
-            intent.setDataAndType(contentUri, "image/*");
-        } else {
-            intent.setDataAndType(Uri.fromFile(file), "image/*");
+    /**
+     * 文件存储默认名称为：文件顺序+_+MD5（传入图片路径）.jpeg
+     */
+    private void compressAndCopyToSd(String imagePath) {
+        Intent intent = new Intent();
+        FileOutputStream fos;
+        try {
+            File[] files = new File(savePath).listFiles();
+            if (files == null) return;
+            if (files.length == MAX_STICKER) {
+                Toast.makeText(this, "表情已达上限，无法添加", Toast.LENGTH_SHORT).show();
+                this.finish();
+                return;
+            }
+            String filename = files.length + "_" + EmoticonUtils.getMD5Result(imagePath);
+            for (File file : files) {
+                String[] strs = file.getName().split("_");
+                if (strs.length >= 1 && strs[1].equals(EmoticonUtils.getMD5Result(imagePath))) {
+                    Toast.makeText(this, "已经添加过此表情", Toast.LENGTH_SHORT).show();
+                    this.finish();
+                    return;
+                }
+            }
+            fos = new FileOutputStream(savePath + File.separator + filename);
+            // 缩放图片，将图片大小降低
+            Bitmap bitmap = getZoomImage(BitmapFactory.decodeFile(imagePath), 400);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, fos);
+            fos.flush();
+            fos.close();
+            intent.putExtra("savePath", savePath + File.separator + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 0.1);
-        intent.putExtra("aspectY", 0.1);
-        intent.putExtra("outputX", 150);
-        intent.putExtra("outputY", 150);
-        intent.putExtra("return-data", true);
-        intent.putExtra("scale", true);
-        startActivityForResult(intent, CROP_PHOTO);
+        setResult(11, intent);
+        this.finish();
+    }
+
+    /**
+     * 图片的缩放方法
+     *
+     * @param orgBitmap ：源图片资源
+     */
+    public Bitmap getZoomImage(Bitmap orgBitmap, float maxSize) {
+        if (null == orgBitmap) {
+            return null;
+        }
+        if (orgBitmap.isRecycled()) {
+            return null;
+        }
+        // 获取图片的宽和高
+        float width = orgBitmap.getWidth();
+        float height = orgBitmap.getHeight();
+        float max = Math.max(width, height);
+        float scale;
+        if (max < maxSize) {
+            scale = 1;
+        } else {
+            scale = maxSize / max;
+        }
+        // 创建操作图片的matrix对象
+        Matrix matrix = new Matrix();
+        // 缩放图片动作
+        matrix.postScale(scale, scale);
+        return Bitmap.createBitmap(orgBitmap, 0, 0, (int) width, (int) height, matrix, true);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         File mPhotoFile = new File(EmoticonUtils.getAppFile(this, "images/user_take.jpg"));
         switch (requestCode) {
-            case CROP_PHOTO: //裁剪照片后
-                if (data != null) {
-                    setPicToView(data);
-                }
-                //裁剪后删除拍照的照片
-                if (mPhotoFile.exists()) {
-                    //noinspection ResultOfMethodCallIgnored
-                    mPhotoFile.delete();
-                }
-                break;
             case ACTION_TAKE_PHOTO:
                 if (mPhotoFile.exists()) {
-                    cropPic(EmoticonUtils.getAppFile(this, "images/user_take.jpg"));
+                    // TODO: 2017/11/13 0013 """""
+                    compressAndCopyToSd(EmoticonUtils.getAppFile(this, "images/user_take.jpg"));
                 }
                 break;
         }

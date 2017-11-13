@@ -31,9 +31,9 @@ public class StickerAdapter extends BaseAdapter {
         mContext = context;
         mCategory = category;
         this.startIndex = startIndex;
-        int emotionLayoutHeight1 = emotionLayoutHeight - EmoticonUtils.dp2px(mContext, 35 + 26 + 50);
+        int realPagerHeight = emotionLayoutHeight - EmoticonUtils.dp2px(mContext, 85);
         float perWidth = emotionLayoutWidth * 1f / PandaEmoView.STICKER_COLUMN;
-        mPerHeight = emotionLayoutHeight1 * 1f / PandaEmoView.STICKER_ROW;
+        mPerHeight = realPagerHeight * 1f / PandaEmoView.STICKER_ROW;
 
         float ivWidth = perWidth * .8f;
         float ivHeight = mPerHeight * .8f;
@@ -43,9 +43,7 @@ public class StickerAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        int count = mCategory.getStickers().size() - startIndex;
-        count = Math.min(count, PandaEmoView.STICKER_PER_PAGE);
-        return count;
+        return PandaEmoView.STICKER_PER_PAGE;
     }
 
     @Override
@@ -65,7 +63,6 @@ public class StickerAdapter extends BaseAdapter {
             RelativeLayout rl = new RelativeLayout(mContext);
             rl.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, (int) mPerHeight));
             ImageView imageView = new ImageView(mContext);
-            imageView.setImageResource(EmoticonManager.getDefaultIconRes());
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             params.width = (int) mIvSize;
             params.height = (int) mIvSize;
@@ -91,7 +88,10 @@ public class StickerAdapter extends BaseAdapter {
                 return convertView;
             }
             String stickerBitmapUri = StickerManager.getInstance().getStickerBitmapUri(sticker.getCategory(), sticker.getName());
-            EmoticonManager.getIImageLoader().displayImage(stickerBitmapUri, viewHolder.mImageView);
+            System.out.println(stickerBitmapUri+"???????????");
+            if (stickerBitmapUri != null) {
+                EmoticonManager.getIImageLoader().displayImage(stickerBitmapUri, viewHolder.mImageView);
+            }
         }
         return convertView;
     }

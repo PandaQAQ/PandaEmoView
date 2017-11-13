@@ -64,6 +64,11 @@
                 android:layout_height="wrap_content"
                 android:text="@string/string_test_text"/>
         </ScrollView>
+
+        <ImageView
+            android:id="@+id/test_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -80,8 +85,8 @@
         <TextView
             android:id="@+id/tv_bottom_test"
             android:layout_width="match_parent"
-            android:layout_height="270dp"
-            android:background="@color/colorAccent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
             android:visibility="gone"/>
     </RelativeLayout>
 </LinearLayout>

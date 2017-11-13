@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -18,6 +19,7 @@ import com.pandaq.emoticonlib.listeners.IStickerSelectedListener;
 import com.pandaq.emoticonlib.view.PandaEmoEditText;
 import com.pandaq.emoticonlib.view.PandaEmoView;
 import com.pandaq.pandaemoview.photomodule.ChoosePhotoActivity;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     ScrollView mScrollView;
     @BindView(R.id.rl_content)
     RelativeLayout mRlContent;
+    @BindView(R.id.test_image)
+    ImageView mTestImage;
     private KeyBoardManager emotionKeyboard;
 
     @Override
@@ -83,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 //添加按钮
                 Toast.makeText(MainActivity.this, "点击添加自定义表情", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, ChoosePhotoActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 10);
             }
         });
         initEmotionKeyboard();
@@ -91,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initEmotionKeyboard() {
         emotionKeyboard = KeyBoardManager.with(this)
-                .bindToEmotionButton(mTestButton, mLoadSticker)
+                .bindToEmotionButton(mTestButton)
                 .setEmotionView(mEmoticonView)
                 .bindToLockContent(mRlContent)
                 .setOnInputListener(new KeyBoardManager.OnInputShowListener() {
@@ -109,15 +113,13 @@ public class MainActivity extends AppCompatActivity {
                         emotionKeyboard.showInputLayout();
                     } else {
                         emotionKeyboard.hideInputLayout();
-                        mEmoticonView.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mTvBottomTest.setVisibility(View.VISIBLE);
-                            }
-                        }, 200);
+                        mTvBottomTest.setVisibility(View.VISIBLE);
                     }
                     // 重写逻辑时一定要返回 ture 拦截 KeyBoardManager 中的默认逻辑
                     return true;
+                } else if (view.getId() == R.id.test_button) {
+                    mTvBottomTest.setVisibility(View.GONE);
+                    return false;// 不破坏表情按钮的处理逻辑，只是隐藏显示的菜单页
                 }
                 return false;
             }
@@ -126,15 +128,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!emotionKeyboard.interceptBackPress()) {
-            finish();
+        if (!mTvBottomTest.isShown()) {
+            if (!emotionKeyboard.interceptBackPress()) {
+                finish();
+            }
+        } else {
+            mTvBottomTest.setVisibility(View.GONE);
         }
     }
 
     @OnClick(R.id.load_sticker)
     public void onViewClicked() {
-
-//        copyStickerToSdCard("sticker_test", getApplicationContext().getFilesDir() + "/sticker/selfSticker");
+        copyStickerToSdCard("sticker_test", getApplicationContext().getFilesDir() + "/sticker/selfSticker");
     }
 
     private void copyStickerToSdCard(String assetDir, String dir) {
@@ -183,6 +188,16 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == 11 && data != null) {
+            if (data.getStringExtra("savePath") == null) return;
+            Picasso.with(this)
+                    .load("file:///" + data.getExtras().getString("path"))
+                    .into(mTestImage);
         }
     }
 }
