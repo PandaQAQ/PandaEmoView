@@ -193,11 +193,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == 11 && data != null) {
-            if (data.getStringExtra("savePath") == null) return;
-            Picasso.with(this)
-                    .load("file:///" + data.getExtras().getString("path"))
-                    .into(mTestImage);
-        }
+        mEmoticonView.reloadEmos();
     }
 }
