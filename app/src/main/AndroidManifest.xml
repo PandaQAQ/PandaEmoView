@@ -22,9 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.pandaq.pandaemoview.photomodule.ChoosePhotoActivity"
-            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

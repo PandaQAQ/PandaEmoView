@@ -1,4 +1,4 @@
-package com.pandaq.pandaemoview.photomodule;
+package com.pandaq.emoticonlib.photopicker;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,13 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.pandaq.emoticonlib.EmoticonManager;
+import com.pandaq.emoticonlib.R;
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
-import com.pandaq.pandaemoview.R;
 
 import java.util.ArrayList;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by PandaQ on 2017/3/30.
@@ -25,7 +22,7 @@ public class CheckPicAdapter extends BaseAdapter {
     private ArrayList<String> mPicPaths;
     private Context mContext;
 
-    public CheckPicAdapter(Context context, ArrayList<String> picPaths) {
+    CheckPicAdapter(Context context, ArrayList<String> picPaths) {
         mPicPaths = picPaths;
         mContext = context;
     }
@@ -68,17 +65,16 @@ public class CheckPicAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void setPicPaths(ArrayList<String> picPaths) {
+    void setPicPaths(ArrayList<String> picPaths) {
         mPicPaths = picPaths;
         notifyDataSetChanged();
     }
 
-    class ViewHolder {
-        @BindView(R.id.iv_pic)
+    private class ViewHolder {
         ImageView mIvPic;
 
         ViewHolder(View view) {
-            ButterKnife.bind(this, view);
+            mIvPic = (ImageView) view.findViewById(R.id.iv_pic);
         }
     }
 }

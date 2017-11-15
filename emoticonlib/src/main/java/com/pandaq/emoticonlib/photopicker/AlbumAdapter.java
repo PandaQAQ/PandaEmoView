@@ -1,4 +1,4 @@
-package com.pandaq.pandaemoview.photomodule;
+package com.pandaq.emoticonlib.photopicker;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;
@@ -10,12 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pandaq.emoticonlib.EmoticonManager;
-import com.pandaq.pandaemoview.R;
+import com.pandaq.emoticonlib.R;
 
 import java.util.ArrayList;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 
 /**
@@ -59,29 +56,28 @@ public class AlbumAdapter extends RecyclerView.Adapter {
         return mImageBeen.size();
     }
 
-    public interface OnItemClickListener {
+    interface OnItemClickListener {
         void OnItemClick(ArrayList<String> images);
     }
 
     private OnItemClickListener mItemClickListener;
 
-    public void setItemClickListener(OnItemClickListener itemClickListener) {
+    void setItemClickListener(OnItemClickListener itemClickListener) {
         mItemClickListener = itemClickListener;
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.iv_cover)
+    private static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mIvCover;
-        @BindView(R.id.tv_file_name)
         TextView mTvFileName;
-        @BindView(R.id.tv_file_count)
         TextView mTvFileCount;
-        @BindView(R.id.card_item)
         CardView mCardItem;
 
         ViewHolder(View view) {
             super(view);
-            ButterKnife.bind(this, view);
+            mIvCover = (ImageView) view.findViewById(R.id.iv_cover);
+            mTvFileName = (TextView) view.findViewById(R.id.tv_file_name);
+            mTvFileCount = (TextView) view.findViewById(R.id.tv_file_count);
+            mCardItem = (CardView) view.findViewById(R.id.card_item);
         }
     }
 }

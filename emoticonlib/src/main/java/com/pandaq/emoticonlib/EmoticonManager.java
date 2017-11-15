@@ -55,6 +55,7 @@ public class EmoticonManager {
     @SuppressLint("StaticFieldLeak")
     private static EmoticonManager mEmoticonManager;
     private static IImageLoader mIImageLoader;
+    public static int MAX_CUSTON_STICKER = 30;
 
     private void init() {
         if (STICKER_PATH == null) {
@@ -81,6 +82,10 @@ public class EmoticonManager {
         if (!mWorkingPath.exists()) {
             mWorkingPath.mkdirs();
         }
+    }
+
+    public static Context getContext() {
+        return mContext;
     }
 
     public static int getDefaultIconRes() {
@@ -308,6 +313,8 @@ public class EmoticonManager {
         private String STICKER_PATH;
         // 默认表情的菜单栏 icon 资源 ID
         private int defaultIcon;
+        // 自定义贴图表情最大张数
+        private int MAX_CUSTON_STICKER;
 
         public Builder setDefaultIcon(int defaultIconRes) {
             this.defaultIcon = defaultIconRes;
@@ -348,6 +355,10 @@ public class EmoticonManager {
             this.STICKER_PATH = STICKER_PATH;
         }
 
+        public void setMAX_CUSTON_STICKER(int maxCustonSticker) {
+            this.MAX_CUSTON_STICKER = maxCustonSticker;
+        }
+
         public void build() {
             if (mEmoticonManager == null) {
                 synchronized (EmoticonManager.class) {
@@ -380,6 +391,9 @@ public class EmoticonManager {
             }
             if (this.defaultIcon > 0) {
                 EmoticonManager.defaultIcon = this.defaultIcon;
+            }
+            if (this.MAX_CUSTON_STICKER != 0) {
+                EmoticonManager.MAX_CUSTON_STICKER = this.MAX_CUSTON_STICKER;
             }
             mEmoticonManager.init();
         }

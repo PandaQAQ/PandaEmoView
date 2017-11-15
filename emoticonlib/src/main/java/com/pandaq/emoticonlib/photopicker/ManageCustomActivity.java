@@ -1,4 +1,4 @@
-package pandaq.com.pandaemoview.photomodule;
+package com.pandaq.emoticonlib.photopicker;
 
 import android.support.v7.app.AppCompatActivity;
 
@@ -7,5 +7,5 @@ import android.support.v7.app.AppCompatActivity;
  * description ：显示已添加自定义表情类
  */
 
-public class CustomStickerActivity extends AppCompatActivity {
+public class ManageCustomActivity extends AppCompatActivity {
 }

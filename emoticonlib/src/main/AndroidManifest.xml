@@ -8,6 +8,18 @@
         android:supportsRtl="true"
         >
 
+        <activity
+            android:name=".photopicker.PickImageActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".photopicker.ManageCustomActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".photopicker.StickerAddPreviewActivity"
+            android:screenOrientation="portrait"/>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.pandaq.emoticonlib.fileprovider"

@@ -1,4 +1,4 @@
-package com.pandaq.pandaemoview.photomodule;
+package com.pandaq.emoticonlib.photopicker;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.pandaq.pandaemoview.photomodule;
+package com.pandaq.emoticonlib.photopicker;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -7,9 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,69 +30,64 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pandaq.emoticonlib.EmoticonManager;
+import com.pandaq.emoticonlib.R;
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
-import com.pandaq.pandaemoview.R;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by huxinyu on 2017/11/9 0010.
  * description ：
  */
 
-public class ChoosePhotoActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class PickImageActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
 
-    @BindView(R.id.toolbar)
-    Toolbar mToolbar;
-    @BindView(R.id.tv_select_album)
-    TextView mTvSelectAlbum;
-    @BindView(R.id.gv_pictures)
-    GridView mGvPictures;
+    private Toolbar mToolbar;
+    private GridView mGvPictures;
+
     private Map<String, ArrayList<String>> picMap = new HashMap<>();
     private CheckPicAdapter mPicAdapter;
     private BottomSheetDialog mBottomSheetDialog;
     private ArrayList<ImageFileBean> mImageBeen;
     private final int ACTION_TAKE_PHOTO = 20;
-    private final int MAX_STICKER = 5;
-    private String savePath;
+    private static final String takePhotoPath = "images/user_take.jpg";
+    private static final String defaultStickerPath = EmoticonManager.getStickerPath() + "selfSticker";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_photo);
-        ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
+
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        TextView tvSelectAlbum = (TextView) findViewById(R.id.tv_select_album);
+        mGvPictures = (GridView) findViewById(R.id.gv_pictures);
+
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ChoosePhotoActivity.this.finish();
+                PickImageActivity.this.finish();
             }
         });
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ChoosePhotoActivity.this.finish();
+                PickImageActivity.this.finish();
             }
         });
         mImageBeen = new ArrayList<>();
         mGvPictures.setOnItemClickListener(this);
-        mTvSelectAlbum.setOnClickListener(this);
+        tvSelectAlbum.setOnClickListener(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermission(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
         } else {
             initImages();
         }
-        savePath = new File(getFilesDir(), "sticker").getAbsolutePath() + "/selfSticker";
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -107,7 +99,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements AdapterVie
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(ChoosePhotoActivity.this, permissions, requestCode);
+                            ActivityCompat.requestPermissions(PickImageActivity.this, permissions, requestCode);
                         }
                     }).show();
         } else {
@@ -258,7 +250,8 @@ public class ChoosePhotoActivity extends AppCompatActivity implements AdapterVie
             takePhoto();
         } else {
             //// TODO: 2017/11/13 0013 保存路径 
-            compressAndCopyToSd(imagePath);
+            String addStickerPath = PickerUtils.compressAndCopyToSd(imagePath,defaultStickerPath);
+            System.out.println("Added_stickerPath------>" + addStickerPath);
         }
     }
 
@@ -270,7 +263,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements AdapterVie
         try {
             Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
             File file = new File(EmoticonUtils.getAppFile(this, "images"));
-            File mPhotoFile = new File(EmoticonUtils.getAppFile(this, "images/user_take.jpg"));
+            File mPhotoFile = new File(EmoticonUtils.getAppFile(this, takePhotoPath));
             if (!file.exists()) {
                 boolean result = file.mkdirs();
             }
@@ -287,93 +280,19 @@ public class ChoosePhotoActivity extends AppCompatActivity implements AdapterVie
         }
     }
 
-    /**
-     * 文件存储默认名称为：文件顺序+_+MD5（传入图片路径）.jpeg
-     */
-    private void compressAndCopyToSd(String imagePath) {
-        Intent intent = new Intent();
-        FileOutputStream fos;
-        try {
-            File[] files = new File(savePath).listFiles();
-            if (files == null) return;
-            if (files.length == MAX_STICKER) {
-                Toast.makeText(this, "表情已达上限，无法添加", Toast.LENGTH_SHORT).show();
-                this.finish();
-                return;
-            }
-            String filename = files.length + "_" + EmoticonUtils.getMD5Result(imagePath);
-            for (File file : files) {
-                String[] strs = file.getName().split("_");
-                if (strs.length >= 1 && strs[1].equals(EmoticonUtils.getMD5Result(imagePath))) {
-                    Toast.makeText(this, "已经添加过此表情", Toast.LENGTH_SHORT).show();
-                    this.finish();
-                    return;
-                }
-            }
-            fos = new FileOutputStream(savePath + File.separator + filename);
-            // 缩放图片，将图片大小降低
-            Bitmap bitmap = getZoomImage(BitmapFactory.decodeFile(imagePath), 400);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, fos);
-            fos.flush();
-            fos.close();
-            intent.putExtra("savePath", savePath + File.separator + filename);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        setResult(11, intent);
-        this.finish();
-    }
-
-    /**
-     * 图片的缩放方法
-     *
-     * @param orgBitmap ：源图片资源
-     */
-    public Bitmap getZoomImage(Bitmap orgBitmap, float maxSize) {
-        if (null == orgBitmap) {
-            return null;
-        }
-        if (orgBitmap.isRecycled()) {
-            return null;
-        }
-        // 获取图片的宽和高
-        float width = orgBitmap.getWidth();
-        float height = orgBitmap.getHeight();
-        float max = Math.max(width, height);
-        float scale;
-        if (max < maxSize) {
-            scale = 1;
-        } else {
-            scale = maxSize / max;
-        }
-        // 创建操作图片的matrix对象
-        Matrix matrix = new Matrix();
-        // 缩放图片动作
-        matrix.postScale(scale, scale);
-        return Bitmap.createBitmap(orgBitmap, 0, 0, (int) width, (int) height, matrix, true);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        File mPhotoFile = new File(EmoticonUtils.getAppFile(this, "images/user_take.jpg"));
+        File mPhotoFile = new File(EmoticonUtils.getAppFile(this, takePhotoPath));
         switch (requestCode) {
             case ACTION_TAKE_PHOTO:
                 if (mPhotoFile.exists()) {
-                    // TODO: 2017/11/13 0013 """""
-                    compressAndCopyToSd(EmoticonUtils.getAppFile(this, "images/user_take.jpg"));
+                    // TODO: 2017/11/13 0013
+                    String addStickerPath = PickerUtils.compressAndCopyToSd(mPhotoFile.getAbsolutePath(),
+                            defaultStickerPath);
+                    System.out.println("Added_stickerPath------>" + addStickerPath);
                 }
                 break;
         }
-    }
-
-    /**
-     * 将获取的头像显示在imageview中
-     *
-     * @param picData 裁剪后的图片数据
-     */
-    private void setPicToView(Intent picData) {
-        setResult(RESULT_OK, picData);
-        this.finish();
     }
 
     @Override

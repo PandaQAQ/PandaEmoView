@@ -88,7 +88,6 @@ public class StickerAdapter extends BaseAdapter {
                 return convertView;
             }
             String stickerBitmapUri = StickerManager.getInstance().getStickerBitmapUri(sticker.getCategory(), sticker.getName());
-            System.out.println(stickerBitmapUri+"???????????");
             if (stickerBitmapUri != null) {
                 EmoticonManager.getIImageLoader().displayImage(stickerBitmapUri, viewHolder.mImageView);
             }
