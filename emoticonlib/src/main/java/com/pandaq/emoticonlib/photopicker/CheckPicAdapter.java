@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 
 import com.pandaq.emoticonlib.EmoticonManager;
 import com.pandaq.emoticonlib.R;
@@ -21,6 +20,8 @@ import java.util.ArrayList;
 public class CheckPicAdapter extends BaseAdapter {
     private ArrayList<String> mPicPaths;
     private Context mContext;
+    public static final String IC_ACTION_CAMERA = "ic_action_camera";
+    public static final String IC_ACTION_ADD = "ic_action_add";
 
     CheckPicAdapter(Context context, ArrayList<String> picPaths) {
         mPicPaths = picPaths;
@@ -53,13 +54,21 @@ public class CheckPicAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         String path = mPicPaths.get(position);
-        if (path.equals("ic_action_camera")) {
-            int value = EmoticonUtils.dp2px(mContext, 30);
-            holder.mIvPic.setPadding(value, value, value, value);
-            holder.mIvPic.setImageResource(R.drawable.ic_action_camera);
-        } else {
-            holder.mIvPic.setPadding(0, 0, 0, 0);
-            EmoticonManager.getIImageLoader().displayImage("file://" + mPicPaths.get(position), holder.mIvPic);
+        int value = EmoticonUtils.dp2px(mContext, 30);
+        switch (path) {
+            case IC_ACTION_CAMERA:
+                holder.mIvPic.setPadding(value, value, value, value);
+                holder.mIvPic.setImageResource(R.drawable.ic_action_camera);
+                break;
+            case IC_ACTION_ADD:
+                holder.mIvPic.setPadding(value, value, value, value);
+                holder.mIvPic.setImageResource(R.drawable.ic_action_add);
+                System.out.println(path);
+                break;
+            default:
+                holder.mIvPic.setPadding(0, 0, 0, 0);
+                EmoticonManager.getIImageLoader().displayImage("file://" + mPicPaths.get(position), holder.mIvPic);
+                break;
         }
 
         return convertView;
@@ -71,10 +80,10 @@ public class CheckPicAdapter extends BaseAdapter {
     }
 
     private class ViewHolder {
-        ImageView mIvPic;
+        SquareImage mIvPic;
 
         ViewHolder(View view) {
-            mIvPic = (ImageView) view.findViewById(R.id.iv_pic);
+            mIvPic = (SquareImage) view.findViewById(R.id.iv_pic);
         }
     }
 }

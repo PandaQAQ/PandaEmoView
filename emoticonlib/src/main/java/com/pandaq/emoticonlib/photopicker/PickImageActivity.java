@@ -46,8 +46,7 @@ import java.util.Map;
 
 public class PickImageActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
 
-    private Toolbar mToolbar;
-    private GridView mGvPictures;
+    private LineGridView mGvPictures;
 
     private Map<String, ArrayList<String>> picMap = new HashMap<>();
     private CheckPicAdapter mPicAdapter;
@@ -61,19 +60,13 @@ public class PickImageActivity extends AppCompatActivity implements AdapterView.
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_photo);
-        setSupportActionBar(mToolbar);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         TextView tvSelectAlbum = (TextView) findViewById(R.id.tv_select_album);
-        mGvPictures = (GridView) findViewById(R.id.gv_pictures);
+        mGvPictures = (LineGridView) findViewById(R.id.gv_pictures);
 
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PickImageActivity.this.finish();
-            }
-        });
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PickImageActivity.this.finish();

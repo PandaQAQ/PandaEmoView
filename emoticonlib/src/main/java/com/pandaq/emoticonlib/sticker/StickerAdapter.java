@@ -78,7 +78,7 @@ public class StickerAdapter extends BaseAdapter {
         }
         int index = startIndex + position;
         if (index == 0) {
-            viewHolder.mImageView.setImageResource(R.drawable.ic_tab_add);
+            viewHolder.mImageView.setImageResource(R.drawable.ic_action_add);
         } else {
             if (index >= mCategory.getStickers().size()) {
                 return convertView;

@@ -27,15 +27,12 @@
         android:text="@string/select_album"
         android:textColor="@color/white"/>
 
-    <GridView
+    <com.pandaq.emoticonlib.photopicker.LineGridView
         android:id="@+id/gv_pictures"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/tv_select_album"
         android:layout_below="@id/toolbar"
-        android:background="@color/trans"
-        android:horizontalSpacing="4dp"
-        android:numColumns="3"
-        android:padding="4dp"
-        android:verticalSpacing="4dp"/>
+        android:background="@color/white"
+        android:numColumns="3"/>
 </RelativeLayout>

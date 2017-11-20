@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.pandaq.emoticonlib.KeyBoardManager;
 import com.pandaq.emoticonlib.listeners.IEmoticonMenuClickListener;
 import com.pandaq.emoticonlib.listeners.IStickerSelectedListener;
+import com.pandaq.emoticonlib.photopicker.ManageCustomActivity;
 import com.pandaq.emoticonlib.photopicker.PickImageActivity;
 import com.pandaq.emoticonlib.view.PandaEmoEditText;
 import com.pandaq.emoticonlib.view.PandaEmoView;
@@ -85,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
             public void onCustomAdd() {
                 //添加按钮
                 Toast.makeText(MainActivity.this, "点击添加自定义表情", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, PickImageActivity.class);
-                startActivityForResult(intent, 10);
+                Intent intent = new Intent(MainActivity.this, ManageCustomActivity.class);
+                startActivity(intent);
             }
         });
         initEmotionKeyboard();
