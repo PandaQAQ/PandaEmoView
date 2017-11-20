@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.pandaq.emoticonlib.EmoticonManager;
 import com.pandaq.emoticonlib.R;
+import com.pandaq.emoticonlib.base.BaseActivity;
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
 
 import java.io.File;
@@ -44,7 +45,7 @@ import java.util.Map;
  * description ：
  */
 
-public class PickImageActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class PickImageActivity extends BaseActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
 
     private LineGridView mGvPictures;
 
@@ -76,65 +77,21 @@ public class PickImageActivity extends AppCompatActivity implements AdapterView.
         mGvPictures.setOnItemClickListener(this);
         tvSelectAlbum.setOnClickListener(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermission(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+            requestRunTimePermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionCall() {
+                @Override
+                public void requestSuccess() {
+                    initImages();
+                }
+
+                @Override
+                public void refused() {
+                    Toast.makeText(PickImageActivity.this, "请授予必要权限！！", Toast.LENGTH_SHORT).show();
+                }
+            });
         } else {
             initImages();
         }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void requestPermission(final String[] permissions, final int requestCode) {
-        if (shouldShowRequestPermissionRationale(permissions)) {
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.attention)
-                    .setMessage(R.string.content_to_request_permission)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(PickImageActivity.this, permissions, requestCode);
-                        }
-                    }).show();
-        } else {
-            ActivityCompat.requestPermissions(this, permissions, requestCode);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 0) {
-            if (verifyPermissions(grantResults)) {
-                initImages();
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    public boolean verifyPermissions(int[] grantResults) {
-        // At least one result must be checked.
-        if (grantResults.length < 1) {
-            return false;
-        }
-
-        // Verify that each required permission has been granted, otherwise return false.
-        for (int result : grantResults) {
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean shouldShowRequestPermissionRationale(String[] permissions) {
-        boolean flag = false;
-        for (String p : permissions) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, p)) {
-                flag = true;
-                break;
-            }
-        }
-        return flag;
     }
 
     private void initImages() {
@@ -243,7 +200,7 @@ public class PickImageActivity extends AppCompatActivity implements AdapterView.
             takePhoto();
         } else {
             //// TODO: 2017/11/13 0013 保存路径 
-            String addStickerPath = PickerUtils.compressAndCopyToSd(imagePath,defaultStickerPath);
+            String addStickerPath = PickerUtils.compressAndCopyToSd(imagePath, defaultStickerPath);
             System.out.println("Added_stickerPath------>" + addStickerPath);
         }
     }

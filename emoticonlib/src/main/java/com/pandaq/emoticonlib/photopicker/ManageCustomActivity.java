@@ -16,12 +16,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pandaq.emoticonlib.EmoticonManager;
 import com.pandaq.emoticonlib.R;
+import com.pandaq.emoticonlib.base.BaseActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
  * description ：显示已添加自定义表情类
  */
 
-public class ManageCustomActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class ManageCustomActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
     private static final String defaultStickerPath = EmoticonManager.getStickerPath() + "/selfSticker";
     private LineGridView mGridView;
@@ -56,65 +56,23 @@ public class ManageCustomActivity extends AppCompatActivity implements AdapterVi
         });
         mGridView.setOnItemClickListener(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermission(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+            requestRunTimePermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionCall() {
+                @Override
+                public void requestSuccess() {
+                    initImages();
+                }
+
+                @Override
+                public void refused() {
+                    Toast.makeText(ManageCustomActivity.this, "请授予必要权限！！", Toast.LENGTH_SHORT).show();
+                }
+            });
         } else {
             initImages();
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void requestPermission(final String[] permissions, final int requestCode) {
-        if (shouldShowRequestPermissionRationale(permissions)) {
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.attention)
-                    .setMessage(R.string.content_to_request_permission)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(ManageCustomActivity.this, permissions, requestCode);
-                        }
-                    }).show();
-        } else {
-            ActivityCompat.requestPermissions(this, permissions, requestCode);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 0) {
-            if (verifyPermissions(grantResults)) {
-                initImages();
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    public boolean verifyPermissions(int[] grantResults) {
-        // At least one result must be checked.
-        if (grantResults.length < 1) {
-            return false;
-        }
-        // Verify that each required permission has been granted, otherwise return false.
-        for (int result : grantResults) {
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean shouldShowRequestPermissionRationale(String[] permissions) {
-        boolean flag = false;
-        for (String p : permissions) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, p)) {
-                flag = true;
-                break;
-            }
-        }
-        return flag;
-    }
 
     private void initImages() {
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
