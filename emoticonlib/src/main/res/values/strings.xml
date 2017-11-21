@@ -10,4 +10,6 @@
     <string name="content_to_request_permission">保证应用正常运行，请授予必要权限！</string>
     <string name="attention">提示</string>
     <string name="ok">好的~</string>
+    <string name="manage">管理</string>
+    <string name="delete">删除</string>
 </resources>
