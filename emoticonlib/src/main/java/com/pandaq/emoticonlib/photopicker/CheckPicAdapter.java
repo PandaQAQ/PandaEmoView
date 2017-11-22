@@ -68,7 +68,7 @@ public class CheckPicAdapter extends BaseAdapter {
                 holder.mCheckBox.setVisibility(View.GONE);
                 break;
             default:
-                EmoticonManager.getIImageLoader().displayImage("file://" + mPicPaths.get(position), holder.mIvPic);
+                EmoticonManager.getInstance().getIImageLoader().displayImage("file://" + mPicPaths.get(position), holder.mIvPic);
                 if (showCheckBox) {
                     holder.mCheckBox.setVisibility(View.VISIBLE);
                     holder.mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -120,5 +120,10 @@ public class CheckPicAdapter extends BaseAdapter {
 
     public ArrayList<String> getSelectedPath() {
         return mSelectedPaths;
+    }
+
+    public void notifyDelete() {
+        mPicPaths.removeAll(mSelectedPaths);
+        notifyDataSetChanged();
     }
 }

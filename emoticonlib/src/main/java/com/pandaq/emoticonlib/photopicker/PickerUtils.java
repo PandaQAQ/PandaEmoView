@@ -28,15 +28,15 @@ public class PickerUtils {
         try {
             File[] files = new File(savePath).listFiles();
             if (files == null) return null;
-            if (files.length == EmoticonManager.MAX_CUSTON_STICKER) {
-                Toast.makeText(EmoticonManager.getContext(), "表情已达上限，无法添加", Toast.LENGTH_SHORT).show();
+            if (files.length == EmoticonManager.getInstance().MAX_CUSTON_STICKER) {
+                Toast.makeText(EmoticonManager.getInstance().getContext(), "表情已达上限，无法添加", Toast.LENGTH_SHORT).show();
                 return null;
             }
             String filename = files.length + "_" + EmoticonUtils.getMD5Result(imagePath);
             for (File file : files) {
                 String[] strs = file.getName().split("_");
                 if (strs.length >= 1 && strs[1].equals(EmoticonUtils.getMD5Result(imagePath))) {
-                    Toast.makeText(EmoticonManager.getContext(), "已经添加过此表情", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EmoticonManager.getInstance().getContext(), "已经添加过此表情", Toast.LENGTH_SHORT).show();
                     return null;
                 }
             }

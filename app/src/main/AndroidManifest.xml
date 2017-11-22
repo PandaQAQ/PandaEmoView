@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/SwipeBackTheme">
         <activity
             android:name="com.pandaq.pandaemoview.MainActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden">

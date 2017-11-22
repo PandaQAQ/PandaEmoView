@@ -52,7 +52,7 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
         mEmotionLayoutHeight = emotionLayoutHeight;
         mTabPosi = tabPosi;
         if (mTabPosi == 0) { // 默认的 emoji 或者 gif emoji
-            mPageCount = (int) Math.ceil(EmoticonManager.getDisplayCount() / (float) PandaEmoView.EMOJI_PER_PAGE);
+            mPageCount = (int) Math.ceil(EmoticonManager.getInstance().getDisplayCount() / (float) PandaEmoView.EMOJI_PER_PAGE);
         } else { //贴图表情
             mPageCount = (int) Math.ceil(StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1).getStickers().size() / (float) PandaEmoView.STICKER_PER_PAGE);
         }
@@ -109,11 +109,11 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             int index = position + (Integer) parent.getTag() * PandaEmoView.EMOJI_PER_PAGE;
-            int count = EmoticonManager.getDisplayCount();
+            int count = EmoticonManager.getInstance().getDisplayCount();
             if (position == PandaEmoView.EMOJI_PER_PAGE || index >= count) {
                 onEmojiSelected("/DEL");
             } else {
-                String text = EmoticonManager.getDisplayText((int) id);
+                String text = EmoticonManager.getInstance().getDisplayText((int) id);
                 if (!TextUtils.isEmpty(text)) {
                     onEmojiSelected(text);
                 }

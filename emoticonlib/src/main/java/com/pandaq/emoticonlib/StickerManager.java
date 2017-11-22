@@ -42,12 +42,12 @@ public class StickerManager {
     }
 
     public void loadStickerCategory() {
-        if (EmoticonManager.getStickerPath() == null) {
+        if (EmoticonManager.getInstance().getStickerPath() == null) {
             return;
         }
         stickerCategories.clear();
         stickerCategoryMap.clear();
-        File stickerDir = new File(EmoticonManager.getStickerPath());
+        File stickerDir = new File(EmoticonManager.getInstance().getStickerPath());
         if (stickerDir.exists()) {
             File[] files = stickerDir.listFiles();
             if (files != null) {
@@ -102,7 +102,7 @@ public class StickerManager {
         if (category == null) {
             return null;
         }
-        return EmoticonManager.getStickerPath() + File.separator + category.getName() + File.separator + stickerName;
+        return EmoticonManager.getInstance().getStickerPath() + File.separator + category.getName() + File.separator + stickerName;
     }
 
     public ArrayList<String> getStickers() {

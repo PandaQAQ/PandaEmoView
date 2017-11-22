@@ -156,6 +156,7 @@ public class KeyBoardManager {
      */
     public KeyBoardManager setEmotionView(PandaEmoView emotionView) {
         mEmotionView = emotionView;
+        EmoticonManager.getInstance().manage(mEmotionView);
         bindToEditText(mEmotionView.getAttachEditText());
         return this;
     }

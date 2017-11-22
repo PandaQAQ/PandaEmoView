@@ -38,7 +38,7 @@ public class EmojiAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        int count = EmoticonManager.getDisplayCount() - mStartIndex + 1;
+        int count = EmoticonManager.getInstance().getDisplayCount() - mStartIndex + 1;
         count = Math.min(count, PandaEmoView.EMOJI_PER_PAGE + 1);
         return count;
     }
@@ -58,12 +58,12 @@ public class EmojiAdapter extends BaseAdapter {
         RelativeLayout rl = new RelativeLayout(mContext);
         rl.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, (int) mPerHeight));
         ImageView emojiThumb = new ImageView(mContext);
-        int count = EmoticonManager.getDisplayCount();
+        int count = EmoticonManager.getInstance().getDisplayCount();
         int index = mStartIndex + position;
         if (position == PandaEmoView.EMOJI_PER_PAGE || index == count) {
             emojiThumb.setBackgroundResource(R.drawable.ic_emoji_del);
         } else if (index < count) {
-            emojiThumb.setBackground(EmoticonManager.getDisplayDrawable(mContext, index));
+            emojiThumb.setBackground(EmoticonManager.getInstance().getDisplayDrawable(mContext, index));
         }
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);

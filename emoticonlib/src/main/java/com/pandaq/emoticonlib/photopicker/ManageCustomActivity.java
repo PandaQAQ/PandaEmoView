@@ -15,8 +15,7 @@ import android.widget.Toast;
 
 import com.pandaq.emoticonlib.EmoticonManager;
 import com.pandaq.emoticonlib.R;
-import com.pandaq.emoticonlib.base.BaseActivity;
-import com.pandaq.emoticonlib.view.PandaEmoView;
+import com.pandaq.emoticonlib.base.SwipeBackActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,9 +25,10 @@ import java.util.ArrayList;
  * description ：显示已添加自定义表情类
  */
 
-public class ManageCustomActivity extends BaseActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
+@SuppressWarnings("ResultOfMethodCallIgnored")
+public class ManageCustomActivity extends SwipeBackActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
 
-    private static final String defaultStickerPath = EmoticonManager.getStickerPath() + "/selfSticker";
+    private static final String defaultStickerPath = EmoticonManager.getInstance().getStickerPath() + "/selfSticker";
     private LineGridView mGridView;
     private CheckPicAdapter mPicAdapter;
     private ArrayList<String> pics = new ArrayList<>();
@@ -95,7 +95,7 @@ public class ManageCustomActivity extends BaseActivity implements AdapterView.On
 
     private void showPics(ArrayList<String> value) {
         if (mPicAdapter == null) {
-            String num = "(" + value.size() + "/" + EmoticonManager.MAX_CUSTON_STICKER + ")";
+            String num = "(" + value.size() + "/" + EmoticonManager.getInstance().MAX_CUSTON_STICKER + ")";
             mToolbar.setTitle("已添加表情" + num);
             mPicAdapter = new CheckPicAdapter(this, value);
             mGridView.setAdapter(mPicAdapter);
@@ -127,7 +127,14 @@ public class ManageCustomActivity extends BaseActivity implements AdapterView.On
     }
 
     private void deleteSelected(ArrayList<String> selectedPaths) {
-        System.out.println(selectedPaths);
+        for (String path : selectedPaths) {
+            File file = new File(path);
+            file.delete();
+        }
+        mPicAdapter.notifyDelete();
+        mPicAdapter.showCheckBox(false);
+        mBottomLayout.setVisibility(View.GONE);
+        EmoticonManager.getInstance().getManagedView().reloadEmos(1);
     }
 
     @Override

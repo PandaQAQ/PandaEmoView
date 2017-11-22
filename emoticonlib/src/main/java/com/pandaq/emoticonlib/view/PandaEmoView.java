@@ -150,7 +150,7 @@ public class PandaEmoView extends RelativeLayout {
         mTabs.clear();
         mBottomTabLayout.removeAllViews();
         //添加默认表情 Tab
-        EmotionTab emojiTab = new EmotionTab(mContext, EmoticonManager.getDefaultIconRes());
+        EmotionTab emojiTab = new EmotionTab(mContext, EmoticonManager.getInstance().getDefaultIconRes());
         mBottomTabLayout.addView(emojiTab);
         mTabs.add(emojiTab);
         //添加所有的贴图tab
@@ -257,7 +257,7 @@ public class PandaEmoView extends RelativeLayout {
 
     private void setCurPageCommon(int position) {
         if (mTabPosi == 0) {
-            setCurPage(position, (int) Math.ceil(EmoticonManager.getDisplayCount() / (float) PandaEmoView.EMOJI_PER_PAGE));
+            setCurPage(position, (int) Math.ceil(EmoticonManager.getInstance().getDisplayCount() / (float) PandaEmoView.EMOJI_PER_PAGE));
         } else {
             StickerCategory category = StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1);
             setCurPage(position, (int) Math.ceil(category.getStickers().size() / (float) PandaEmoView.STICKER_PER_PAGE));
@@ -324,11 +324,14 @@ public class PandaEmoView extends RelativeLayout {
     /**
      * 新增了表情库后调用
      */
-    public void reloadEmos() {
+    public void reloadEmos(int position) {
         StickerManager.getInstance().loadStickerCategory();
         initTabs();
         initListener();
         invalidate();
+        if (0 <= position && position < mTabs.size()) {
+            selectTab(position);
+        }
     }
 
 }

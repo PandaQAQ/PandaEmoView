@@ -184,15 +184,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 in.close();
                 out.close();
-                mEmoticonView.reloadEmos();
+                mEmoticonView.reloadEmos(1);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mEmoticonView.reloadEmos();
     }
 }

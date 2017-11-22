@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Catalog Title="images">
-    <Emoticon File="emoji_00" ID="face_source_00" Tag="[233]"/>
-    <Emoticon File="emoji_01" ID="face_source_01" Tag="[666]"/>
-    <Emoticon File="emoji_02" ID="face_source_02" Tag="[Beauty]"/>
-    <Emoticon File="emoji_03" ID="face_source_03" Tag="[bye]"/>
-    <Emoticon File="emoji_04" ID="face_source_04" Tag="[chaos]"/>
-    <Emoticon File="emoji_05" ID="face_source_05" Tag="[Cool]"/>
-    <Emoticon File="emoji_06" ID="face_source_06" Tag="[crazy]"/>
-    <Emoticon File="emoji_07" ID="face_source_07" Tag="[cry]"/>
-    <Emoticon File="emoji_08" ID="face_source_08" Tag="[Dear]"/>
-    <Emoticon File="emoji_09" ID="face_source_09" Tag="[decline]"/>
-    <Emoticon File="emoji_10" ID="face_source_10" Tag="[Despise]"/>
-    <Emoticon File="emoji_11" ID="face_source_11" Tag="[Doubt]"/>
-    <Emoticon File="emoji_12" ID="face_source_12" Tag="[ghost]"/>
-    <Emoticon File="emoji_13" ID="face_source_13" Tag="[nice]"/>
-    <Emoticon File="emoji_14" ID="face_source_14" Tag="[Poor]"/>
-    <Emoticon File="emoji_15" ID="face_source_15" Tag="[Pull]"/>
-    <Emoticon File="emoji_16" ID="face_source_16" Tag="[scold]"/>
-    <Emoticon File="emoji_17" ID="face_source_17" Tag="[Secret]"/>
-    <Emoticon File="emoji_18" ID="face_source_18" Tag="[Shut_up]"/>
-    <Emoticon File="emoji_19" ID="face_source_19" Tag="[sleep]"/>
-    <Emoticon File="emoji_20" ID="face_source_20" Tag="[Strive]"/>
-    <Emoticon File="emoji_21" ID="face_source_21" Tag="[surprised]"/>
-    <Emoticon File="emoji_22" ID="face_source_22" Tag="[Sweat]"/>
-    <Emoticon File="emoji_23" ID="face_source_23" Tag="[tired]"/>
+    <Emoticon File="emoji_00" Tag="[233]"/>
+    <Emoticon File="emoji_01" Tag="[666]"/>
+    <Emoticon File="emoji_02" Tag="[Beauty]"/>
+    <Emoticon File="emoji_03" Tag="[bye]"/>
+    <Emoticon File="emoji_04" Tag="[chaos]"/>
+    <Emoticon File="emoji_05" Tag="[Cool]"/>
+    <Emoticon File="emoji_06" Tag="[crazy]"/>
+    <Emoticon File="emoji_07" Tag="[cry]"/>
+    <Emoticon File="emoji_08" Tag="[Dear]"/>
+    <Emoticon File="emoji_09" Tag="[decline]"/>
+    <Emoticon File="emoji_10" Tag="[Despise]"/>
+    <Emoticon File="emoji_11" Tag="[Doubt]"/>
+    <Emoticon File="emoji_12" Tag="[ghost]"/>
+    <Emoticon File="emoji_13" Tag="[nice]"/>
+    <Emoticon File="emoji_14" Tag="[Poor]"/>
+    <Emoticon File="emoji_15" Tag="[Pull]"/>
+    <Emoticon File="emoji_16" Tag="[scold]"/>
+    <Emoticon File="emoji_17" Tag="[Secret]"/>
+    <Emoticon File="emoji_18" Tag="[Shut_up]"/>
+    <Emoticon File="emoji_19" Tag="[sleep]"/>
+    <Emoticon File="emoji_20" Tag="[Strive]"/>
+    <Emoticon File="emoji_21" Tag="[surprised]"/>
+    <Emoticon File="emoji_22" Tag="[Sweat]"/>
+    <Emoticon File="emoji_23" Tag="[tired]"/>
 </Catalog>
 
 

@@ -37,25 +37,26 @@ import java.util.regex.Pattern;
  * description ：emoji 表情管理类
  */
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class EmoticonManager {
 
-    private static String EMOT_DIR = "face"; // assets 中默认表情文件夹
-    private static String SOUCRE_DIR = "source_default"; // assets 中默认图片资源文件夹名称，父目录为 EMOT_DIR
-    private static String STICKER_PATH = null; //默认路径在 /data/data/包名/files/sticker 下
+    private String EMOT_DIR = "face"; // assets 中默认表情文件夹
+    private String SOUCRE_DIR = "source_default"; // assets 中默认图片资源文件夹名称，父目录为 EMOT_DIR
+    private String STICKER_PATH = null; //默认路径在 /data/data/包名/files/sticker 下
     private int CACHE_MAX_SIZE = 1024;
-    private static Pattern mPattern;
-    private static int defaultIcon = R.drawable.ic_default;
-    @SuppressLint("StaticFieldLeak")
-    private static Context mContext;
+    private Pattern mPattern;
+    private int defaultIcon = R.drawable.ic_default;
+    private Context mContext;
     private String mConfigName = "emoji_default.xml";
-    private static final List<ImageEntry> mDefaultEntries = new ArrayList<>();
-    private static final Map<String, ImageEntry> mText2Entry = new HashMap<>();
-    private static LruCache<String, Bitmap> mDrawableCache;
-    private static LruCache<String, AnimatedGifDrawable> mGifDrawableCache;
+    private final List<ImageEntry> mDefaultEntries = new ArrayList<>();
+    private final Map<String, ImageEntry> mText2Entry = new HashMap<>();
+    private LruCache<String, Bitmap> mDrawableCache;
+    private LruCache<String, AnimatedGifDrawable> mGifDrawableCache;
     @SuppressLint("StaticFieldLeak")
     private static EmoticonManager mEmoticonManager;
-    private static IImageLoader mIImageLoader;
-    public static int MAX_CUSTON_STICKER = 30;
+    private IImageLoader mIImageLoader;
+    public int MAX_CUSTON_STICKER = 30;
+    private PandaEmoView sPandaEmoView;
 
     private void init() {
         if (STICKER_PATH == null) {
@@ -84,23 +85,27 @@ public class EmoticonManager {
         }
     }
 
-    public static Context getContext() {
+    public static EmoticonManager getInstance() {
+        return mEmoticonManager;
+    }
+
+    public Context getContext() {
         return mContext;
     }
 
-    public static int getDefaultIconRes() {
+    public int getDefaultIconRes() {
         return defaultIcon;
     }
 
-    public static String getStickerPath() {
+    public String getStickerPath() {
         return STICKER_PATH;
     }
 
-    public static IImageLoader getIImageLoader() {
+    public IImageLoader getIImageLoader() {
         return mIImageLoader;
     }
 
-    static Pattern getPattern() {
+    Pattern getPattern() {
         return mPattern;
     }
 
@@ -108,15 +113,15 @@ public class EmoticonManager {
         return Pattern.compile("\\[[^\\[]{1,10}\\]");
     }
 
-    public static int getDisplayCount() {
+    public int getDisplayCount() {
         return mDefaultEntries.size();
     }
 
-    static String getDisplayText(int index) {
+    String getDisplayText(int index) {
         return index >= 0 && index < mDefaultEntries.size() ? mDefaultEntries.get(index).text : null;
     }
 
-    public static Drawable getDisplayDrawable(Context context, int index) {
+    public Drawable getDisplayDrawable(Context context, int index) {
         String text = (index >= 0 && index < mDefaultEntries.size() ? mDefaultEntries.get(index).text : null);
         return text == null ? null : getDrawable(context, text);
     }
@@ -128,7 +133,7 @@ public class EmoticonManager {
      * @param text    表情对应的文本 [微笑] [再见]
      * @return 表情静态 drawable
      */
-    static Drawable getDrawable(Context context, String text) {
+    Drawable getDrawable(Context context, String text) {
         ImageEntry entry = mText2Entry.get(text);
         if (entry == null || TextUtils.isEmpty(entry.text)) {
             return null;
@@ -148,7 +153,7 @@ public class EmoticonManager {
      * @param assetPath 图片路径（不包含 .格式）
      * @return 静态图的 bitmap 对象
      */
-    private static Bitmap loadAssetBitmap(Context context, String assetPath) {
+    private Bitmap loadAssetBitmap(Context context, String assetPath) {
         InputStream is = null;
         try {
             Resources resources = context.getResources();
@@ -189,7 +194,7 @@ public class EmoticonManager {
      * @param bounds  控制动态图显示大小的 bounds
      * @return GifDrawable 对象
      */
-    static AnimatedGifDrawable getDrawableGif(Context context, String text, int bounds) {
+    AnimatedGifDrawable getDrawableGif(Context context, String text, int bounds) {
         ImageEntry entry = mText2Entry.get(text);
         if (entry == null || TextUtils.isEmpty(entry.text)) {
             return null;
@@ -371,29 +376,29 @@ public class EmoticonManager {
                 mEmoticonManager.CACHE_MAX_SIZE = this.CACHE_MAX_SIZE;
             }
             if (this.EMOT_DIR != null) {
-                EmoticonManager.EMOT_DIR = this.EMOT_DIR;
+                mEmoticonManager.EMOT_DIR = this.EMOT_DIR;
             }
             if (this.mContext != null) {
-                EmoticonManager.mContext = this.mContext;
+                mEmoticonManager.mContext = this.mContext;
             }
             if (this.mIImageLoader != null) {
-                EmoticonManager.mIImageLoader = this.mIImageLoader;
+                mEmoticonManager.mIImageLoader = this.mIImageLoader;
             }
             if (this.mConfigName != null) {
                 mEmoticonManager.mConfigName = this.mConfigName;
             }
             if (this.SOUCRE_DIR != null) {
-                EmoticonManager.SOUCRE_DIR = this.SOUCRE_DIR;
+                mEmoticonManager.SOUCRE_DIR = this.SOUCRE_DIR;
             }
 
             if (this.STICKER_PATH != null) {
-                EmoticonManager.STICKER_PATH = this.STICKER_PATH;
+                mEmoticonManager.STICKER_PATH = this.STICKER_PATH;
             }
             if (this.defaultIcon > 0) {
-                EmoticonManager.defaultIcon = this.defaultIcon;
+                mEmoticonManager.defaultIcon = this.defaultIcon;
             }
             if (this.MAX_CUSTON_STICKER != 0) {
-                EmoticonManager.MAX_CUSTON_STICKER = this.MAX_CUSTON_STICKER;
+                mEmoticonManager.MAX_CUSTON_STICKER = this.MAX_CUSTON_STICKER;
             }
             mEmoticonManager.init();
         }
@@ -404,7 +409,7 @@ public class EmoticonManager {
      *
      * @return false 不存在    true 存在
      */
-    private static boolean isFileExists(String filename) {
+    private boolean isFileExists(String filename) {
         AssetManager assetManager = mContext.getAssets();
         try {
             String[] names = assetManager.list(EMOT_DIR + File.separator + SOUCRE_DIR);
@@ -419,5 +424,13 @@ public class EmoticonManager {
             return false;
         }
         return false;
+    }
+
+    public void manage(PandaEmoView emoView) {
+        sPandaEmoView = emoView;
+    }
+
+    public PandaEmoView getManagedView() {
+        return sPandaEmoView;
     }
 }

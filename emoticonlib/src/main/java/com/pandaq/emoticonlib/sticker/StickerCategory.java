@@ -82,7 +82,7 @@ public class StickerCategory {
     }
 
     public String getCoverImgPath() {
-        for (File file : new File(EmoticonManager.getStickerPath()).listFiles()) {
+        for (File file : new File(EmoticonManager.getInstance().getStickerPath()).listFiles()) {
             if (file.isFile() && file.getName().startsWith(name)) {
                 return "file://" + file.getAbsolutePath();
             }
@@ -92,7 +92,7 @@ public class StickerCategory {
 
     public List<StickerItem> loadStickerData() {
         List<StickerItem> stickers = new ArrayList<>();
-        File stickerDir = new File(EmoticonManager.getStickerPath(), name);
+        File stickerDir = new File(EmoticonManager.getInstance().getStickerPath(), name);
         if (stickerDir.exists()) {
             File[] files = stickerDir.listFiles();
             for (File file : files) {
@@ -122,10 +122,5 @@ public class StickerCategory {
         }
         StickerCategory r = (StickerCategory) obj;
         return r.getName().equals(getName());
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
     }
 }

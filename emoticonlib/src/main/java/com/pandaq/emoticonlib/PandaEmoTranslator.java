@@ -86,7 +86,7 @@ public class PandaEmoTranslator {
         faceInfo.clear();
         int start, end;
         SpannableString spannableString = new SpannableString(value);
-        Matcher matcher = EmoticonManager.getPattern().matcher(value);
+        Matcher matcher = EmoticonManager.getInstance().getPattern().matcher(value);
         /*
          单个 TextView 中显示动态图太多刷新绘制比较消耗内存，
          因此做类似QQ动态表情的限制，
@@ -106,7 +106,7 @@ public class PandaEmoTranslator {
                     spannableString.setSpan(span, faceIndex[0], faceIndex[1], Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                 }
             } else {
-                AnimatedGifDrawable gifDrawable = EmoticonManager.getDrawableGif(context,
+                AnimatedGifDrawable gifDrawable = EmoticonManager.getInstance().getDrawableGif(context,
                         value.substring(faceIndex[0], faceIndex[1]),
                         EmoticonUtils.dp2px(context, FACE_BOUNDS));
                 if (gifDrawable != null) {
@@ -141,7 +141,7 @@ public class PandaEmoTranslator {
         if (count <= 0 || editable.length() < start + count)
             return;
         CharSequence s = editable.subSequence(start, start + count);
-        Matcher matcher = EmoticonManager.getPattern().matcher(s);
+        Matcher matcher = EmoticonManager.getInstance().getPattern().matcher(s);
         while (matcher.find()) {
             int from = start + matcher.start();
             int to = start + matcher.end();
@@ -162,7 +162,7 @@ public class PandaEmoTranslator {
      * @return 静态表情 Drawable对象
      */
     private Drawable getEmotDrawable(Context context, String text) {
-        Drawable drawable = EmoticonManager.getDrawable(context, text);
+        Drawable drawable = EmoticonManager.getInstance().getDrawable(context, text);
         int size = EmoticonUtils.dp2px(context, FACE_BOUNDS);
         if (drawable != null) {
             drawable.setBounds(10, 0, size, size);

@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 import com.pandaq.emoticonlib.EmoticonManager;
 import com.pandaq.emoticonlib.R;
-import com.pandaq.emoticonlib.base.BaseActivity;
+import com.pandaq.emoticonlib.base.SwipeBackActivity;
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
 
 import java.io.File;
@@ -38,7 +38,7 @@ import java.util.Map;
  * description ：
  */
 
-public class PickImageActivity extends BaseActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class PickImageActivity extends SwipeBackActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
 
     private LineGridView mGvPictures;
 
@@ -48,7 +48,7 @@ public class PickImageActivity extends BaseActivity implements AdapterView.OnIte
     private ArrayList<ImageFileBean> mImageBeen;
     private final int ACTION_TAKE_PHOTO = 20;
     private static final String takePhotoPath = "images/user_take.jpg";
-    private static final String defaultStickerPath = EmoticonManager.getStickerPath() + "selfSticker";
+    private static final String defaultStickerPath = EmoticonManager.getInstance().getStickerPath() + "selfSticker";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
