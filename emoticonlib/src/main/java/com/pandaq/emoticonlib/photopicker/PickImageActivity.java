@@ -20,12 +20,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pandaq.emoticonlib.EmoticonManager;
 import com.pandaq.emoticonlib.R;
 import com.pandaq.emoticonlib.base.SwipeBackActivity;
+import com.pandaq.emoticonlib.utils.Constant;
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
 
 import java.io.File;
@@ -48,7 +50,7 @@ public class PickImageActivity extends SwipeBackActivity implements AdapterView.
     private ArrayList<ImageFileBean> mImageBeen;
     private final int ACTION_TAKE_PHOTO = 20;
     private static final String takePhotoPath = "images/user_take.jpg";
-    private static final String defaultStickerPath = EmoticonManager.getInstance().getStickerPath() + "selfSticker";
+    private static final String defaultStickerPath = EmoticonManager.getInstance().getStickerPath() + "/selfSticker";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,7 +60,17 @@ public class PickImageActivity extends SwipeBackActivity implements AdapterView.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         TextView tvSelectAlbum = (TextView) findViewById(R.id.tv_bottom_left);
+        TextView tvBottomRight = (TextView) findViewById(R.id.tv_bottom_right);
+        TextView tvActionManage = (TextView) findViewById(R.id.tv_action_manage);
+        RelativeLayout rlBottomLayout = (RelativeLayout) findViewById(R.id.rl_bottom_layout);
         mGvPictures = (LineGridView) findViewById(R.id.gv_pictures);
+        View toolbarSplit = findViewById(R.id.toolbar_split);
+
+        tvBottomRight.setVisibility(View.GONE);
+        rlBottomLayout.setVisibility(View.VISIBLE);
+        tvActionManage.setVisibility(View.GONE);
+        toolbarSplit.setVisibility(View.GONE);
+        toolbar.setTitle("选择图片");
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,9 +204,11 @@ public class PickImageActivity extends SwipeBackActivity implements AdapterView.
         if (imagePath.equals("ic_action_camera")) {
             takePhoto();
         } else {
-            //// TODO: 2017/11/13 0013 保存路径 
-            String addStickerPath = PickerUtils.compressAndCopyToSd(imagePath, defaultStickerPath);
-            System.out.println("Added_stickerPath------>" + addStickerPath);
+            Intent intent = new Intent(this, StickerAddPreviewActivity.class);
+            intent.putExtra(Constant.SOURCE_PATH, imagePath);
+            intent.putExtra(Constant.TARGET_PATH, defaultStickerPath);
+            startActivityForResult(intent, 110);
+            this.finish();
         }
     }
 
@@ -229,10 +243,11 @@ public class PickImageActivity extends SwipeBackActivity implements AdapterView.
         switch (requestCode) {
             case ACTION_TAKE_PHOTO:
                 if (mPhotoFile.exists()) {
-                    // TODO: 2017/11/13 0013
-                    String addStickerPath = PickerUtils.compressAndCopyToSd(mPhotoFile.getAbsolutePath(),
-                            defaultStickerPath);
-                    System.out.println("Added_stickerPath------>" + addStickerPath);
+                    Intent intent = new Intent(this, StickerAddPreviewActivity.class);
+                    intent.putExtra(Constant.SOURCE_PATH, mPhotoFile.getAbsolutePath());
+                    intent.putExtra(Constant.TARGET_PATH, defaultStickerPath);
+                    startActivityForResult(intent, 110);
+                    this.finish();
                 }
                 break;
         }

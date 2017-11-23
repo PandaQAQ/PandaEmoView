@@ -18,12 +18,12 @@ import java.io.IOException;
  * description ：默认 PhotoPicker 的工具类
  */
 
-public class PickerUtils {
+class PickerUtils {
 
     /**
      * 文件存储默认名称为：文件顺序+_+MD5（传入图片路径）.jpeg
      */
-    public static String compressAndCopyToSd(String imagePath, String savePath) {
+    static String compressAndCopyToSd(String imagePath, String savePath) {
         FileOutputStream fos;
         try {
             File[] files = new File(savePath).listFiles();

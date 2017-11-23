@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.pandaq.emoticonlib.EmoticonManager;
 import com.pandaq.emoticonlib.R;
 import com.pandaq.emoticonlib.base.SwipeBackActivity;
+import com.pandaq.emoticonlib.utils.Constant;
+import com.pandaq.emoticonlib.view.PandaEmoView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -89,13 +91,13 @@ public class ManageCustomActivity extends SwipeBackActivity implements AdapterVi
                 }
             }
         }
-        pics.add(CheckPicAdapter.IC_ACTION_ADD);
+        pics.add(Constant.IC_ACTION_ADD);
         showPics(pics);
     }
 
     private void showPics(ArrayList<String> value) {
         if (mPicAdapter == null) {
-            String num = "(" + value.size() + "/" + EmoticonManager.getInstance().MAX_CUSTON_STICKER + ")";
+            String num = "(" + (value.size() - 1) + "/" + EmoticonManager.getInstance().MAX_CUSTON_STICKER + ")";
             mToolbar.setTitle("已添加表情" + num);
             mPicAdapter = new CheckPicAdapter(this, value);
             mGridView.setAdapter(mPicAdapter);
@@ -107,9 +109,9 @@ public class ManageCustomActivity extends SwipeBackActivity implements AdapterVi
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String path = mPicAdapter.getItem(position);
-        if (CheckPicAdapter.IC_ACTION_ADD.equals(path)) {
+        if (Constant.IC_ACTION_ADD.equals(path)) {
             Intent intent = new Intent(ManageCustomActivity.this, PickImageActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, 110);
         }
     }
 

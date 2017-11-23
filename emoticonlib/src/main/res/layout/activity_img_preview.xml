@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/toolbar_layout"
@@ -32,7 +34,7 @@
             android:gravity="center"
             android:paddingEnd="16dp"
             android:paddingStart="16dp"
-            android:text="@string/manage"
+            android:text="@string/use"
             android:textColor="@color/white"
             android:textSize="14sp"/>
 
@@ -47,47 +49,10 @@
             android:background="@color/grid_line"/>
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/rl_bottom_layout"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/colorPrimary"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/tv_bottom_left"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/toolbar_button_bg"
-            android:gravity="center_vertical"
-            android:padding="@dimen/margin_8dp"
-            android:text="@string/select_album"
-            android:textColor="@color/white"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:id="@+id/tv_bottom_right"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/toolbar_button_bg"
-            android:gravity="center_vertical"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:text="@string/delete"
-            android:textColor="@color/white"
-            android:textSize="14sp"/>
-
-    </RelativeLayout>
-
-    <com.pandaq.emoticonlib.photopicker.LineGridView
-        android:id="@+id/gv_pictures"
+    <ImageView
+        android:id="@+id/iv_pic"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/rl_bottom_layout"
-        android:layout_below="@id/toolbar_layout"
-        android:background="@color/white"
-        android:numColumns="3"/>
-</RelativeLayout>
+        android:layout_margin="32dp"
+        android:scaleType="fitCenter"/>
+</LinearLayout>

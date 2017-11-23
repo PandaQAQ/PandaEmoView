@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 
 import com.pandaq.emoticonlib.EmoticonManager;
 import com.pandaq.emoticonlib.R;
+import com.pandaq.emoticonlib.utils.Constant;
 
 import java.util.ArrayList;
 
@@ -23,8 +24,6 @@ public class CheckPicAdapter extends BaseAdapter {
     private ArrayList<String> mSelectedPaths;
     private Context mContext;
     private boolean showCheckBox;
-    public static final String IC_ACTION_CAMERA = "ic_action_camera";
-    public static final String IC_ACTION_ADD = "ic_action_add";
 
     CheckPicAdapter(Context context, ArrayList<String> picPaths) {
         mPicPaths = picPaths;
@@ -59,13 +58,15 @@ public class CheckPicAdapter extends BaseAdapter {
         }
         String path = mPicPaths.get(position);
         switch (path) {
-            case IC_ACTION_CAMERA:
+            case Constant.IC_ACTION_CAMERA:
                 holder.mIvPic.setImageResource(R.drawable.ic_action_camera);
                 holder.mCheckBox.setVisibility(View.GONE);
+                holder.mIvPic.setClickable(false);
                 break;
-            case IC_ACTION_ADD:
+            case Constant.IC_ACTION_ADD:
                 holder.mIvPic.setImageResource(R.drawable.ic_action_add);
                 holder.mCheckBox.setVisibility(View.GONE);
+                holder.mIvPic.setClickable(false);
                 break;
             default:
                 EmoticonManager.getInstance().getIImageLoader().displayImage("file://" + mPicPaths.get(position), holder.mIvPic);
@@ -90,7 +91,7 @@ public class CheckPicAdapter extends BaseAdapter {
                     });
                 } else {
                     holder.mCheckBox.setVisibility(View.GONE);
-                    holder.mIvPic.setOnClickListener(null);
+                    holder.mIvPic.setClickable(false);
                 }
                 break;
         }
@@ -118,11 +119,11 @@ public class CheckPicAdapter extends BaseAdapter {
         }
     }
 
-    public ArrayList<String> getSelectedPath() {
+    ArrayList<String> getSelectedPath() {
         return mSelectedPaths;
     }
 
-    public void notifyDelete() {
+    void notifyDelete() {
         mPicPaths.removeAll(mSelectedPaths);
         notifyDataSetChanged();
     }
