@@ -150,10 +150,10 @@ public class EmoticonManager {
      * 在一个 TextView 中显示多个动态表情时为了降低内存消耗会转成静态表情，项目中默认是5个以上就显示静态图
      *
      * @param context   上下文
-     * @param assetPath 图片路径（不包含 .格式）
+     * @param path 图片路径（不包含 .格式）
      * @return 静态图的 bitmap 对象
      */
-    private Bitmap loadAssetBitmap(Context context, String assetPath) {
+    private Bitmap loadAssetBitmap(Context context, String path) {
         InputStream is = null;
         try {
             Resources resources = context.getResources();
@@ -162,14 +162,14 @@ public class EmoticonManager {
             options.inScreenDensity = resources.getDisplayMetrics().densityDpi;
             options.inTargetDensity = resources.getDisplayMetrics().densityDpi;
             // 显示静态图时优先显示png，无对应png时加载gif第一张
-            if (isFileExists(assetPath + ".png")) {
-                is = context.getAssets().open(assetPath + ".png");
+            if (isFileExists(path + ".png")) {
+                is = context.getAssets().open(path + ".png");
             } else {
-                is = context.getAssets().open(assetPath + ".gif");
+                is = context.getAssets().open(path + ".gif");
             }
             Bitmap bitmap = BitmapFactory.decodeStream(is, new Rect(), options);
             if (bitmap != null) {
-                mDrawableCache.put(assetPath, bitmap);
+                mDrawableCache.put(path, bitmap);
             }
             return bitmap;
         } catch (IOException e) {
@@ -321,46 +321,46 @@ public class EmoticonManager {
         // 自定义贴图表情最大张数
         private int MAX_CUSTON_STICKER;
 
-        public Builder setDefaultIcon(int defaultIconRes) {
+        public Builder defaultTabIcon(int defaultIconRes) {
             this.defaultIcon = defaultIconRes;
             return this;
         }
 
-        public Builder setEMOT_DIR(String EMOT_DIR) {
+        public Builder emoticonDir(String EMOT_DIR) {
             this.EMOT_DIR = EMOT_DIR;
             return this;
         }
 
-        public Builder setCACHE_MAX_SIZE(int CACHE_MAX_SIZE) {
+        public Builder cacheSize(int CACHE_MAX_SIZE) {
             this.CACHE_MAX_SIZE = CACHE_MAX_SIZE;
             return this;
         }
 
-        public Builder setContext(Context context) {
+        public Builder with(Context context) {
             mContext = context;
             return this;
         }
 
-        public Builder setIImageLoader(IImageLoader IImageLoader) {
+        public Builder imageLoader(IImageLoader IImageLoader) {
             mIImageLoader = IImageLoader;
             return this;
         }
 
-        public Builder setConfigName(String configName) {
+        public Builder configFileName(String configName) {
             mConfigName = configName;
             return this;
         }
 
-        public Builder setSOUCRE_DIR(String sourceDir) {
+        public Builder sourceDir(String sourceDir) {
             this.SOUCRE_DIR = sourceDir;
             return this;
         }
 
-        public void setSTICKER_PATH(String STICKER_PATH) {
+        public void stickerPath(String STICKER_PATH) {
             this.STICKER_PATH = STICKER_PATH;
         }
 
-        public void setMAX_CUSTON_STICKER(int maxCustonSticker) {
+        public void maxCustomStickers(int maxCustonSticker) {
             this.MAX_CUSTON_STICKER = maxCustonSticker;
         }
 

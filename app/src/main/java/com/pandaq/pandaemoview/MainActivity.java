@@ -14,10 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pandaq.emoticonlib.KeyBoardManager;
+import com.pandaq.emoticonlib.StickerManager;
 import com.pandaq.emoticonlib.listeners.IEmoticonMenuClickListener;
 import com.pandaq.emoticonlib.listeners.IStickerSelectedListener;
 import com.pandaq.emoticonlib.photopicker.ManageCustomActivity;
-import com.pandaq.emoticonlib.photopicker.PickImageActivity;
 import com.pandaq.emoticonlib.view.PandaEmoEditText;
 import com.pandaq.emoticonlib.view.PandaEmoView;
 
@@ -77,9 +77,8 @@ public class MainActivity extends AppCompatActivity {
         });
         mEmoticonView.setEmoticonSelectedListener(new IStickerSelectedListener() {
             @Override
-            public void onStickerSelected(String categoryName, String stickerName, String stickerBitmapPath) {
-                Log.d("PandaQ===>", "categoryName---" + categoryName + "---stickerName---" + stickerName +
-                        "---stickerBitmapPath---" + stickerBitmapPath);
+            public void onStickerSelected(String title, String stickerBitmapPath) {
+                Log.d("PandaQ===>", "Title---" + title + "---stickerBitmapPath---" + stickerBitmapPath);
             }
 
             @Override
@@ -139,7 +138,13 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.load_sticker)
     public void onViewClicked() {
-        copyStickerToSdCard("sticker_test", getApplicationContext().getFilesDir() + "/sticker/selfSticker");
+        copyStickerToSdCard("sticker_test", getApplicationContext().getFilesDir()+"/sticker/selfSticker");
+        copyStickerAndUnZip("ziptest", getApplicationContext().getFilesDir().getAbsolutePath());
+    }
+
+    private void copyStickerAndUnZip(String assetDir, String dir) {
+        copyStickerToSdCard(assetDir, dir);
+        StickerManager.getInstance().addZipResource(dir+"/soAngry.zip");
     }
 
     private void copyStickerToSdCard(String assetDir, String dir) {

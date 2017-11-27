@@ -18,10 +18,10 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         new EmoticonManager.Builder()
-                .setContext(getApplicationContext())
-                .setConfigName("emoji.xml")
-                .setSOUCRE_DIR("images")
-                .setIImageLoader(new IImageLoader() {
+                .with(getApplicationContext())
+                .configFileName("emoji.xml")
+                .sourceDir("images")
+                .imageLoader(new IImageLoader() {
                     @Override
                     public void displayImage(String path, ImageView imageView) {
                         Picasso.with(getApplicationContext())

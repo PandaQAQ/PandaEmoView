@@ -1,7 +1,6 @@
 package com.pandaq.emoticonlib.sticker;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -11,7 +10,6 @@ import android.widget.RelativeLayout;
 
 import com.pandaq.emoticonlib.EmoticonManager;
 import com.pandaq.emoticonlib.R;
-import com.pandaq.emoticonlib.StickerManager;
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
 import com.pandaq.emoticonlib.view.PandaEmoView;
 
@@ -77,17 +75,22 @@ public class StickerAdapter extends BaseAdapter {
             viewHolder = (StickerViewHolder) convertView.getTag();
         }
         int index = startIndex + position;
-        if (index == 0) {
+        if (mCategory.isDefault() && index == 0) {
             viewHolder.mImageView.setImageResource(R.drawable.ic_action_add);
         } else {
+            StickerItem sticker;
+            if (mCategory.isDefault()) {
+                sticker = mCategory.getStickers().get(index - 1);
+            } else {
+                sticker = mCategory.getStickers().get(index);
+            }
             if (index >= mCategory.getStickers().size()) {
                 return convertView;
             }
-            StickerItem sticker = mCategory.getStickers().get(index - 1);
             if (sticker == null) {
                 return convertView;
             }
-            String stickerBitmapUri = StickerManager.getInstance().getStickerBitmapUri(sticker.getCategory(), sticker.getName());
+            String stickerBitmapUri = sticker.getSourcePath();
             if (stickerBitmapUri != null) {
                 EmoticonManager.getInstance().getIImageLoader().displayImage(stickerBitmapUri, viewHolder.mImageView);
             }

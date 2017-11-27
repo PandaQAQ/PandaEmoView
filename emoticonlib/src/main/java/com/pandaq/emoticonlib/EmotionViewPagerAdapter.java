@@ -136,12 +136,10 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
                     listener.onCustomAdd();
                 } else {
                     StickerItem sticker = stickers.get(index);
-                    StickerCategory real = StickerManager.getInstance().getCategory(sticker.getCategory());
-                    if (real == null) {
+                    if (sticker.getSourcePath() == null) {
                         return;
                     }
-                    listener.onStickerSelected(sticker.getCategory(), sticker.getName(),
-                            StickerManager.getInstance().getStickerBitmapPath(sticker.getCategory(), sticker.getName()));
+                    listener.onStickerSelected(sticker.getTitle(),sticker.getSourcePath());
                 }
             }
         }

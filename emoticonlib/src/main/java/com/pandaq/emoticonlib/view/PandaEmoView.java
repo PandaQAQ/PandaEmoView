@@ -161,7 +161,7 @@ public class PandaEmoView extends RelativeLayout {
             if (category.getName().equals(StickerManager.selfSticker)) {
                 tab = new EmotionTab(mContext, R.drawable.icon_self);
             } else {
-                tab = new EmotionTab(mContext, category.getCoverImgPath());
+                tab = new EmotionTab(mContext, category.getCoverPath());
             }
             mBottomTabLayout.addView(tab);
             mTabs.add(tab);
