@@ -67,12 +67,14 @@ public class MainActivity extends AppCompatActivity {
         mEmoticonView.setEmoticonExtClickListener(new IEmoticonMenuClickListener() {
             @Override
             public void onTabAddClick(View view) {
-                Toast.makeText(MainActivity.this, "点击添加按钮", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, AddEmoActivity.class);
+                startActivity(intent);
             }
 
             @Override
             public void onTabSettingClick(View view) {
-                Toast.makeText(MainActivity.this, "点击设置按钮", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                startActivity(intent);
             }
         });
         mEmoticonView.setEmoticonSelectedListener(new IStickerSelectedListener() {
@@ -138,13 +140,13 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.load_sticker)
     public void onViewClicked() {
-        copyStickerToSdCard("sticker_test", getApplicationContext().getFilesDir()+"/sticker/selfSticker");
+        copyStickerToSdCard("sticker_test", getApplicationContext().getFilesDir() + "/sticker/selfSticker");
         copyStickerAndUnZip("ziptest", getApplicationContext().getFilesDir().getAbsolutePath());
     }
 
     private void copyStickerAndUnZip(String assetDir, String dir) {
         copyStickerToSdCard(assetDir, dir);
-        StickerManager.getInstance().addZipResource(dir+"/soAngry.zip");
+        StickerManager.getInstance().addZipResource(dir + "/soAngry.zip");
     }
 
     private void copyStickerToSdCard(String assetDir, String dir) {
