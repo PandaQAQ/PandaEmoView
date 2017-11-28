@@ -99,7 +99,7 @@ public class StickerManager {
         return stickerCategories;
     }
 
-    synchronized StickerCategory getCategory(String name) {
+    public synchronized StickerCategory getCategory(String name) {
         return stickerCategoryMap.get(name);
     }
 

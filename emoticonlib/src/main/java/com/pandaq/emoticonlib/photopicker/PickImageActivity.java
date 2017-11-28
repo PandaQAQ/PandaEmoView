@@ -226,7 +226,7 @@ public class PickImageActivity extends SwipeBackActivity implements AdapterView.
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                Uri contentUri = FileProvider.getUriForFile(this, "com.pandaq.emoticonlib.fileprovider", mPhotoFile);
+                Uri contentUri = FileProvider.getUriForFile(this, getApplicationInfo().packageName + ".fileprovider", mPhotoFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
             } else {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mPhotoFile));

@@ -155,6 +155,14 @@ public class KeyBoardManager {
      * @param emotionView 表情布局
      */
     public KeyBoardManager setEmotionView(PandaEmoView emotionView) {
+        if (emotionView.getAttachEditText() == null) {
+            try {
+                throw new Exception("Please call PandaEmoView.attachEditText(PandaEmoEditText messageEditText) first");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
         mEmotionView = emotionView;
         EmoticonManager.getInstance().manage(mEmotionView);
         bindToEditText(mEmotionView.getAttachEditText());

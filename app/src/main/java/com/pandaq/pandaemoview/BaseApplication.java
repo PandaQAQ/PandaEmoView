@@ -21,6 +21,9 @@ public class BaseApplication extends Application {
                 .with(getApplicationContext())
                 .configFileName("emoji.xml")
                 .sourceDir("images")
+//                .showAddTab(false)
+//                .showStickers(false)
+//                .showSetTab(false)
                 .imageLoader(new IImageLoader() {
                     @Override
                     public void displayImage(String path, ImageView imageView) {

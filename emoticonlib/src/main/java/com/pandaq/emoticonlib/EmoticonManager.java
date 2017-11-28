@@ -16,6 +16,7 @@ import android.util.Xml;
 
 import com.pandaq.emoticonlib.gif.AnimatedGifDrawable;
 import com.pandaq.emoticonlib.listeners.IImageLoader;
+import com.pandaq.emoticonlib.utils.EmoticonUtils;
 import com.pandaq.emoticonlib.view.PandaEmoView;
 
 import org.xml.sax.Attributes;
@@ -44,6 +45,7 @@ public class EmoticonManager {
     private String SOUCRE_DIR = "source_default"; // assets 中默认图片资源文件夹名称，父目录为 EMOT_DIR
     private String STICKER_PATH = null; //默认路径在 /data/data/包名/files/sticker 下
     private int CACHE_MAX_SIZE = 1024;
+    private int DEFAULT_EMO_BOUNDS_DP = 30; //默认的 emoji 表情图文混排大小
     private Pattern mPattern;
     private int defaultIcon = R.drawable.ic_default;
     private Context mContext;
@@ -57,6 +59,9 @@ public class EmoticonManager {
     private IImageLoader mIImageLoader;
     public int MAX_CUSTON_STICKER = 30;
     private PandaEmoView sPandaEmoView;
+    private boolean showAddButton = true;
+    private boolean showSetButton = true;
+    private boolean showStickers = true;
 
     private void init() {
         if (STICKER_PATH == null) {
@@ -83,6 +88,10 @@ public class EmoticonManager {
         if (!mWorkingPath.exists()) {
             mWorkingPath.mkdirs();
         }
+    }
+
+    public int getDEFAULT_EMO_BOUNDS_DP() {
+        return DEFAULT_EMO_BOUNDS_DP;
     }
 
     public static EmoticonManager getInstance() {
@@ -117,13 +126,25 @@ public class EmoticonManager {
         return mDefaultEntries.size();
     }
 
-    String getDisplayText(int index) {
+    public String getDisplayText(int index) {
         return index >= 0 && index < mDefaultEntries.size() ? mDefaultEntries.get(index).text : null;
     }
 
     public Drawable getDisplayDrawable(Context context, int index) {
         String text = (index >= 0 && index < mDefaultEntries.size() ? mDefaultEntries.get(index).text : null);
         return text == null ? null : getDrawable(context, text);
+    }
+
+    public boolean isShowAddButton() {
+        return showAddButton;
+    }
+
+    public boolean isShowSetButton() {
+        return showSetButton;
+    }
+
+    public boolean isShowStickers() {
+        return showStickers;
     }
 
     /**
@@ -149,8 +170,8 @@ public class EmoticonManager {
      * 加载asset目录下对应的静态图，无静态图时加载动态图第一帧
      * 在一个 TextView 中显示多个动态表情时为了降低内存消耗会转成静态表情，项目中默认是5个以上就显示静态图
      *
-     * @param context   上下文
-     * @param path 图片路径（不包含 .格式）
+     * @param context 上下文
+     * @param path    图片路径（不包含 .格式）
      * @return 静态图的 bitmap 对象
      */
     private Bitmap loadAssetBitmap(Context context, String path) {
@@ -223,6 +244,27 @@ public class EmoticonManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * 获取 GifDrawable 对象，优先从缓存中读取，没有才创建新对象
+     *
+     * @param context 上下文
+     * @param text    表情对应的文本 [微笑] [再见]
+     * @return GifDrawable 对象
+     */
+    AnimatedGifDrawable getDrawableGif(Context context, String text) {
+        int size = EmoticonUtils.dp2px(context, 30);
+        ImageEntry entry = mText2Entry.get(text);
+        if (entry == null || TextUtils.isEmpty(entry.text)) {
+            return null;
+        }
+        AnimatedGifDrawable cache = mGifDrawableCache.get(entry.path);
+        if (cache == null) {
+            cache = loadAssetGif(context, entry.path, size);
+            mGifDrawableCache.put(entry.path, cache);
+        }
+        return cache;
     }
 
     /**
@@ -310,6 +352,8 @@ public class EmoticonManager {
         private String mConfigName;
         // 加载表情时内存缓存的最大值
         private int CACHE_MAX_SIZE;
+        // 默认的表情 bounds 大小 单位为 dp
+        private int DEFAULT_EMO_BOUNDS_DP;
         // 上下文
         private Context mContext;
         // 贴图表情加载
@@ -320,6 +364,12 @@ public class EmoticonManager {
         private int defaultIcon;
         // 自定义贴图表情最大张数
         private int MAX_CUSTON_STICKER;
+        // 是否显示 addTab
+        private boolean showAddButton = true;
+        // 是否显示 setTab
+        private boolean showSetButton = true;
+        // 是否显示 stickers Tabs
+        private boolean showStickers = true;
 
         public Builder defaultTabIcon(int defaultIconRes) {
             this.defaultIcon = defaultIconRes;
@@ -333,6 +383,11 @@ public class EmoticonManager {
 
         public Builder cacheSize(int CACHE_MAX_SIZE) {
             this.CACHE_MAX_SIZE = CACHE_MAX_SIZE;
+            return this;
+        }
+
+        public Builder defaultBounds(int boundsDp) {
+            this.DEFAULT_EMO_BOUNDS_DP = boundsDp;
             return this;
         }
 
@@ -356,12 +411,29 @@ public class EmoticonManager {
             return this;
         }
 
-        public void stickerPath(String STICKER_PATH) {
-            this.STICKER_PATH = STICKER_PATH;
+        public Builder showAddTab(boolean showAddButton) {
+            this.showAddButton = showAddButton;
+            return this;
         }
 
-        public void maxCustomStickers(int maxCustonSticker) {
+        public Builder showStickers(boolean showStickers) {
+            this.showStickers = showStickers;
+            return this;
+        }
+
+        public Builder showSetTab(boolean showSetButton) {
+            this.showSetButton = showSetButton;
+            return this;
+        }
+
+        public Builder stickerPath(String STICKER_PATH) {
+            this.STICKER_PATH = STICKER_PATH;
+            return this;
+        }
+
+        public Builder maxCustomStickers(int maxCustonSticker) {
             this.MAX_CUSTON_STICKER = maxCustonSticker;
+            return this;
         }
 
         public void build() {
@@ -375,6 +447,11 @@ public class EmoticonManager {
             if (this.CACHE_MAX_SIZE != 0) {
                 mEmoticonManager.CACHE_MAX_SIZE = this.CACHE_MAX_SIZE;
             }
+
+            if (this.DEFAULT_EMO_BOUNDS_DP != 0) {
+                mEmoticonManager.DEFAULT_EMO_BOUNDS_DP = this.DEFAULT_EMO_BOUNDS_DP;
+            }
+
             if (this.EMOT_DIR != null) {
                 mEmoticonManager.EMOT_DIR = this.EMOT_DIR;
             }
@@ -400,6 +477,13 @@ public class EmoticonManager {
             if (this.MAX_CUSTON_STICKER != 0) {
                 mEmoticonManager.MAX_CUSTON_STICKER = this.MAX_CUSTON_STICKER;
             }
+
+            mEmoticonManager.showAddButton = this.showAddButton;
+
+            mEmoticonManager.showStickers = this.showStickers;
+
+            mEmoticonManager.showSetButton = this.showSetButton;
+
             mEmoticonManager.init();
         }
     }

@@ -1,4 +1,4 @@
-package com.pandaq.emoticonlib;
+package com.pandaq.emoticonlib.view;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -15,6 +15,9 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
 
+import com.pandaq.emoticonlib.EmoticonManager;
+import com.pandaq.emoticonlib.PandaEmoTranslator;
+import com.pandaq.emoticonlib.StickerManager;
 import com.pandaq.emoticonlib.gif.EmojiAdapter;
 import com.pandaq.emoticonlib.listeners.IStickerSelectedListener;
 import com.pandaq.emoticonlib.sticker.StickerAdapter;

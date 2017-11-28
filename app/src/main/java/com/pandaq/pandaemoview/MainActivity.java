@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mEmoticonView.attachEditText(mEtInput);
-        mEmoticonView.setEmotionAddVisiable(true);
         mEmoticonView.setEmoticonExtClickListener(new IEmoticonMenuClickListener() {
             @Override
             public void onTabAddClick(View view) {
