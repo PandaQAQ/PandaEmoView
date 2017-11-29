@@ -14,9 +14,10 @@ import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
 
-import com.pandaq.emoticonlib.gif.AnimatedGifDrawable;
-import com.pandaq.emoticonlib.gif.AnimatedImageSpan;
-import com.pandaq.emoticonlib.gif.GifRunnable;
+import com.pandaq.emoticonlib.emoticons.EmoticonManager;
+import com.pandaq.emoticonlib.emoticons.gif.AnimatedGifDrawable;
+import com.pandaq.emoticonlib.emoticons.gif.AnimatedImageSpan;
+import com.pandaq.emoticonlib.emoticons.gif.GifRunnable;
 import com.pandaq.emoticonlib.utils.ClickTextSpan;
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
 
@@ -33,7 +34,7 @@ public class PandaEmoTranslator {
 
     private static PandaEmoTranslator sEmoTranslator;
     private int MAX_PER_VIEW = 5;
-    private int FACE_BOUNDS = EmoticonManager.getInstance().getDEFAULT_EMO_BOUNDS_DP();// 单位 DP
+    private int FACE_BOUNDS = PandaEmoManager.getInstance().getDefaultEmoBoundsDp();// 单位 DP
     private GifRunnable mGifRunnable;
     private Handler mHandler = new Handler();
     /* faceInfo 用于存放表情的起始位置和对应文字
@@ -93,7 +94,7 @@ public class PandaEmoTranslator {
         faceInfo.clear();
         int start, end;
         SpannableString spannableString = new SpannableString(value);
-        Matcher matcher = EmoticonManager.getInstance().getPattern().matcher(value);
+        Matcher matcher = PandaEmoManager.getInstance().getPattern().matcher(value);
         /*
          单个 TextView 中显示动态图太多刷新绘制比较消耗内存，
          因此做类似QQ动态表情的限制，
@@ -161,7 +162,7 @@ public class PandaEmoTranslator {
         int start;
         int end;
         SpannableString mSpannableString = new SpannableString(value);
-        Matcher matcher = EmoticonManager.getInstance().getPattern().matcher(value);
+        Matcher matcher = PandaEmoManager.getInstance().getPattern().matcher(value);
         while (matcher.find()) {
             start = matcher.start();
             end = matcher.end();
@@ -218,7 +219,7 @@ public class PandaEmoTranslator {
         int start;
         int end;
         SpannableString mSpannableString = new SpannableString(value);
-        Matcher matcher = EmoticonManager.getInstance().getPattern().matcher(value);
+        Matcher matcher = PandaEmoManager.getInstance().getPattern().matcher(value);
         while (matcher.find()) {
             start = matcher.start();
             end = matcher.end();
@@ -241,7 +242,7 @@ public class PandaEmoTranslator {
         if (count <= 0 || editable.length() < start + count)
             return;
         CharSequence s = editable.subSequence(start, start + count);
-        Matcher matcher = EmoticonManager.getInstance().getPattern().matcher(s);
+        Matcher matcher = PandaEmoManager.getInstance().getPattern().matcher(s);
         while (matcher.find()) {
             int from = start + matcher.start();
             int to = start + matcher.end();

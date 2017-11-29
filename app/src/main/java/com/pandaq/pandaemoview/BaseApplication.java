@@ -3,7 +3,7 @@ package com.pandaq.pandaemoview;
 import android.app.Application;
 import android.widget.ImageView;
 
-import com.pandaq.emoticonlib.EmoticonManager;
+import com.pandaq.emoticonlib.PandaEmoManager;
 import com.pandaq.emoticonlib.listeners.IImageLoader;
 import com.squareup.picasso.Picasso;
 
@@ -17,7 +17,7 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        new EmoticonManager.Builder()
+        new PandaEmoManager.Builder()
                 .with(getApplicationContext())
                 .configFileName("emoji.xml")
                 .sourceDir("images")

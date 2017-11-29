@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pandaq.emoticonlib.KeyBoardManager;
-import com.pandaq.emoticonlib.StickerManager;
+import com.pandaq.emoticonlib.sticker.StickerManager;
 import com.pandaq.emoticonlib.listeners.IEmoticonMenuClickListener;
 import com.pandaq.emoticonlib.listeners.IStickerSelectedListener;
 import com.pandaq.emoticonlib.photopicker.ManageCustomActivity;
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mEmoticonView.attachEditText(mEtInput);
-        mEmoticonView.setEmoticonExtClickListener(new IEmoticonMenuClickListener() {
+        mEmoticonView.setEmoticonMenuClickListener(new IEmoticonMenuClickListener() {
             @Override
             public void onTabAddClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddEmoActivity.class);

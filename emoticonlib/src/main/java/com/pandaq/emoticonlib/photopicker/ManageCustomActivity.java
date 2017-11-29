@@ -13,11 +13,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.pandaq.emoticonlib.EmoticonManager;
+import com.pandaq.emoticonlib.PandaEmoManager;
 import com.pandaq.emoticonlib.R;
 import com.pandaq.emoticonlib.base.SwipeBackActivity;
 import com.pandaq.emoticonlib.utils.Constant;
-import com.pandaq.emoticonlib.view.PandaEmoView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ import java.util.ArrayList;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class ManageCustomActivity extends SwipeBackActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
 
-    private static final String defaultStickerPath = EmoticonManager.getInstance().getStickerPath() + "/selfSticker";
+    private static final String defaultStickerPath = PandaEmoManager.getInstance().getStickerPath() + "/selfSticker";
     private LineGridView mGridView;
     private CheckPicAdapter mPicAdapter;
     private ArrayList<String> pics = new ArrayList<>();
@@ -97,7 +96,7 @@ public class ManageCustomActivity extends SwipeBackActivity implements AdapterVi
 
     private void showPics(ArrayList<String> value) {
         if (mPicAdapter == null) {
-            String num = "(" + (value.size() - 1) + "/" + EmoticonManager.getInstance().MAX_CUSTON_STICKER + ")";
+            String num = "(" + (value.size() - 1) + "/" + PandaEmoManager.getInstance().getMaxCustomSticker() + ")";
             mToolbar.setTitle("已添加表情" + num);
             mPicAdapter = new CheckPicAdapter(this, value);
             mGridView.setAdapter(mPicAdapter);
@@ -136,7 +135,7 @@ public class ManageCustomActivity extends SwipeBackActivity implements AdapterVi
         mPicAdapter.notifyDelete();
         mPicAdapter.showCheckBox(false);
         mBottomLayout.setVisibility(View.GONE);
-        EmoticonManager.getInstance().getManagedView().reloadEmos(1);
+        PandaEmoManager.getInstance().getManagedView().reloadEmos(1);
     }
 
     @Override

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.pandaq.emoticonlib.EmoticonManager;
+import com.pandaq.emoticonlib.PandaEmoManager;
 import com.pandaq.emoticonlib.R;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class AlbumAdapter extends RecyclerView.Adapter {
         ViewHolder mHolder = (ViewHolder) holder;
         mHolder.mTvFileCount.setText("" + mImageBeen.get(position).getImages().size() + "张");
         mHolder.mTvFileName.setText(mImageBeen.get(position).getFileName());
-        EmoticonManager.getInstance().getIImageLoader().displayImage("file://" + mImageBeen.get(position).getTopImage(), mHolder.mIvCover);
+        PandaEmoManager.getInstance().getIImageLoader().displayImage("file://" + mImageBeen.get(position).getTopImage(), mHolder.mIvCover);
         mHolder.mCardItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

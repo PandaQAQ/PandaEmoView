@@ -24,7 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.pandaq.emoticonlib.EmoticonManager;
+import com.pandaq.emoticonlib.PandaEmoManager;
 import com.pandaq.emoticonlib.R;
 import com.pandaq.emoticonlib.base.SwipeBackActivity;
 import com.pandaq.emoticonlib.utils.Constant;
@@ -50,7 +50,7 @@ public class PickImageActivity extends SwipeBackActivity implements AdapterView.
     private ArrayList<ImageFileBean> mImageBeen;
     private final int ACTION_TAKE_PHOTO = 20;
     private static final String takePhotoPath = "images/user_take.jpg";
-    private static final String defaultStickerPath = EmoticonManager.getInstance().getStickerPath() + "/selfSticker";
+    private static final String defaultStickerPath = PandaEmoManager.getInstance().getStickerPath() + "/selfSticker";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

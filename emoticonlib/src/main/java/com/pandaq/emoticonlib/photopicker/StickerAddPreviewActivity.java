@@ -9,10 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.pandaq.emoticonlib.EmoticonManager;
+import com.pandaq.emoticonlib.PandaEmoManager;
 import com.pandaq.emoticonlib.R;
 import com.pandaq.emoticonlib.base.SwipeBackActivity;
-import com.pandaq.emoticonlib.utils.Constant;
 
 import static com.pandaq.emoticonlib.utils.Constant.SOURCE_PATH;
 import static com.pandaq.emoticonlib.utils.Constant.TARGET_PATH;
@@ -48,7 +47,7 @@ public class StickerAddPreviewActivity extends SwipeBackActivity implements View
     private void initData() {
         sourcePath = getIntent().getStringExtra(SOURCE_PATH);
         targetPath = getIntent().getStringExtra(TARGET_PATH);
-        EmoticonManager.getInstance().getIImageLoader().displayImage("file://" + sourcePath, mImageView);
+        PandaEmoManager.getInstance().getIImageLoader().displayImage("file://" + sourcePath, mImageView);
     }
 
     @Override
@@ -57,7 +56,7 @@ public class StickerAddPreviewActivity extends SwipeBackActivity implements View
         Intent intent = new Intent(this, ManageCustomActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-        EmoticonManager.getInstance().getManagedView().reloadEmos(1);
+        PandaEmoManager.getInstance().getManagedView().reloadEmos(1);
         Toast.makeText(this, "已添加", Toast.LENGTH_SHORT).show();
         this.finish();
     }

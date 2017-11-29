@@ -1,12 +1,11 @@
 package com.pandaq.emoticonlib.photopicker;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.widget.Toast;
 
-import com.pandaq.emoticonlib.EmoticonManager;
+import com.pandaq.emoticonlib.PandaEmoManager;
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
 
 import java.io.File;
@@ -28,15 +27,15 @@ class PickerUtils {
         try {
             File[] files = new File(savePath).listFiles();
             if (files == null) return null;
-            if (files.length == EmoticonManager.getInstance().MAX_CUSTON_STICKER) {
-                Toast.makeText(EmoticonManager.getInstance().getContext(), "表情已达上限，无法添加", Toast.LENGTH_SHORT).show();
+            if (files.length == PandaEmoManager.getInstance().getMaxCustomSticker()) {
+                Toast.makeText(PandaEmoManager.getInstance().getContext(), "表情已达上限，无法添加", Toast.LENGTH_SHORT).show();
                 return null;
             }
             String filename = files.length + "_" + EmoticonUtils.getMD5Result(imagePath);
             for (File file : files) {
                 String[] strs = file.getName().split("_");
                 if (strs.length >= 1 && strs[1].equals(EmoticonUtils.getMD5Result(imagePath))) {
-                    Toast.makeText(EmoticonManager.getInstance().getContext(), "已经添加过此表情", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PandaEmoManager.getInstance().getContext(), "已经添加过此表情", Toast.LENGTH_SHORT).show();
                     return null;
                 }
             }

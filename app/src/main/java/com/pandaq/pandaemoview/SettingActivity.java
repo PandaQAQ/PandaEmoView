@@ -7,7 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.pandaq.emoticonlib.StickerManager;
+import com.pandaq.emoticonlib.sticker.StickerManager;
 import com.pandaq.emoticonlib.base.SwipeBackActivity;
 import com.pandaq.emoticonlib.sticker.StickerCategory;
 

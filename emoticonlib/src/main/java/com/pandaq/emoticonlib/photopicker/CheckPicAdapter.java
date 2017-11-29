@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
-import com.pandaq.emoticonlib.EmoticonManager;
+import com.pandaq.emoticonlib.PandaEmoManager;
 import com.pandaq.emoticonlib.R;
 import com.pandaq.emoticonlib.utils.Constant;
 
@@ -69,7 +69,7 @@ public class CheckPicAdapter extends BaseAdapter {
                 holder.mIvPic.setClickable(false);
                 break;
             default:
-                EmoticonManager.getInstance().getIImageLoader().displayImage("file://" + mPicPaths.get(position), holder.mIvPic);
+                PandaEmoManager.getInstance().getIImageLoader().displayImage("file://" + mPicPaths.get(position), holder.mIvPic);
                 if (showCheckBox) {
                     holder.mCheckBox.setVisibility(View.VISIBLE);
                     holder.mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

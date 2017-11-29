@@ -15,15 +15,15 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
 
-import com.pandaq.emoticonlib.EmoticonManager;
+import com.pandaq.emoticonlib.PandaEmoManager;
 import com.pandaq.emoticonlib.PandaEmoTranslator;
-import com.pandaq.emoticonlib.StickerManager;
-import com.pandaq.emoticonlib.gif.EmojiAdapter;
+import com.pandaq.emoticonlib.emoticons.EmoticonManager;
+import com.pandaq.emoticonlib.emoticons.gif.EmojiAdapter;
 import com.pandaq.emoticonlib.listeners.IStickerSelectedListener;
 import com.pandaq.emoticonlib.sticker.StickerAdapter;
 import com.pandaq.emoticonlib.sticker.StickerCategory;
 import com.pandaq.emoticonlib.sticker.StickerItem;
-import com.pandaq.emoticonlib.view.PandaEmoView;
+import com.pandaq.emoticonlib.sticker.StickerManager;
 
 import java.util.List;
 
@@ -55,9 +55,9 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
         mEmotionLayoutHeight = emotionLayoutHeight;
         mTabPosi = tabPosi;
         if (mTabPosi == 0) { // 默认的 emoji 或者 gif emoji
-            mPageCount = (int) Math.ceil(EmoticonManager.getInstance().getDisplayCount() / (float) PandaEmoView.EMOJI_PER_PAGE);
+            mPageCount = (int) Math.ceil(EmoticonManager.getInstance().getDisplayCount() / (float) PandaEmoManager.getInstance().getEmojiPerPage());
         } else { //贴图表情
-            mPageCount = (int) Math.ceil(StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1).getStickers().size() / (float) PandaEmoView.STICKER_PER_PAGE);
+            mPageCount = (int) Math.ceil(StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1).getStickers().size() / (float) PandaEmoManager.getInstance().getStickerPerPage());
         }
         this.listener = listener;
     }
@@ -87,13 +87,13 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
         gridView.setTag(position);//标记自己是第几页
         if (mTabPosi == 0) {
             gridView.setOnItemClickListener(emojiListener);
-            gridView.setAdapter(new EmojiAdapter(context, mEmotionLayoutWidth, mEmotionLayoutHeight, position * PandaEmoView.EMOJI_PER_PAGE));
-            gridView.setNumColumns(PandaEmoView.EMOJI_COLUMN);
+            gridView.setAdapter(new EmojiAdapter(context, mEmotionLayoutWidth, mEmotionLayoutHeight, position * PandaEmoManager.getInstance().getEmojiPerPage()));
+            gridView.setNumColumns(PandaEmoManager.getInstance().getEmojiColumn());
         } else {
             StickerCategory category = StickerManager.getInstance().getCategory(StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1).getName());
             gridView.setOnItemClickListener(stickerListener);
-            gridView.setAdapter(new StickerAdapter(context, category, mEmotionLayoutWidth, mEmotionLayoutHeight, position * PandaEmoView.STICKER_PER_PAGE));
-            gridView.setNumColumns(PandaEmoView.STICKER_COLUMN);
+            gridView.setAdapter(new StickerAdapter(context, category, mEmotionLayoutWidth, mEmotionLayoutHeight, position * PandaEmoManager.getInstance().getStickerPerPage()));
+            gridView.setNumColumns(PandaEmoManager.getInstance().getStickerColumn());
         }
 
         rl.addView(gridView);
@@ -111,9 +111,9 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            int index = position + (Integer) parent.getTag() * PandaEmoView.EMOJI_PER_PAGE;
+            int index = position + (Integer) parent.getTag() * PandaEmoManager.getInstance().getEmojiPerPage();
             int count = EmoticonManager.getInstance().getDisplayCount();
-            if (position == PandaEmoView.EMOJI_PER_PAGE || index >= count) {
+            if (position == PandaEmoManager.getInstance().getEmojiPerPage() || index >= count) {
                 onEmojiSelected("/DEL");
             } else {
                 String text = EmoticonManager.getInstance().getDisplayText((int) id);
@@ -129,7 +129,7 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
 
             StickerCategory category = StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1);
             List<StickerItem> stickers = category.getStickers();
-            int index = position + (Integer) parent.getTag() * PandaEmoView.STICKER_PER_PAGE - 1;
+            int index = position + (Integer) parent.getTag() * PandaEmoManager.getInstance().getStickerPerPage() - 1;
             if (index >= stickers.size()) {
                 Log.i("CSDN_LQR", "index " + index + " larger than size " + stickers.size());
                 return;
@@ -142,7 +142,7 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
                     if (sticker.getSourcePath() == null) {
                         return;
                     }
-                    listener.onStickerSelected(sticker.getTitle(),sticker.getSourcePath());
+                    listener.onStickerSelected(sticker.getTitle(), sticker.getSourcePath());
                 }
             }
         }
@@ -164,5 +164,9 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
             PandaEmoTranslator.getInstance().replaceEmoticons(mContext, editable, 0, editable.toString().length());
             mMessageEditText.setSelection(editEnd);
         }
+    }
+
+    void setTabPosi(int tabPosi) {
+        mTabPosi = tabPosi;
     }
 }

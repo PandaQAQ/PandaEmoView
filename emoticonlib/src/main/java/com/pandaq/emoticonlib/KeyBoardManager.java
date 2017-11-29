@@ -52,6 +52,10 @@ public class KeyBoardManager {
      * 绑定编辑框
      */
     private KeyBoardManager bindToEditText(final PandaEmoEditText editText) {
+        if (editText == null) {
+            throwAttachException();
+            return this;
+        }
         mEditText = editText;
         mEditText.requestFocus();
         mEditText.setOnTouchListener(new View.OnTouchListener() {
@@ -155,16 +159,8 @@ public class KeyBoardManager {
      * @param emotionView 表情布局
      */
     public KeyBoardManager setEmotionView(PandaEmoView emotionView) {
-        if (emotionView.getAttachEditText() == null) {
-            try {
-                throw new Exception("Please call PandaEmoView.attachEditText(PandaEmoEditText messageEditText) first");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
         mEmotionView = emotionView;
-        EmoticonManager.getInstance().manage(mEmotionView);
+        PandaEmoManager.getInstance().manage(mEmotionView);
         bindToEditText(mEmotionView.getAttachEditText());
         return this;
     }
@@ -184,6 +180,10 @@ public class KeyBoardManager {
      * 释放被锁定的内容高度
      */
     private void unlockContentHeightDelayed() {
+        if (mEditText == null) {
+            throwAttachException();
+            return;
+        }
         mEditText.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -227,6 +227,10 @@ public class KeyBoardManager {
      * 编辑框获取焦点，并显示软件盘
      */
     private void showSoftInput() {
+        if (mEditText == null) {
+            throwAttachException();
+            return;
+        }
         mEditText.requestFocus();
         mInputManager.showSoftInput(mEditText, 0);
     }
@@ -235,6 +239,10 @@ public class KeyBoardManager {
      * 隐藏软件盘
      */
     private void hideSoftInput() {
+        if (mEditText == null) {
+            throwAttachException();
+            return;
+        }
         mInputManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
     }
 
@@ -341,5 +349,13 @@ public class KeyBoardManager {
         lockContentHeight();
         showSoftInput();
         unlockContentHeightDelayed();
+    }
+
+    private void throwAttachException() {
+        try {
+            throw new Exception("Please call PandaEmoView.attachEditText(PandaEmoEditText messageEditText) first");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

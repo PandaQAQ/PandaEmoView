@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.pandaq.emoticonlib.EmoticonManager;
+import com.pandaq.emoticonlib.PandaEmoManager;
 import com.pandaq.emoticonlib.R;
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
 import com.pandaq.emoticonlib.view.PandaEmoView;
@@ -30,8 +30,8 @@ public class StickerAdapter extends BaseAdapter {
         mCategory = category;
         this.startIndex = startIndex;
         int realPagerHeight = emotionLayoutHeight - EmoticonUtils.dp2px(mContext, 85);
-        float perWidth = emotionLayoutWidth * 1f / PandaEmoView.STICKER_COLUMN;
-        mPerHeight = realPagerHeight * 1f / PandaEmoView.STICKER_ROW;
+        float perWidth = emotionLayoutWidth * 1f / PandaEmoManager.getInstance().getStickerColumn();
+        mPerHeight = realPagerHeight * 1f / PandaEmoManager.getInstance().getStickerRow();
 
         float ivWidth = perWidth * .8f;
         float ivHeight = mPerHeight * .8f;
@@ -41,7 +41,7 @@ public class StickerAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return PandaEmoView.STICKER_PER_PAGE;
+        return PandaEmoManager.getInstance().getStickerPerPage();
     }
 
     @Override
@@ -92,7 +92,7 @@ public class StickerAdapter extends BaseAdapter {
             }
             String stickerBitmapUri = sticker.getSourcePath();
             if (stickerBitmapUri != null) {
-                EmoticonManager.getInstance().getIImageLoader().displayImage(stickerBitmapUri, viewHolder.mImageView);
+                PandaEmoManager.getInstance().getIImageLoader().displayImage(stickerBitmapUri, viewHolder.mImageView);
             }
         }
         return convertView;
