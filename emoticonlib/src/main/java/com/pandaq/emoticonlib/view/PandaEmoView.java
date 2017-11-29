@@ -1,7 +1,6 @@
 package com.pandaq.emoticonlib.view;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.support.v4.view.ViewPager;
@@ -12,13 +11,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.pandaq.emoticonlib.EmoticonManager;
-import com.pandaq.emoticonlib.EmotionViewPagerAdapter;
+import com.pandaq.emoticonlib.PandaEmoManager;
+import com.pandaq.emoticonlib.PandaEmoTranslator;
 import com.pandaq.emoticonlib.R;
-import com.pandaq.emoticonlib.StickerManager;
+import com.pandaq.emoticonlib.emoticons.EmoticonManager;
 import com.pandaq.emoticonlib.listeners.IEmoticonMenuClickListener;
 import com.pandaq.emoticonlib.listeners.IStickerSelectedListener;
 import com.pandaq.emoticonlib.sticker.StickerCategory;
+import com.pandaq.emoticonlib.sticker.StickerManager;
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
 
 import java.util.ArrayList;
@@ -31,25 +31,9 @@ import java.util.List;
  */
 
 public class PandaEmoView extends RelativeLayout {
-    /* column of emoticon per page */
-    public final static int EMOJI_COLUMN = 7;
-    /* row of emoticon per page */
-    public final static int EMOJI_ROW = 3;
-    /* members of emoticon per page
-     * the last one is delete button;
-     */
-    public final static int EMOJI_PER_PAGE = EMOJI_COLUMN * EMOJI_ROW - 1;
-    /* column of sticker per page*/
-    public final static int STICKER_COLUMN = 4;
-    /* row of sticker per page*/
-    public final static int STICKER_ROW = 2;
-    /* members of sticker per page
-     * the last one is delete button;
-     */
-    public final static int STICKER_PER_PAGE = STICKER_COLUMN * STICKER_ROW;
+
     private int mMeasuredWidth;
     private int mMeasuredHeight;
-
     private Context mContext;
     private ViewPager mEmoticonPager;
     private LinearLayout mIndicatorLayout;
@@ -59,11 +43,11 @@ public class PandaEmoView extends RelativeLayout {
     private int mTabCount;
     private ArrayList<View> mTabs = new ArrayList<>();
     private int mTabPosi = 0;
-    private PandaEmoEditText mMessageEditText;
-    private boolean mEmoticonAddVisiable = true;
+    private PandaEmoEditText mAttachedEditText;
     private IStickerSelectedListener mEmoticonSelectedListener;
     private IEmoticonMenuClickListener mEmoticonExtClickListener;
     private boolean loadedResource = false;
+    private EmotionViewPagerAdapter adapter;
 
     public PandaEmoView(Context context) {
         this(context, null);
@@ -76,6 +60,7 @@ public class PandaEmoView extends RelativeLayout {
     public PandaEmoView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
+        this.setVisibility(GONE);
     }
 
     @Override
@@ -138,7 +123,11 @@ public class PandaEmoView extends RelativeLayout {
         mIndicatorLayout = (LinearLayout) findViewById(R.id.llIndicator);
         mBottomTabLayout = (LinearLayout) findViewById(R.id.llTabContainer);
         mAddTab = (EmotionTab) findViewById(R.id.tabAdd);
-        setEmotionAddVisiable(mEmoticonAddVisiable);
+        if (PandaEmoManager.getInstance().isShowAddButton()) {
+            mAddTab.setVisibility(VISIBLE);
+        } else {
+            mAddTab.setVisibility(GONE);
+        }
         initTabs();
     }
 
@@ -150,32 +139,38 @@ public class PandaEmoView extends RelativeLayout {
         mTabs.clear();
         mBottomTabLayout.removeAllViews();
         //添加默认表情 Tab
-        EmotionTab emojiTab = new EmotionTab(mContext, EmoticonManager.getDefaultIconRes());
+        EmotionTab emojiTab = new EmotionTab(mContext, PandaEmoManager.getInstance().getDefaultIconRes());
         mBottomTabLayout.addView(emojiTab);
         mTabs.add(emojiTab);
         //添加所有的贴图tab
-        List<StickerCategory> stickerCategories = StickerManager.getInstance().getStickerCategories();
-        for (int i = 0; i < stickerCategories.size(); i++) {
-            StickerCategory category = stickerCategories.get(i);
-            EmotionTab tab;
-            if (category.getName().equals(StickerManager.selfSticker)) {
-                tab = new EmotionTab(mContext, R.drawable.icon_self);
-            } else {
-                tab = new EmotionTab(mContext, category.getCoverImgPath());
+        if (PandaEmoManager.getInstance().isShowStickers()) {  // 是否显示
+            List<StickerCategory> stickerCategories = StickerManager.getInstance().getStickerCategories();
+            for (int i = 0; i < stickerCategories.size(); i++) {
+                StickerCategory category = stickerCategories.get(i);
+                EmotionTab tab;
+                if (category.getName().equals(StickerManager.selfSticker)) {
+                    tab = new EmotionTab(mContext, R.drawable.icon_self);
+                    mBottomTabLayout.addView(tab);
+                    mTabs.add(tab);
+                } else {
+                    tab = new EmotionTab(mContext, category.getCoverPath());
+                    mBottomTabLayout.addView(tab);
+                    mTabs.add(tab);
+                }
             }
-            mBottomTabLayout.addView(tab);
-            mTabs.add(tab);
         }
         //最后添加一个表情设置Tab
-        mSettingTab = new EmotionTab(mContext, R.drawable.ic_emotion_setting);
-        StateListDrawable drawable = new StateListDrawable();
-        Drawable unSelected = mContext.getResources().getDrawable(R.color.white);
-        drawable.addState(new int[]{-android.R.attr.state_pressed}, unSelected);
-        Drawable selected = mContext.getResources().getDrawable(R.color.gray_text);
-        drawable.addState(new int[]{android.R.attr.state_pressed}, selected);
-        mSettingTab.setBackground(drawable);
-        mBottomTabLayout.addView(mSettingTab);
-        mTabs.add(mSettingTab);
+        if (PandaEmoManager.getInstance().isShowSetButton()) {
+            mSettingTab = new EmotionTab(mContext, R.drawable.ic_emotion_setting);
+            StateListDrawable drawable = new StateListDrawable();
+            Drawable unSelected = mContext.getResources().getDrawable(R.color.white);
+            drawable.addState(new int[]{-android.R.attr.state_pressed}, unSelected);
+            Drawable selected = mContext.getResources().getDrawable(R.color.gray_text);
+            drawable.addState(new int[]{android.R.attr.state_pressed}, selected);
+            mSettingTab.setBackground(drawable);
+            mBottomTabLayout.addView(mSettingTab);
+            mTabs.add(mSettingTab);
+        }
         selectTab(0); //默认底一个被选中
     }
 
@@ -183,8 +178,10 @@ public class PandaEmoView extends RelativeLayout {
      * 选择选中的 Item
      */
     private void selectTab(int tabPosi) {
-        if (tabPosi == mTabs.size() - 1)
-            return;
+        if (PandaEmoManager.getInstance().isShowSetButton()) {
+            if (tabPosi == mTabs.size() - 1)
+                return;
+        }
         for (int i = 0; i < mTabCount; i++) {
             View tab = mTabs.get(i);
             tab.setBackgroundResource(R.drawable.shape_tab_normal);
@@ -195,18 +192,26 @@ public class PandaEmoView extends RelativeLayout {
     }
 
     private void fillVpEmotioin(int tabPosi) {
-        EmotionViewPagerAdapter adapter = new EmotionViewPagerAdapter(mContext, mMeasuredWidth, mMeasuredHeight, tabPosi, mEmoticonSelectedListener);
+        if (adapter == null) {
+            adapter = new EmotionViewPagerAdapter(mContext, mMeasuredWidth, mMeasuredHeight, tabPosi, mEmoticonSelectedListener);
+        } else {
+            adapter.setTabPosi(tabPosi);
+        }
         mEmoticonPager.setAdapter(adapter);
         mIndicatorLayout.removeAllViews();
         setCurPageCommon(0);
         if (tabPosi == 0) {
-            adapter.attachEditText(mMessageEditText);
+            adapter.attachEditText(mAttachedEditText);
         }
     }
 
     private void initListener() {
         if (mBottomTabLayout == null) return;
-        mTabCount = mBottomTabLayout.getChildCount() - 1;//不包含最后的设置按钮
+        if (PandaEmoManager.getInstance().isShowSetButton()) {
+            mTabCount = mBottomTabLayout.getChildCount() - 1;//不包含最后的设置按钮
+        } else {
+            mTabCount = mBottomTabLayout.getChildCount();
+        }
         for (int position = 0; position < mTabCount; position++) {
             View tab = mBottomTabLayout.getChildAt(position);
             tab.setTag(position);
@@ -234,33 +239,37 @@ public class PandaEmoView extends RelativeLayout {
 
             }
         });
-
-        mAddTab.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mEmoticonExtClickListener != null) {
-                    mEmoticonExtClickListener.onTabAddClick(v);
+        if (mAddTab != null) {
+            mAddTab.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mEmoticonExtClickListener != null) {
+                        mEmoticonExtClickListener.onTabAddClick(v);
+                    }
                 }
-            }
-        });
-
-        mSettingTab.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mEmoticonExtClickListener != null) {
-                    mEmoticonExtClickListener.onTabSettingClick(v);
+            });
+        }
+        if (mSettingTab != null) {
+            mSettingTab.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mEmoticonExtClickListener != null) {
+                        mEmoticonExtClickListener.onTabSettingClick(v);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
 
     private void setCurPageCommon(int position) {
         if (mTabPosi == 0) {
-            setCurPage(position, (int) Math.ceil(EmoticonManager.getDisplayCount() / (float) PandaEmoView.EMOJI_PER_PAGE));
+            int emojiPerpage = PandaEmoManager.getInstance().getEmojiPerPage();
+            setCurPage(position, (int) Math.ceil(EmoticonManager.getInstance().getDisplayCount() / (float) emojiPerpage));
         } else {
+            int stickerPerPage = PandaEmoManager.getInstance().getStickerPerPage();
             StickerCategory category = StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1);
-            setCurPage(position, (int) Math.ceil(category.getStickers().size() / (float) PandaEmoView.STICKER_PER_PAGE));
+            setCurPage(position, (int) Math.ceil(category.getStickers().size() / (float) stickerPerPage));
         }
     }
 
@@ -295,40 +304,41 @@ public class PandaEmoView extends RelativeLayout {
         }
     }
 
-    public void attachEditText(PandaEmoEditText messageEditText) {
-        mMessageEditText = messageEditText;
+    public void attachEditText(PandaEmoEditText inputEditText) {
+        if (mAttachedEditText != null) { // 绑定下一个焦点输入控件时将上一个控件吊起的输入框隐藏,并将已输入的内容转成表情放入
+            mAttachedEditText.setText(PandaEmoTranslator.getInstance()
+                    .makeSpannableString(mAttachedEditText.getContext(), mAttachedEditText.getText().toString()));
+            mAttachedEditText.getKeyBoardManager().hideInputLayout();
+            if (mTabPosi == 0) { // 重新为表情输入栏绑定输入控件
+                adapter.attachEditText(inputEditText);
+            }
+        }
+        mAttachedEditText = inputEditText;
     }
 
     public PandaEmoEditText getAttachEditText() {
-        return mMessageEditText;
-    }
-
-    /**
-     * 设置表情添加按钮的显隐
-     */
-    public void setEmotionAddVisiable(boolean visiable) {
-        mEmoticonAddVisiable = visiable;
-        if (mAddTab != null) {
-            mAddTab.setVisibility(mEmoticonAddVisiable ? View.VISIBLE : View.GONE);
-        }
+        return mAttachedEditText;
     }
 
     public void setEmoticonSelectedListener(IStickerSelectedListener emotionSelectedListener) {
         mEmoticonSelectedListener = emotionSelectedListener;
     }
 
-    public void setEmoticonExtClickListener(IEmoticonMenuClickListener emotionExtClickListener) {
+    public void setEmoticonMenuClickListener(IEmoticonMenuClickListener emotionExtClickListener) {
         mEmoticonExtClickListener = emotionExtClickListener;
     }
 
     /**
      * 新增了表情库后调用
      */
-    public void reloadEmos() {
+    public void reloadEmos(int position) {
         StickerManager.getInstance().loadStickerCategory();
         initTabs();
         initListener();
         invalidate();
+        if (0 <= position && position < mTabs.size()) {
+            selectTab(position);
+        }
     }
 
 }

@@ -23,7 +23,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.pandaq.pandaemoview.photomodule.ChoosePhotoActivity"
+            android:name=".AddEmoActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".SettingActivity"
             android:screenOrientation="portrait"/>
     </application>
 

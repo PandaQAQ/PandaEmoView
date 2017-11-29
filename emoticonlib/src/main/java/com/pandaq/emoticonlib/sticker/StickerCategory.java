@@ -1,10 +1,5 @@
 package com.pandaq.emoticonlib.sticker;
 
-import com.pandaq.emoticonlib.EmoticonManager;
-import com.pandaq.emoticonlib.view.PandaEmoView;
-
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,18 +9,17 @@ import java.util.List;
 
 public class StickerCategory {
 
-    private String name;//贴图包名（贴图 icon 名称）
-    private String title;//显示的标题
-    private boolean system;//是否是系统内置表情
-    private int order = 0;//默认顺序
+    private String name; //贴图包文件夹名
+    private String title; //贴图标签名称
+    private int order = 0; //默认顺序
+    private String coverPath; //tab栏图标
+    private String filePath; // 文件路径
+    private boolean isDefault; //是否是自定义sticker（带添加按钮）
     private transient List<StickerItem> stickers;
 
-    public StickerCategory(String name, String title, boolean system, int order) {
+    public StickerCategory(String name, int order) {
         this.name = name;
-        this.title = title;
-        this.system = system;
         this.order = order;
-        loadStickerData();
     }
 
     public String getName() {
@@ -34,22 +28,6 @@ public class StickerCategory {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public boolean isSystem() {
-        return system;
-    }
-
-    public void setSystem(boolean system) {
-        this.system = system;
     }
 
     public int getOrder() {
@@ -77,39 +55,7 @@ public class StickerCategory {
         if (stickers == null || stickers.isEmpty()) {
             return 0;
         }
-
         return stickers.size();
-    }
-
-    public String getCoverImgPath() {
-        for (File file : new File(EmoticonManager.getStickerPath()).listFiles()) {
-            if (file.isFile() && file.getName().startsWith(name)) {
-                return "file://" + file.getAbsolutePath();
-            }
-        }
-        return null;
-    }
-
-    public List<StickerItem> loadStickerData() {
-        List<StickerItem> stickers = new ArrayList<>();
-        File stickerDir = new File(EmoticonManager.getStickerPath(), name);
-        if (stickerDir.exists()) {
-            File[] files = stickerDir.listFiles();
-            for (File file : files) {
-                stickers.add(new StickerItem(name, file.getName()));
-            }
-        }
-        //补充最后一页缺少的贴图
-        int tmp = stickers.size() % PandaEmoView.STICKER_PER_PAGE;
-        if (tmp != 0) {
-            int tmp2 = PandaEmoView.STICKER_PER_PAGE - (stickers.size() - (stickers.size() / PandaEmoView.STICKER_PER_PAGE) * PandaEmoView.STICKER_PER_PAGE);
-            for (int i = 0; i < tmp2; i++) {
-                stickers.add(new StickerItem("", ""));
-            }
-        }
-
-        this.setStickers(stickers);
-        return stickers;
     }
 
     @Override
@@ -124,8 +70,35 @@ public class StickerCategory {
         return r.getName().equals(getName());
     }
 
-    @Override
-    public int hashCode() {
-        return name.hashCode();
+    public String getCoverPath() {
+        return "file://" + coverPath;
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
+    }
+
+    public void setCoverPath(String coverPath) {
+        this.coverPath = coverPath;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 }

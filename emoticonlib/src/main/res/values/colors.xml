@@ -4,4 +4,9 @@
     <color name="white">#ffffff</color>
     <color name="gray_text">#aaa</color>
     <color name="trans">#00ffffff</color>
+
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="grid_line">#aaa</color>
 </resources>

@@ -7,7 +7,7 @@ package com.pandaq.emoticonlib.listeners;
 
 public interface IStickerSelectedListener {
 
-    void onStickerSelected(String categoryName, String stickerName, String stickerBitmapPath);
+    void onStickerSelected(String title, String sourcePath);
 
     void onCustomAdd();
 }

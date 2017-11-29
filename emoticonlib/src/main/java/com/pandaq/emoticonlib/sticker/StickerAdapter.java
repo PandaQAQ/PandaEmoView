@@ -1,7 +1,6 @@
 package com.pandaq.emoticonlib.sticker;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -9,9 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.pandaq.emoticonlib.EmoticonManager;
+import com.pandaq.emoticonlib.PandaEmoManager;
 import com.pandaq.emoticonlib.R;
-import com.pandaq.emoticonlib.StickerManager;
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
 import com.pandaq.emoticonlib.view.PandaEmoView;
 
@@ -31,9 +29,9 @@ public class StickerAdapter extends BaseAdapter {
         mContext = context;
         mCategory = category;
         this.startIndex = startIndex;
-        int emotionLayoutHeight1 = emotionLayoutHeight - EmoticonUtils.dp2px(mContext, 35 + 26 + 50);
-        float perWidth = emotionLayoutWidth * 1f / PandaEmoView.STICKER_COLUMN;
-        mPerHeight = emotionLayoutHeight1 * 1f / PandaEmoView.STICKER_ROW;
+        int realPagerHeight = emotionLayoutHeight - EmoticonUtils.dp2px(mContext, 85);
+        float perWidth = emotionLayoutWidth * 1f / PandaEmoManager.getInstance().getStickerColumn();
+        mPerHeight = realPagerHeight * 1f / PandaEmoManager.getInstance().getStickerRow();
 
         float ivWidth = perWidth * .8f;
         float ivHeight = mPerHeight * .8f;
@@ -43,9 +41,7 @@ public class StickerAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        int count = mCategory.getStickers().size() - startIndex;
-        count = Math.min(count, PandaEmoView.STICKER_PER_PAGE);
-        return count;
+        return PandaEmoManager.getInstance().getStickerPerPage();
     }
 
     @Override
@@ -65,7 +61,6 @@ public class StickerAdapter extends BaseAdapter {
             RelativeLayout rl = new RelativeLayout(mContext);
             rl.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, (int) mPerHeight));
             ImageView imageView = new ImageView(mContext);
-            imageView.setImageResource(EmoticonManager.getDefaultIconRes());
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             params.width = (int) mIvSize;
             params.height = (int) mIvSize;
@@ -80,18 +75,25 @@ public class StickerAdapter extends BaseAdapter {
             viewHolder = (StickerViewHolder) convertView.getTag();
         }
         int index = startIndex + position;
-        if (index == 0) {
-            viewHolder.mImageView.setImageResource(R.drawable.ic_tab_add);
+        if (mCategory.isDefault() && index == 0) {
+            viewHolder.mImageView.setImageResource(R.drawable.ic_action_add);
         } else {
+            StickerItem sticker;
+            if (mCategory.isDefault()) {
+                sticker = mCategory.getStickers().get(index - 1);
+            } else {
+                sticker = mCategory.getStickers().get(index);
+            }
             if (index >= mCategory.getStickers().size()) {
                 return convertView;
             }
-            StickerItem sticker = mCategory.getStickers().get(index - 1);
             if (sticker == null) {
                 return convertView;
             }
-            String stickerBitmapUri = StickerManager.getInstance().getStickerBitmapUri(sticker.getCategory(), sticker.getName());
-            EmoticonManager.getIImageLoader().displayImage(stickerBitmapUri, viewHolder.mImageView);
+            String stickerBitmapUri = sticker.getSourcePath();
+            if (stickerBitmapUri != null) {
+                PandaEmoManager.getInstance().getIImageLoader().displayImage(stickerBitmapUri, viewHolder.mImageView);
+            }
         }
         return convertView;
     }

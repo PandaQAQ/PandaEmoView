@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -13,11 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pandaq.emoticonlib.KeyBoardManager;
+import com.pandaq.emoticonlib.sticker.StickerManager;
 import com.pandaq.emoticonlib.listeners.IEmoticonMenuClickListener;
 import com.pandaq.emoticonlib.listeners.IStickerSelectedListener;
+import com.pandaq.emoticonlib.photopicker.ManageCustomActivity;
 import com.pandaq.emoticonlib.view.PandaEmoEditText;
 import com.pandaq.emoticonlib.view.PandaEmoView;
-import com.pandaq.pandaemoview.photomodule.ChoosePhotoActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     ScrollView mScrollView;
     @BindView(R.id.rl_content)
     RelativeLayout mRlContent;
+    @BindView(R.id.test_image)
+    ImageView mTestImage;
     private KeyBoardManager emotionKeyboard;
 
     @Override
@@ -59,30 +63,30 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mEmoticonView.attachEditText(mEtInput);
-        mEmoticonView.setEmotionAddVisiable(true);
-        mEmoticonView.setEmoticonExtClickListener(new IEmoticonMenuClickListener() {
+        mEmoticonView.setEmoticonMenuClickListener(new IEmoticonMenuClickListener() {
             @Override
             public void onTabAddClick(View view) {
-                Toast.makeText(MainActivity.this, "点击添加按钮", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, AddEmoActivity.class);
+                startActivity(intent);
             }
 
             @Override
             public void onTabSettingClick(View view) {
-                Toast.makeText(MainActivity.this, "点击设置按钮", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                startActivity(intent);
             }
         });
         mEmoticonView.setEmoticonSelectedListener(new IStickerSelectedListener() {
             @Override
-            public void onStickerSelected(String categoryName, String stickerName, String stickerBitmapPath) {
-                Log.d("PandaQ===>", "categoryName---" + categoryName + "---stickerName---" + stickerName +
-                        "---stickerBitmapPath---" + stickerBitmapPath);
+            public void onStickerSelected(String title, String stickerBitmapPath) {
+                Log.d("PandaQ===>", "Title---" + title + "---stickerBitmapPath---" + stickerBitmapPath);
             }
 
             @Override
             public void onCustomAdd() {
                 //添加按钮
                 Toast.makeText(MainActivity.this, "点击添加自定义表情", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, ChoosePhotoActivity.class);
+                Intent intent = new Intent(MainActivity.this, ManageCustomActivity.class);
                 startActivity(intent);
             }
         });
@@ -91,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initEmotionKeyboard() {
         emotionKeyboard = KeyBoardManager.with(this)
-                .bindToEmotionButton(mTestButton, mLoadSticker)
+                .bindToEmotionButton(mTestButton)
                 .setEmotionView(mEmoticonView)
                 .bindToLockContent(mRlContent)
                 .setOnInputListener(new KeyBoardManager.OnInputShowListener() {
@@ -109,15 +113,13 @@ public class MainActivity extends AppCompatActivity {
                         emotionKeyboard.showInputLayout();
                     } else {
                         emotionKeyboard.hideInputLayout();
-                        mEmoticonView.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mTvBottomTest.setVisibility(View.VISIBLE);
-                            }
-                        }, 200);
+                        mTvBottomTest.setVisibility(View.VISIBLE);
                     }
                     // 重写逻辑时一定要返回 ture 拦截 KeyBoardManager 中的默认逻辑
                     return true;
+                } else if (view.getId() == R.id.test_button) {
+                    mTvBottomTest.setVisibility(View.GONE);
+                    return false;// 不破坏表情按钮的处理逻辑，只是隐藏显示的菜单页
                 }
                 return false;
             }
@@ -126,15 +128,24 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!emotionKeyboard.interceptBackPress()) {
-            finish();
+        if (!mTvBottomTest.isShown()) {
+            if (!emotionKeyboard.interceptBackPress()) {
+                finish();
+            }
+        } else {
+            mTvBottomTest.setVisibility(View.GONE);
         }
     }
 
     @OnClick(R.id.load_sticker)
     public void onViewClicked() {
+        copyStickerToSdCard("sticker_test", getApplicationContext().getFilesDir() + "/sticker/selfSticker");
+        copyStickerAndUnZip("ziptest", getApplicationContext().getFilesDir().getAbsolutePath());
+    }
 
-//        copyStickerToSdCard("sticker_test", getApplicationContext().getFilesDir() + "/sticker/selfSticker");
+    private void copyStickerAndUnZip(String assetDir, String dir) {
+        copyStickerToSdCard(assetDir, dir);
+        StickerManager.getInstance().addZipResource(dir + "/soAngry.zip");
     }
 
     private void copyStickerToSdCard(String assetDir, String dir) {
@@ -179,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 in.close();
                 out.close();
-                mEmoticonView.reloadEmos();
+                mEmoticonView.reloadEmos(1);
             } catch (IOException e) {
                 e.printStackTrace();
             }

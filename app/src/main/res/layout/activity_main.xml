@@ -5,6 +5,7 @@
     android:id="@+id/parentPanel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context="com.pandaq.pandaemoview.MainActivity">
 
@@ -12,15 +13,17 @@
         android:id="@+id/rl_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="@color/white">
 
         <TextView
             android:id="@+id/toptitle"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="#dcba00"
+            android:background="@color/colorPrimary"
             android:gravity="center"
             android:text="Title"
+            android:textColor="@color/white"
             android:textSize="22sp"/>
 
         <RelativeLayout
@@ -49,7 +52,6 @@
                 android:layout_height="50dp"
                 android:layout_below="@id/test_button"
                 />
-
         </RelativeLayout>
 
         <ScrollView
@@ -64,6 +66,11 @@
                 android:layout_height="wrap_content"
                 android:text="@string/string_test_text"/>
         </ScrollView>
+
+        <ImageView
+            android:id="@+id/test_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -80,8 +87,8 @@
         <TextView
             android:id="@+id/tv_bottom_test"
             android:layout_width="match_parent"
-            android:layout_height="270dp"
-            android:background="@color/colorAccent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
             android:visibility="gone"/>
     </RelativeLayout>
 </LinearLayout>

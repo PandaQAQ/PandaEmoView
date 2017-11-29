@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.pandaq.emoticonlib.EmoticonManager;
+import com.pandaq.emoticonlib.PandaEmoManager;
 import com.pandaq.emoticonlib.R;
 
 /**
@@ -56,7 +56,7 @@ public class EmotionTab extends RelativeLayout {
             if (TextUtils.isEmpty(mStickerCoverImgPath)) {
                 ivIcon.setImageResource(mIconSrc);
             } else {
-                EmoticonManager.getIImageLoader().displayImage(mStickerCoverImgPath, ivIcon);
+                PandaEmoManager.getInstance().getIImageLoader().displayImage(mStickerCoverImgPath, ivIcon);
             }
         }
     }

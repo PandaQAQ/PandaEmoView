@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '25.0.3'
     defaultConfig {
         applicationId "com.pandaq.pandaemoview"
         minSdkVersion 21
