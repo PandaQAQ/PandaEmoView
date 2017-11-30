@@ -309,7 +309,7 @@ public class PandaEmoView extends RelativeLayout {
             mAttachedEditText.setText(PandaEmoTranslator.getInstance()
                     .makeSpannableString(mAttachedEditText.getContext(), mAttachedEditText.getText().toString()));
             mAttachedEditText.getKeyBoardManager().hideInputLayout();
-            if (mTabPosi == 0) { // 重新为表情输入栏绑定输入控件
+            if (mTabPosi == 0 && adapter != null) { // 重新为表情输入栏绑定输入控件
                 adapter.attachEditText(inputEditText);
             }
         }

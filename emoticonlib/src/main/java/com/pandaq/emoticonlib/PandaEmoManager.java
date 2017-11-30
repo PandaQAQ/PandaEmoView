@@ -2,6 +2,7 @@ package com.pandaq.emoticonlib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 
 import com.pandaq.emoticonlib.listeners.IImageLoader;
 import com.pandaq.emoticonlib.view.PandaEmoView;
@@ -38,6 +39,7 @@ public class PandaEmoManager {
     private boolean showAddButton = true;
     private boolean showSetButton = true;
     private boolean showStickers = true;
+    private int backGroundColor = Color.WHITE;
 
     private PandaEmoView sPandaEmoView;
     private Pattern mPattern;
@@ -139,7 +141,7 @@ public class PandaEmoManager {
     }
 
     public int getEmojiPerPage() {
-        return EMOJI_COLUMN * EMOJI_ROW-1;
+        return EMOJI_COLUMN * EMOJI_ROW - 1;
     }
 
     public int getStickerPerPage() {
@@ -148,6 +150,10 @@ public class PandaEmoManager {
 
     public PandaEmoView getManagedView() {
         return sPandaEmoView;
+    }
+
+    public int getBackGroundColor() {
+        return backGroundColor;
     }
 
     public static class Builder {
@@ -185,6 +191,8 @@ public class PandaEmoManager {
         private int STICKER_ROW = 2;
         // 贴图表情列数
         private int STICKER_COLUMN = 4;
+        // 控件背景颜色
+        private int backgroundColor = Color.WHITE;
 
         public Builder defaultTabIcon(int defaultIconRes) {
             this.defaultIcon = defaultIconRes;
@@ -271,6 +279,11 @@ public class PandaEmoManager {
             return this;
         }
 
+        public Builder backgroundColor(int backgroundColor) {
+            this.backgroundColor = backgroundColor;
+            return this;
+        }
+
         public void build() {
             if (sPandaEmoManager == null) {
                 synchronized (PandaEmoManager.class) {
@@ -334,6 +347,9 @@ public class PandaEmoManager {
             if (this.STICKER_COLUMN != 0) {
                 sPandaEmoManager.STICKER_COLUMN = this.STICKER_COLUMN;
             }
+
+            sPandaEmoManager.backGroundColor = this.backgroundColor;
+
             sPandaEmoManager.showAddButton = this.showAddButton;
 
             sPandaEmoManager.showStickers = this.showStickers;
@@ -344,7 +360,7 @@ public class PandaEmoManager {
         }
     }
 
-    public void manage(PandaEmoView emoView) {
+    void manage(PandaEmoView emoView) {
         sPandaEmoView = emoView;
     }
 }
