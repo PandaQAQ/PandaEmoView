@@ -2,7 +2,6 @@ package com.pandaq.emoticonlib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 
 import com.pandaq.emoticonlib.listeners.IImageLoader;
 import com.pandaq.emoticonlib.view.PandaEmoView;
@@ -29,7 +28,7 @@ public class PandaEmoManager {
     private int DEFAULT_EMO_BOUNDS_DP = 30; //默认的 emoji 表情图文混排大小
     private int defaultIcon = R.drawable.ic_default;
     private Context mContext;
-    private String mConfigName = "emoji_default.xml";
+    private String mConfigFile = "emoji_default.xml";
     private IImageLoader mIImageLoader;
     private int MAX_CUSTOM_STICKER = 30;
     private int EMOJI_ROW = 3;
@@ -39,8 +38,6 @@ public class PandaEmoManager {
     private boolean showAddButton = true;
     private boolean showSetButton = true;
     private boolean showStickers = true;
-    private int backGroundColor = Color.WHITE;
-
     private PandaEmoView sPandaEmoView;
     private Pattern mPattern;
 
@@ -49,10 +46,10 @@ public class PandaEmoManager {
             STICKER_PATH = new File(mContext.getFilesDir(), "sticker").getAbsolutePath();
         }
         mPattern = makePattern();
-        File mWorkingPath = new File(STICKER_PATH + "/selfSticker");
+        File selfStickerPath = new File(STICKER_PATH + "/selfSticker");
         // if this directory does not exists, make one.
-        if (!mWorkingPath.exists()) {
-            mWorkingPath.mkdirs();
+        if (!selfStickerPath.exists()) {
+            selfStickerPath.mkdirs();
         }
     }
 
@@ -132,8 +129,8 @@ public class PandaEmoManager {
         return defaultIcon;
     }
 
-    public String getConfigName() {
-        return mConfigName;
+    public String getConfigFile() {
+        return mConfigFile;
     }
 
     public int getMaxCustomSticker() {
@@ -150,10 +147,6 @@ public class PandaEmoManager {
 
     public PandaEmoView getManagedView() {
         return sPandaEmoView;
-    }
-
-    public int getBackGroundColor() {
-        return backGroundColor;
     }
 
     public static class Builder {
@@ -191,8 +184,6 @@ public class PandaEmoManager {
         private int STICKER_ROW = 2;
         // 贴图表情列数
         private int STICKER_COLUMN = 4;
-        // 控件背景颜色
-        private int backgroundColor = Color.WHITE;
 
         public Builder defaultTabIcon(int defaultIconRes) {
             this.defaultIcon = defaultIconRes;
@@ -279,11 +270,6 @@ public class PandaEmoManager {
             return this;
         }
 
-        public Builder backgroundColor(int backgroundColor) {
-            this.backgroundColor = backgroundColor;
-            return this;
-        }
-
         public void build() {
             if (sPandaEmoManager == null) {
                 synchronized (PandaEmoManager.class) {
@@ -314,7 +300,7 @@ public class PandaEmoManager {
             }
 
             if (this.mConfigName != null) {
-                sPandaEmoManager.mConfigName = this.mConfigName;
+                sPandaEmoManager.mConfigFile = this.mConfigName;
             }
 
             if (this.SOUCRE_DIR != null) {
@@ -347,8 +333,6 @@ public class PandaEmoManager {
             if (this.STICKER_COLUMN != 0) {
                 sPandaEmoManager.STICKER_COLUMN = this.STICKER_COLUMN;
             }
-
-            sPandaEmoManager.backGroundColor = this.backgroundColor;
 
             sPandaEmoManager.showAddButton = this.showAddButton;
 

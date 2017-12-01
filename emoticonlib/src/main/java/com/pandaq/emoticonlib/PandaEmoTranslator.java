@@ -34,7 +34,6 @@ public class PandaEmoTranslator {
 
     private static PandaEmoTranslator sEmoTranslator;
     private int MAX_PER_VIEW = 5;
-    private int FACE_BOUNDS = PandaEmoManager.getInstance().getDefaultEmoBoundsDp();// 单位 DP
     private GifRunnable mGifRunnable;
     private Handler mHandler = new Handler();
     /* faceInfo 用于存放表情的起始位置和对应文字
@@ -58,35 +57,26 @@ public class PandaEmoTranslator {
      * 设置单个 TextView 最多显示的动态图个数
      * 超过这个个数则所有表情显示为静态图
      *
-     * @param maxPerView 阈值
+     * @param maxGifPerView 阈值
      */
-    public void setMAX_PER_VIEW(int maxPerView) {
-        MAX_PER_VIEW = maxPerView;
+    public void setMaxGifPerView(int maxGifPerView) {
+        MAX_PER_VIEW = maxGifPerView;
     }
 
-    public int getMAX_PER_VIEW() {
+    public int getMaxGifPerView() {
         return MAX_PER_VIEW;
-    }
-
-    public void setFACE_BOUNDS(int faceBounds) {
-        FACE_BOUNDS = faceBounds;
-    }
-
-    public int getFACE_BOUNDS() {
-        return FACE_BOUNDS;
     }
 
     /**
      * 图文混排工具方法
      *
-     * @param context  环境
      * @param classTag 当前显示界面的 Tag（一般是Activity），
      *                 用于在退出界面时将界面内的动图对象从 Runable 中移除
      * @param value    要转换的文字
      * @param callBack 动图刷新回调
      * @return 图文混排后显示的内容
      */
-    public SpannableString makeGifSpannable(Context context, String classTag, String value,
+    public SpannableString makeGifSpannable(String classTag, String value,
                                             AnimatedGifDrawable.RunGifCallBack callBack) {
         if (TextUtils.isEmpty(value)) {
             value = "";
@@ -108,15 +98,14 @@ public class PandaEmoTranslator {
         int faces = faceInfo.size();
         for (int[] faceIndex : faceInfo) {
             if (faces > MAX_PER_VIEW) {
-                Drawable drawable = getEmotDrawable(context, value.substring(faceIndex[0], faceIndex[1]));
+                Drawable drawable = getEmotDrawable(PandaEmoManager.getInstance().getContext(), value.substring(faceIndex[0], faceIndex[1]));
                 if (drawable != null) {
                     ImageSpan span = new ImageSpan(drawable);
                     spannableString.setSpan(span, faceIndex[0], faceIndex[1], Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                 }
             } else {
-                AnimatedGifDrawable gifDrawable = EmoticonManager.getInstance().getDrawableGif(context,
-                        value.substring(faceIndex[0], faceIndex[1]),
-                        EmoticonUtils.dp2px(context, FACE_BOUNDS));
+                AnimatedGifDrawable gifDrawable = EmoticonManager.getInstance().getDrawableGif(PandaEmoManager.getInstance().getContext(),
+                        value.substring(faceIndex[0], faceIndex[1]));
                 if (gifDrawable != null) {
                     gifDrawable.setRunCallBack(callBack);
                     gifDrawable.setContainerTag(classTag);
@@ -129,7 +118,7 @@ public class PandaEmoTranslator {
                     AnimatedImageSpan span = new AnimatedImageSpan(gifDrawable, mGifRunnable);
                     spannableString.setSpan(span, faceIndex[0], faceIndex[1], Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                 } else { //不存在动态图资源时用静态图代替
-                    Drawable drawable = getEmotDrawable(context, value.substring(faceIndex[0], faceIndex[1]));
+                    Drawable drawable = getEmotDrawable(PandaEmoManager.getInstance().getContext(), value.substring(faceIndex[0], faceIndex[1]));
                     if (drawable != null) {
                         ImageSpan span = new ImageSpan(drawable);
                         spannableString.setSpan(span, faceIndex[0], faceIndex[1], Spannable.SPAN_INCLUSIVE_INCLUSIVE);
@@ -141,78 +130,12 @@ public class PandaEmoTranslator {
     }
 
     /**
-     * 将动态图图文混排 高亮用户名点击
-     *
-     * @param tv       显示文本的 TextView
-     * @param classTag 显示动态表情的activity的tag，用于在退出界面时将该界面的动图移除
-     * @param context  上下文
-     * @param value    带表情的文本
-     * @param listener 动态表情刷新界面回调
-     * @return 显示文本
-     */
-    public SpannableString makeSpannableGifReply(TextView tv, String classTag, Context context, String value, AnimatedGifDrawable.RunGifCallBack listener
-            , String keyWord, int color, View.OnClickListener mlistener) {
-        tv.setClickable(true);
-        tv.setHighlightColor(Color.TRANSPARENT);
-        tv.setMovementMethod(LinkMovementMethod.getInstance());
-        if (TextUtils.isEmpty(value)) {
-            value = "";
-        }
-        faceInfo.clear();
-        int start;
-        int end;
-        SpannableString mSpannableString = new SpannableString(value);
-        Matcher matcher = PandaEmoManager.getInstance().getPattern().matcher(value);
-        while (matcher.find()) {
-            start = matcher.start();
-            end = matcher.end();
-            faceInfo.add(new int[]{start, end});
-        }
-        Pattern p = Pattern.compile(keyWord.replace("*", "\\*"));
-        Matcher m = p.matcher(mSpannableString);
-        while (m.find()) {
-            ClickTextSpan clickTextSpan = new ClickTextSpan(color, mlistener);
-            mSpannableString.setSpan(clickTextSpan, m.start(), m.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-        if (faceInfo.size() > 5) { // 表情大于5个显示静态图
-            for (int[] faceIndex : faceInfo) {
-                Drawable drawable = getEmotDrawable(context, value.substring(faceIndex[0], faceIndex[1]));
-                if (drawable != null) {
-                    ImageSpan span = new ImageSpan(drawable);
-                    mSpannableString.setSpan(span, faceIndex[0], faceIndex[1], Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                }
-            }
-        } else {
-            for (int[] faceIndex : faceInfo) {
-                AnimatedGifDrawable gifDrawable = getEmotDrawableGif(context, value.substring(faceIndex[0], faceIndex[1]));
-                Drawable drawable = getEmotDrawable(context, value.substring(faceIndex[0], faceIndex[1]));
-                if (gifDrawable != null) {
-                    gifDrawable.setRunCallBack(listener);
-                    gifDrawable.setContainerTag(classTag);
-                    if (mGifRunnable == null) {
-                        mGifRunnable = new GifRunnable(gifDrawable, mHandler);
-                    } else {
-                        mGifRunnable.addGifDrawable(gifDrawable);
-                    }
-                    AnimatedImageSpan span = new AnimatedImageSpan(gifDrawable, mGifRunnable);
-                    mSpannableString.setSpan(span, faceIndex[0], faceIndex[1], Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                } else if (drawable != null) {
-                    ImageSpan span = new ImageSpan(drawable);
-                    mSpannableString.setSpan(span, faceIndex[0], faceIndex[1], Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                }
-            }
-        }
-        return mSpannableString;
-    }
-
-    /**
      * 将带表情的文本转换成图文混排的文本（动态图也转换为静态图）
      *
-     * @param context 上下文
      * @param value   待转换文本
      * @return 转换结果
      */
-    public SpannableString makeSpannableString(Context context, String value) {
+    public SpannableString makeEmojiSpannable(String value) {
         if (TextUtils.isEmpty(value)) {
             value = "";
         }
@@ -224,7 +147,7 @@ public class PandaEmoTranslator {
             start = matcher.start();
             end = matcher.end();
             String emot = value.substring(start, end);
-            Drawable drawable = getEmotDrawable(context, emot);
+            Drawable drawable = getEmotDrawable(PandaEmoManager.getInstance().getContext(), emot);
             if (drawable != null) {
                 ImageSpan span = new ImageSpan(drawable);
                 mSpannableString.setSpan(span, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
@@ -236,9 +159,8 @@ public class PandaEmoTranslator {
     /**
      * 将 EditText 文本替换为静态表情图
      *
-     * @param context 上下文环境
      */
-    public void replaceEmoticons(Context context, Editable editable, int start, int count) {
+    public void replaceEmoticons( Editable editable, int start, int count) {
         if (count <= 0 || editable.length() < start + count)
             return;
         CharSequence s = editable.subSequence(start, start + count);
@@ -247,7 +169,7 @@ public class PandaEmoTranslator {
             int from = start + matcher.start();
             int to = start + matcher.end();
             String emot = editable.subSequence(from, to).toString();
-            Drawable d = getEmotDrawable(context, emot);
+            Drawable d = getEmotDrawable(PandaEmoManager.getInstance().getContext(), emot);
             if (d != null) {
                 ImageSpan span = new ImageSpan(d, ImageSpan.ALIGN_BOTTOM);
                 editable.setSpan(span, from, to, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -264,15 +186,11 @@ public class PandaEmoTranslator {
      */
     private Drawable getEmotDrawable(Context context, String text) {
         Drawable drawable = EmoticonManager.getInstance().getDrawable(context, text);
-        int size = EmoticonUtils.dp2px(context, FACE_BOUNDS);
+        int size = EmoticonUtils.dp2px(context, PandaEmoManager.getInstance().getDefaultEmoBoundsDp());
         if (drawable != null) {
             drawable.setBounds(10, 0, size, size);
         }
         return drawable;
-    }
-
-    private AnimatedGifDrawable getEmotDrawableGif(Context context, String text) {
-        return EmoticonManager.getInstance().getDrawableGif(context, text);
     }
 
     /**
@@ -280,7 +198,7 @@ public class PandaEmoTranslator {
      *
      * @param activityTag 停止界面 activity 的 Tag
      */
-    public void startHandler(String activityTag) {
+    public void startGif(String activityTag) {
         if (mGifRunnable != null) {
             mGifRunnable.startHandler(activityTag);
         }
@@ -289,18 +207,18 @@ public class PandaEmoTranslator {
     /**
      * 暂停当前界面的动态表情执行
      */
-    public void pauseHandler() {
+    public void pauseGif() {
         if (mGifRunnable != null) {
             mGifRunnable.pauseHandler();
         }
     }
 
     /**
-     * 停止某个界面的动态表情执行
+     * 停止某个界面的动态表情执行,将任务移除
      *
      * @param activityTag 停止界面 activity 的 Tag
      */
-    public void stopHandler(String activityTag) {
+    public void stopGif(String activityTag) {
         if (mGifRunnable != null) {
             mGifRunnable.stopHandler(activityTag);
         }

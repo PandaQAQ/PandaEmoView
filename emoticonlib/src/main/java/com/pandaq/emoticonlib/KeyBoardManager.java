@@ -110,8 +110,8 @@ public class KeyBoardManager {
      * 绑定内容view，此view用于固定bar的高度，防止跳闪
      * contentView 界面布局为 内容和表情布局分开格式，contentView 为除表情外的所有内容布局
      */
-    public KeyBoardManager bindToLockContent(View contentView) {
-        lockView = contentView;
+    public KeyBoardManager bindToLockContent(View lockView) {
+        this.lockView = lockView;
         return sKeyBoardManager;
     }
 

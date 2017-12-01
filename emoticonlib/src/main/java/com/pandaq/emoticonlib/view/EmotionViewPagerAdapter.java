@@ -161,7 +161,7 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
             end = (start < 0 ? 0 : end);
             editable.replace(start, end, key);
             int editEnd = mMessageEditText.getSelectionEnd();
-            PandaEmoTranslator.getInstance().replaceEmoticons(mContext, editable, 0, editable.toString().length());
+            PandaEmoTranslator.getInstance().replaceEmoticons(editable, 0, editable.toString().length());
             mMessageEditText.setSelection(editEnd);
         }
     }

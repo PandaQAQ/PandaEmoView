@@ -63,7 +63,7 @@ public class EmoticonManager {
      * 加载表情包
      */
     private void loadEmoticons() {
-        load(mPandaEmoManager.getContext(), mPandaEmoManager.getEmotDir() + File.separator + mPandaEmoManager.getConfigName());
+        load(mPandaEmoManager.getContext(), mPandaEmoManager.getEmotDir() + File.separator + mPandaEmoManager.getConfigFile());
         mDrawableCache = new LruCache<String, Bitmap>(mPandaEmoManager.getCacheMaxSize()) {
             @Override
             protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
@@ -230,34 +230,13 @@ public class EmoticonManager {
     }
 
     /**
-     * 获取 GifDrawable 对象，优先从缓存中读取，没有才创建新对象
-     *
-     * @param context 上下文
-     * @param text    表情对应的文本 [微笑] [再见]
-     * @param bounds  控制动态图显示大小的 bounds
-     * @return GifDrawable 对象
-     */
-    public AnimatedGifDrawable getDrawableGif(Context context, String text, int bounds) {
-        ImageEntry entry = mText2Entry.get(text);
-        if (entry == null || TextUtils.isEmpty(entry.text)) {
-            return null;
-        }
-        AnimatedGifDrawable cache = mGifDrawableCache.get(entry.path);
-        if (cache == null) {
-            cache = loadAssetGif(context, entry.path, bounds);
-            mGifDrawableCache.put(entry.path, cache);
-        }
-        return cache;
-    }
-
-    /**
      * 去 assetPath 目录下加载动态表情
      *
      * @param context   上下文
      * @param assetPath 路径
      * @return GifDrawable 对象
      */
-    private static AnimatedGifDrawable loadAssetGif(Context context, String assetPath, int bounds) {
+    private static AnimatedGifDrawable loadAssetGif(Context context, String assetPath,int bounds) {
         InputStream is;
         try {
             is = context.getResources().getAssets().open(assetPath + ".gif");
@@ -276,7 +255,7 @@ public class EmoticonManager {
      * @return GifDrawable 对象
      */
     public AnimatedGifDrawable getDrawableGif(Context context, String text) {
-        int size = EmoticonUtils.dp2px(context, 30);
+        int size = EmoticonUtils.dp2px(context, PandaEmoManager.getInstance().getDefaultEmoBoundsDp());
         ImageEntry entry = mText2Entry.get(text);
         if (entry == null || TextUtils.isEmpty(entry.text)) {
             return null;
