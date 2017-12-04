@@ -193,7 +193,7 @@ public class PandaEmoView extends RelativeLayout {
 
     private void fillVpEmotioin(int tabPosi) {
         if (adapter == null) {
-            adapter = new EmotionViewPagerAdapter(mContext, mMeasuredWidth, mMeasuredHeight, tabPosi, mEmoticonSelectedListener);
+            adapter = new EmotionViewPagerAdapter(mMeasuredWidth, mMeasuredHeight, tabPosi, mEmoticonSelectedListener);
         } else {
             adapter.setTabPosi(tabPosi);
         }
@@ -308,7 +308,7 @@ public class PandaEmoView extends RelativeLayout {
         if (mAttachedEditText != null) { // 绑定下一个焦点输入控件时将上一个控件吊起的输入框隐藏,并将已输入的内容转成表情放入
             mAttachedEditText.setText(PandaEmoTranslator.getInstance()
                     .makeEmojiSpannable(mAttachedEditText.getText().toString()));
-            mAttachedEditText.getKeyBoardManager().hideInputLayout();
+            mAttachedEditText.getKeyBoardManager().hideInputLayout(true);
             if (mTabPosi == 0 && adapter != null) { // 重新为表情输入栏绑定输入控件
                 adapter.attachEditText(inputEditText);
             }

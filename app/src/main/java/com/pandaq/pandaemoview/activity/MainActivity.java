@@ -1,25 +1,29 @@
-package com.pandaq.pandaemoview;
+package com.pandaq.pandaemoview.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pandaq.emoticonlib.KeyBoardManager;
-import com.pandaq.emoticonlib.sticker.StickerManager;
+import com.pandaq.emoticonlib.PandaEmoManager;
+import com.pandaq.emoticonlib.PandaEmoTranslator;
+import com.pandaq.emoticonlib.emoticons.EmoticonManager;
+import com.pandaq.emoticonlib.emoticons.gif.AnimatedGifDrawable;
 import com.pandaq.emoticonlib.listeners.IEmoticonMenuClickListener;
 import com.pandaq.emoticonlib.listeners.IStickerSelectedListener;
 import com.pandaq.emoticonlib.photopicker.ManageCustomActivity;
 import com.pandaq.emoticonlib.view.PandaEmoEditText;
 import com.pandaq.emoticonlib.view.PandaEmoView;
+import com.pandaq.pandaemoview.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,33 +33,38 @@ import java.io.OutputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.et_input)
-    PandaEmoEditText mEtInput;
-    @BindView(R.id.emoticonView)
-    PandaEmoView mEmoticonView;
-    @BindView(R.id.test_button)
-    Button mTestButton;
-    @BindView(R.id.parentPanel)
-    LinearLayout mParentPanel;
-    @BindView(R.id.tv_bottom_test)
-    TextView mTvBottomTest;
+
     @BindView(R.id.toptitle)
     TextView mToptitle;
-    @BindView(R.id.load_sticker)
-    Button mLoadSticker;
-    @BindView(R.id.llIndicator)
-    RelativeLayout mLlIndicator;
-    @BindView(R.id.scrollView)
-    ScrollView mScrollView;
+    @BindView(R.id.iv_call_menu)
+    ImageView mIvCallMenu;
+    @BindView(R.id.iv_call_emoticon)
+    ImageView mIvCallEmoticon;
+    @BindView(R.id.et_input)
+    PandaEmoEditText mEtInput;
+    @BindView(R.id.text_title)
+    TextView mTextTitle;
+    @BindView(R.id.tv_input_content)
+    TextView mTvInputContent;
+    @BindView(R.id.img_title)
+    TextView mImgTitle;
+    @BindView(R.id.iv_img_pic)
+    ImageView mIvImgPic;
     @BindView(R.id.rl_content)
     RelativeLayout mRlContent;
-    @BindView(R.id.test_image)
-    ImageView mTestImage;
+    @BindView(R.id.emoticonView)
+    PandaEmoView mEmoticonView;
+    @BindView(R.id.rl_bottom_layout)
+    RelativeLayout mRlBottomLayout;
+    @BindView(R.id.tv_send)
+    TextView mTvSend;
+    @BindView(R.id.tv_lru_size)
+    TextView mTvLruSize;
     private KeyBoardManager emotionKeyboard;
+    private boolean inPutLayoutShow = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mEmoticonView.attachEditText(mEtInput);
+        // Tab 菜单按钮监听
         mEmoticonView.setEmoticonMenuClickListener(new IEmoticonMenuClickListener() {
             @Override
             public void onTabAddClick(View view) {
@@ -76,10 +86,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        // 表情贴图选中监听
         mEmoticonView.setEmoticonSelectedListener(new IStickerSelectedListener() {
             @Override
             public void onStickerSelected(String title, String stickerBitmapPath) {
-                Log.d("PandaQ===>", "Title---" + title + "---stickerBitmapPath---" + stickerBitmapPath);
+                PandaEmoManager.getInstance().getIImageLoader().displayImage(stickerBitmapPath, mIvImgPic);
             }
 
             @Override
@@ -90,35 +101,83 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        mEtInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!TextUtils.isEmpty(mEtInput.getText())) {
+                    mTvSend.setVisibility(View.VISIBLE);
+                    mIvCallMenu.setVisibility(View.GONE);
+                } else {
+                    mTvSend.setVisibility(View.GONE);
+                    mIvCallMenu.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        mTvSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String send = mEtInput.getText().toString();
+                mTvInputContent.setText(PandaEmoTranslator
+                        .getInstance()
+                        .makeGifSpannable(getLocalClassName(), send, new AnimatedGifDrawable.RunGifCallBack() {
+                            @Override
+                            public void run() {
+                                mTvInputContent.postInvalidate();
+                            }
+                        }));
+                mEtInput.setText("");
+                mTvLruSize.setText(String.valueOf(EmoticonManager.getInstance().getGifLruSize()));
+            }
+        });
         initEmotionKeyboard();
+        // 将测试表情包压缩文件copy到SD卡
+        copyStickerAndUnZip("ziptest", getApplicationContext().getFilesDir().getAbsolutePath());
     }
 
     private void initEmotionKeyboard() {
         emotionKeyboard = KeyBoardManager.with(this)
-                .bindToEmotionButton(mTestButton)
+                .bindToEmotionButton(mIvCallEmoticon, mIvCallMenu)
                 .setEmotionView(mEmoticonView)
                 .bindToLockContent(mRlContent)
                 .setOnInputListener(new KeyBoardManager.OnInputShowListener() {
                     @Override
                     public void showInputView(boolean show) {
-                        System.out.println("showInputLayout-------->" + show);
+                        inPutLayoutShow = show;
                     }
                 });
         emotionKeyboard.setOnEmotionButtonOnClickListener(new KeyBoardManager.OnEmotionButtonOnClickListener() {
             @Override
             public boolean onEmotionButtonOnClickListener(View view) {
-                if (view.getId() == R.id.load_sticker) {
-                    if (mTvBottomTest.isShown()) {
-                        mTvBottomTest.setVisibility(View.GONE);
+                if (view.getId() == R.id.iv_call_menu) {
+                    if (mRlBottomLayout.isShown()) {
+                        mRlBottomLayout.setVisibility(View.GONE);
                         emotionKeyboard.showInputLayout();
                     } else {
-                        emotionKeyboard.hideInputLayout();
-                        mTvBottomTest.setVisibility(View.VISIBLE);
+                        if (inPutLayoutShow) {
+                            emotionKeyboard.hideInputLayout(true);
+                        } else {
+                            emotionKeyboard.hideInputLayout(false);
+                        }
+                        ViewGroup.LayoutParams params = mRlBottomLayout.getLayoutParams();
+                        params.height = KeyBoardManager.with(MainActivity.this)
+                                .getKeyBoardHeight();
+                        mRlBottomLayout.setLayoutParams(params);
+                        mRlBottomLayout.setVisibility(View.VISIBLE);
                     }
                     // 重写逻辑时一定要返回 ture 拦截 KeyBoardManager 中的默认逻辑
                     return true;
-                } else if (view.getId() == R.id.test_button) {
-                    mTvBottomTest.setVisibility(View.GONE);
+                } else if (view.getId() == R.id.iv_call_emoticon) {
+                    mRlBottomLayout.setVisibility(View.GONE);
                     return false;// 不破坏表情按钮的处理逻辑，只是隐藏显示的菜单页
                 }
                 return false;
@@ -128,24 +187,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!mTvBottomTest.isShown()) {
+        if (!mRlBottomLayout.isShown()) {
             if (!emotionKeyboard.interceptBackPress()) {
                 finish();
             }
         } else {
-            mTvBottomTest.setVisibility(View.GONE);
+            mRlBottomLayout.setVisibility(View.GONE);
         }
-    }
-
-    @OnClick(R.id.load_sticker)
-    public void onViewClicked() {
-        copyStickerToSdCard("sticker_test", getApplicationContext().getFilesDir() + "/sticker/selfSticker");
-        copyStickerAndUnZip("ziptest", getApplicationContext().getFilesDir().getAbsolutePath());
     }
 
     private void copyStickerAndUnZip(String assetDir, String dir) {
         copyStickerToSdCard(assetDir, dir);
-        StickerManager.getInstance().addZipResource(dir + "/soAngry.zip");
     }
 
     private void copyStickerToSdCard(String assetDir, String dir) {
@@ -190,10 +242,27 @@ public class MainActivity extends AppCompatActivity {
                 }
                 in.close();
                 out.close();
-                mEmoticonView.reloadEmos(1);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PandaEmoTranslator.getInstance().startGif(getLocalClassName());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        PandaEmoTranslator.getInstance().pauseGif();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PandaEmoTranslator.getInstance().clearGif(getLocalClassName());
     }
 }

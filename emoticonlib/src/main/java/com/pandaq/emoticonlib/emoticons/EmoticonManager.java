@@ -36,7 +36,7 @@ import java.util.Map;
 
 public class EmoticonManager {
 
-    public static EmoticonManager instance;
+    private static EmoticonManager instance;
     private final List<ImageEntry> mDefaultEntries = new ArrayList<>();
     private final Map<String, ImageEntry> mText2Entry = new HashMap<>();
     private LruCache<String, Bitmap> mDrawableCache;
@@ -54,9 +54,13 @@ public class EmoticonManager {
         return instance;
     }
 
-    public EmoticonManager() {
+    private EmoticonManager() {
         mPandaEmoManager = PandaEmoManager.getInstance();
         loadEmoticons();
+    }
+
+    public int getGifLruSize() {
+        return mGifDrawableCache.size();
     }
 
     /**
@@ -64,14 +68,14 @@ public class EmoticonManager {
      */
     private void loadEmoticons() {
         load(mPandaEmoManager.getContext(), mPandaEmoManager.getEmotDir() + File.separator + mPandaEmoManager.getConfigFile());
-        mDrawableCache = new LruCache<String, Bitmap>(mPandaEmoManager.getCacheMaxSize()) {
+        mDrawableCache = new LruCache<String, Bitmap>(mDefaultEntries.size()) {
             @Override
             protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
                 if (oldValue != newValue)
                     oldValue.recycle();
             }
         };
-        mGifDrawableCache = new LruCache<String, AnimatedGifDrawable>(mPandaEmoManager.getCacheMaxSize()) {
+        mGifDrawableCache = new LruCache<String, AnimatedGifDrawable>(mDefaultEntries.size()) {
             @Override
             protected void entryRemoved(boolean evicted, String key, AnimatedGifDrawable oldValue, AnimatedGifDrawable newValue) {
                 if (oldValue != newValue)
@@ -236,7 +240,7 @@ public class EmoticonManager {
      * @param assetPath 路径
      * @return GifDrawable 对象
      */
-    private static AnimatedGifDrawable loadAssetGif(Context context, String assetPath,int bounds) {
+    private static AnimatedGifDrawable loadAssetGif(Context context, String assetPath, int bounds) {
         InputStream is;
         try {
             is = context.getResources().getAssets().open(assetPath + ".gif");

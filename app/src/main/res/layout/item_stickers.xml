@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="@color/white"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp">
+    android:padding="16dp">
 
     <ImageView
         android:id="@+id/iv_cover"
@@ -28,6 +27,9 @@
         android:layout_height="40dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:text="下载"/>
+        android:background="@drawable/button"
+        android:gravity="center"
+        android:text="下载"
+        android:textColor="@color/white"/>
 
 </RelativeLayout>

@@ -43,20 +43,19 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
     private IStickerSelectedListener listener;
     private EditText mMessageEditText;
 
-    private Context mContext;
 
-    public void attachEditText(EditText messageEditText) {
+    void attachEditText(EditText messageEditText) {
         mMessageEditText = messageEditText;
     }
 
-    public EmotionViewPagerAdapter(Context context, int emotionLayoutWidth, int emotionLayoutHeight, int tabPosi, IStickerSelectedListener listener) {
-        mContext = context;
+    EmotionViewPagerAdapter(int emotionLayoutWidth, int emotionLayoutHeight, int tabPosi, IStickerSelectedListener listener) {
         mEmotionLayoutWidth = emotionLayoutWidth;
         mEmotionLayoutHeight = emotionLayoutHeight;
         mTabPosi = tabPosi;
         if (mTabPosi == 0) { // 默认的 emoji 或者 gif emoji
             mPageCount = (int) Math.ceil(EmoticonManager.getInstance().getDisplayCount() / (float) PandaEmoManager.getInstance().getEmojiPerPage());
         } else { //贴图表情
+            System.out.println(StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1).getStickers().size() + "??????????");
             mPageCount = (int) Math.ceil(StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1).getStickers().size() / (float) PandaEmoManager.getInstance().getStickerPerPage());
         }
         this.listener = listener;
@@ -129,7 +128,12 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
 
             StickerCategory category = StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1);
             List<StickerItem> stickers = category.getStickers();
-            int index = position + (Integer) parent.getTag() * PandaEmoManager.getInstance().getStickerPerPage() - 1;
+            int index;
+            if (mTabPosi == 1) {
+                index = position + (Integer) parent.getTag() * PandaEmoManager.getInstance().getStickerPerPage() - 1;
+            } else {
+                index = position + (Integer) parent.getTag() * PandaEmoManager.getInstance().getStickerPerPage();
+            }
             if (index >= stickers.size()) {
                 Log.i("CSDN_LQR", "index " + index + " larger than size " + stickers.size());
                 return;
@@ -168,5 +172,10 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
 
     void setTabPosi(int tabPosi) {
         mTabPosi = tabPosi;
+        if (mTabPosi == 0) { // 默认的 emoji 或者 gif emoji
+            mPageCount = (int) Math.ceil(EmoticonManager.getInstance().getDisplayCount() / (float) PandaEmoManager.getInstance().getEmojiPerPage());
+        } else { //贴图表情
+            mPageCount = (int) Math.ceil(StickerManager.getInstance().getStickerCategories().get(mTabPosi - 1).getStickers().size() / (float) PandaEmoManager.getInstance().getStickerPerPage());
+        }
     }
 }

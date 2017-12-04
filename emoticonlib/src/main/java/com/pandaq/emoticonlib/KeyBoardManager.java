@@ -93,11 +93,9 @@ public class KeyBoardManager {
             @Override
             public void backPressed() {
                 interceptBackPress = mEmotionView.isShown();
-                if (interceptBackPress) {
-                    // 通知输入View关闭
-                    if (mOnInputShowListener != null) {
-                        mOnInputShowListener.showInputView(false);
-                    }
+                // 通知输入View关闭
+                if (mOnInputShowListener != null) {
+                    mOnInputShowListener.showInputView(false);
                 }
                 hideEmotionLayout(false);
                 unlockContentHeightDelayed();
@@ -299,7 +297,7 @@ public class KeyBoardManager {
      *
      * @return 软键盘高度 px
      */
-    private int getKeyBoardHeight() {
+    public int getKeyBoardHeight() {
         int softInputHeight = getSupportSoftInputHeight();
         if (softInputHeight == 0) {
             softInputHeight = mSp.getInt(SHARE_PREFERENCE_SOFT_INPUT_HEIGHT, EmoticonUtils.dp2px(mActivity, 270));
@@ -334,11 +332,14 @@ public class KeyBoardManager {
     }
     /*================== 表情按钮点击事件回调 end ==================*/
 
-    public void hideInputLayout() {
-        lockContentHeight();
-        hideEmotionLayout(false);
-        unlockContentHeightDelayed();
-        // 并不是真的软键盘在显示，只是为了标识让下一次按键打开表情界面而不是输入法
+    public void hideInputLayout(boolean lock) {
+        if (lock) {
+            lockContentHeight();
+            hideEmotionLayout(false);
+            unlockContentHeightDelayed();
+        } else {
+            hideEmotionLayout(false);
+        }
     }
 
     public void showInputLayout() {

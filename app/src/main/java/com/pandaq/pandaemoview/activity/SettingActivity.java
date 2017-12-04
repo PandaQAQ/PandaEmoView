@@ -1,4 +1,4 @@
-package com.pandaq.pandaemoview;
+package com.pandaq.pandaemoview.activity;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -6,6 +6,7 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -17,10 +18,16 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 
+import com.pandaq.emoticonlib.PandaEmoManager;
 import com.pandaq.emoticonlib.base.SwipeBackActivity;
 import com.pandaq.emoticonlib.sticker.StickerCategory;
 import com.pandaq.emoticonlib.sticker.StickerManager;
+import com.pandaq.pandaemoview.ItemStickerAdapter;
+import com.pandaq.pandaemoview.R;
+import com.pandaq.pandaemoview.StickerEntity;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -51,48 +58,21 @@ public class SettingActivity extends SwipeBackActivity {
     }
 
     private void init() {
+        ArrayList<StickerEntity> entities = new ArrayList<>();
+        StickerEntity entity = new StickerEntity();
+        entity.downLoadUrl = PandaEmoManager.getInstance().getStickerPath() + File.separator + "soAngry";
+        entity.name = "我好气啊";
+        entity.isDownLoaded = true;
+        entity.picCover = "https://b-ssl.duitang.com/uploads/item/201607/24/20160724220001_reK4C.jpeg";
+        entities.add(entity);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        List<StickerCategory> stickerCategories = StickerManager.getInstance().getStickerCategories();
-    }
-
-    private class MyWebViewClient extends WebViewClient {
-        boolean overLoad = true;
-
-        public MyWebViewClient(boolean overLoad) {
-            this.overLoad = overLoad;
-        }
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            return overLoad;
-        }
-
-        /**
-         * 网页开始加载
-         */
-        @Override
-        public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            super.onPageStarted(view, url, favicon);
-        }
-
-        /**
-         * 网页加载完成
-         */
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            super.onPageFinished(view, url);
-        }
-
-        @Override
-        public void onReceivedSslError(WebView webView, SslErrorHandler sslErrorHandler, SslError sslError) {
-            super.onReceivedSslError(webView, sslErrorHandler, sslError);
-            sslErrorHandler.proceed();
-            System.out.println("?????????");
-        }
+        ItemStickerAdapter itemStickerAdapter = new ItemStickerAdapter(this, entities);
+        mRvEmoticonList.setLayoutManager(new LinearLayoutManager(this));
+        mRvEmoticonList.setAdapter(itemStickerAdapter);
     }
 }

@@ -1,29 +1,22 @@
 package com.pandaq.emoticonlib;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.text.style.ImageSpan;
-import android.view.View;
-import android.widget.TextView;
 
 import com.pandaq.emoticonlib.emoticons.EmoticonManager;
 import com.pandaq.emoticonlib.emoticons.gif.AnimatedGifDrawable;
 import com.pandaq.emoticonlib.emoticons.gif.AnimatedImageSpan;
 import com.pandaq.emoticonlib.emoticons.gif.GifRunnable;
-import com.pandaq.emoticonlib.utils.ClickTextSpan;
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
 
 import java.util.HashSet;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by huxinyu on 2017/11/2 0002.
@@ -49,7 +42,7 @@ public class PandaEmoTranslator {
                 }
             }
         }
-
+        sEmoTranslator.MAX_PER_VIEW = PandaEmoManager.getInstance().getMaxGifPerView();
         return sEmoTranslator;
     }
 
@@ -59,12 +52,9 @@ public class PandaEmoTranslator {
      *
      * @param maxGifPerView 阈值
      */
-    public void setMaxGifPerView(int maxGifPerView) {
+    public PandaEmoTranslator setMaxGifPerView(int maxGifPerView) {
         MAX_PER_VIEW = maxGifPerView;
-    }
-
-    public int getMaxGifPerView() {
-        return MAX_PER_VIEW;
+        return this;
     }
 
     /**
@@ -132,7 +122,7 @@ public class PandaEmoTranslator {
     /**
      * 将带表情的文本转换成图文混排的文本（动态图也转换为静态图）
      *
-     * @param value   待转换文本
+     * @param value 待转换文本
      * @return 转换结果
      */
     public SpannableString makeEmojiSpannable(String value) {
@@ -158,9 +148,8 @@ public class PandaEmoTranslator {
 
     /**
      * 将 EditText 文本替换为静态表情图
-     *
      */
-    public void replaceEmoticons( Editable editable, int start, int count) {
+    public void replaceEmoticons(Editable editable, int start, int count) {
         if (count <= 0 || editable.length() < start + count)
             return;
         CharSequence s = editable.subSequence(start, start + count);
@@ -218,9 +207,9 @@ public class PandaEmoTranslator {
      *
      * @param activityTag 停止界面 activity 的 Tag
      */
-    public void stopGif(String activityTag) {
+    public void clearGif(String activityTag) {
         if (mGifRunnable != null) {
-            mGifRunnable.stopHandler(activityTag);
+            mGifRunnable.clearHandler(activityTag);
         }
     }
 
