@@ -36,7 +36,7 @@ import java.util.Map;
 
 public class EmoticonManager {
 
-    public static EmoticonManager instance;
+    private static EmoticonManager instance;
     private final List<ImageEntry> mDefaultEntries = new ArrayList<>();
     private final Map<String, ImageEntry> mText2Entry = new HashMap<>();
     private LruCache<String, Bitmap> mDrawableCache;
@@ -54,24 +54,28 @@ public class EmoticonManager {
         return instance;
     }
 
-    public EmoticonManager() {
+    private EmoticonManager() {
         mPandaEmoManager = PandaEmoManager.getInstance();
         loadEmoticons();
+    }
+
+    public int getGifLruSize() {
+        return mGifDrawableCache.size();
     }
 
     /**
      * 加载表情包
      */
     private void loadEmoticons() {
-        load(mPandaEmoManager.getContext(), mPandaEmoManager.getEmotDir() + File.separator + mPandaEmoManager.getConfigName());
-        mDrawableCache = new LruCache<String, Bitmap>(mPandaEmoManager.getCacheMaxSize()) {
+        load(mPandaEmoManager.getContext(), mPandaEmoManager.getEmotDir() + File.separator + mPandaEmoManager.getConfigFile());
+        mDrawableCache = new LruCache<String, Bitmap>(mDefaultEntries.size()) {
             @Override
             protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
                 if (oldValue != newValue)
                     oldValue.recycle();
             }
         };
-        mGifDrawableCache = new LruCache<String, AnimatedGifDrawable>(mPandaEmoManager.getCacheMaxSize()) {
+        mGifDrawableCache = new LruCache<String, AnimatedGifDrawable>(mDefaultEntries.size()) {
             @Override
             protected void entryRemoved(boolean evicted, String key, AnimatedGifDrawable oldValue, AnimatedGifDrawable newValue) {
                 if (oldValue != newValue)
@@ -230,27 +234,6 @@ public class EmoticonManager {
     }
 
     /**
-     * 获取 GifDrawable 对象，优先从缓存中读取，没有才创建新对象
-     *
-     * @param context 上下文
-     * @param text    表情对应的文本 [微笑] [再见]
-     * @param bounds  控制动态图显示大小的 bounds
-     * @return GifDrawable 对象
-     */
-    public AnimatedGifDrawable getDrawableGif(Context context, String text, int bounds) {
-        ImageEntry entry = mText2Entry.get(text);
-        if (entry == null || TextUtils.isEmpty(entry.text)) {
-            return null;
-        }
-        AnimatedGifDrawable cache = mGifDrawableCache.get(entry.path);
-        if (cache == null) {
-            cache = loadAssetGif(context, entry.path, bounds);
-            mGifDrawableCache.put(entry.path, cache);
-        }
-        return cache;
-    }
-
-    /**
      * 去 assetPath 目录下加载动态表情
      *
      * @param context   上下文
@@ -276,7 +259,7 @@ public class EmoticonManager {
      * @return GifDrawable 对象
      */
     public AnimatedGifDrawable getDrawableGif(Context context, String text) {
-        int size = EmoticonUtils.dp2px(context, 30);
+        int size = EmoticonUtils.dp2px(context, PandaEmoManager.getInstance().getDefaultEmoBoundsDp());
         ImageEntry entry = mText2Entry.get(text);
         if (entry == null || TextUtils.isEmpty(entry.text)) {
             return null;

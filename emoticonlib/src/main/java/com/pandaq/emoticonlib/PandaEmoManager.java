@@ -24,11 +24,12 @@ public class PandaEmoManager {
     private String EMOT_DIR = "face"; // assets 中默认表情文件夹
     private String SOURCE_DIR = "source_default"; // assets 中默认图片资源文件夹名称，父目录为 EMOT_DIR
     private String STICKER_PATH = null; //默认路径在 /data/data/包名/files/sticker 下
-    private int CACHE_MAX_SIZE = 1024;
+    private int MAX_GIF_PERVIEW = 5; // 单个 TextView 最多显示的 Gif 个数
+    private int CACHE_MAX_SIZE = 128;
     private int DEFAULT_EMO_BOUNDS_DP = 30; //默认的 emoji 表情图文混排大小
     private int defaultIcon = R.drawable.ic_default;
     private Context mContext;
-    private String mConfigName = "emoji_default.xml";
+    private String mConfigFile = "emoji_default.xml";
     private IImageLoader mIImageLoader;
     private int MAX_CUSTOM_STICKER = 30;
     private int EMOJI_ROW = 3;
@@ -38,7 +39,6 @@ public class PandaEmoManager {
     private boolean showAddButton = true;
     private boolean showSetButton = true;
     private boolean showStickers = true;
-
     private PandaEmoView sPandaEmoView;
     private Pattern mPattern;
 
@@ -47,10 +47,10 @@ public class PandaEmoManager {
             STICKER_PATH = new File(mContext.getFilesDir(), "sticker").getAbsolutePath();
         }
         mPattern = makePattern();
-        File mWorkingPath = new File(STICKER_PATH + "/selfSticker");
+        File selfStickerPath = new File(STICKER_PATH + "/selfSticker");
         // if this directory does not exists, make one.
-        if (!mWorkingPath.exists()) {
-            mWorkingPath.mkdirs();
+        if (!selfStickerPath.exists()) {
+            selfStickerPath.mkdirs();
         }
     }
 
@@ -130,8 +130,8 @@ public class PandaEmoManager {
         return defaultIcon;
     }
 
-    public String getConfigName() {
-        return mConfigName;
+    public String getConfigFile() {
+        return mConfigFile;
     }
 
     public int getMaxCustomSticker() {
@@ -139,11 +139,15 @@ public class PandaEmoManager {
     }
 
     public int getEmojiPerPage() {
-        return EMOJI_COLUMN * EMOJI_ROW-1;
+        return EMOJI_COLUMN * EMOJI_ROW - 1;
     }
 
     public int getStickerPerPage() {
         return STICKER_COLUMN * STICKER_ROW;
+    }
+
+    public int getMaxGifPerView() {
+        return MAX_GIF_PERVIEW;
     }
 
     public PandaEmoView getManagedView() {
@@ -185,6 +189,8 @@ public class PandaEmoManager {
         private int STICKER_ROW = 2;
         // 贴图表情列数
         private int STICKER_COLUMN = 4;
+        // 单个 TextView 最多显示 Gif 的个数
+        private int MAX_GIF_PERVIEW = 5;
 
         public Builder defaultTabIcon(int defaultIconRes) {
             this.defaultIcon = defaultIconRes;
@@ -271,6 +277,11 @@ public class PandaEmoManager {
             return this;
         }
 
+        public Builder maxGifPerView(int maxGifPerView) {
+            this.MAX_GIF_PERVIEW = maxGifPerView;
+            return this;
+        }
+
         public void build() {
             if (sPandaEmoManager == null) {
                 synchronized (PandaEmoManager.class) {
@@ -301,7 +312,7 @@ public class PandaEmoManager {
             }
 
             if (this.mConfigName != null) {
-                sPandaEmoManager.mConfigName = this.mConfigName;
+                sPandaEmoManager.mConfigFile = this.mConfigName;
             }
 
             if (this.SOUCRE_DIR != null) {
@@ -334,6 +345,11 @@ public class PandaEmoManager {
             if (this.STICKER_COLUMN != 0) {
                 sPandaEmoManager.STICKER_COLUMN = this.STICKER_COLUMN;
             }
+
+            if (this.MAX_GIF_PERVIEW >= 1) {
+                sPandaEmoManager.MAX_GIF_PERVIEW = this.MAX_GIF_PERVIEW;
+            }
+
             sPandaEmoManager.showAddButton = this.showAddButton;
 
             sPandaEmoManager.showStickers = this.showStickers;
@@ -344,7 +360,7 @@ public class PandaEmoManager {
         }
     }
 
-    public void manage(PandaEmoView emoView) {
+    void manage(PandaEmoView emoView) {
         sPandaEmoView = emoView;
     }
 }

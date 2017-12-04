@@ -79,13 +79,13 @@ public class StickerAdapter extends BaseAdapter {
             viewHolder.mImageView.setImageResource(R.drawable.ic_action_add);
         } else {
             StickerItem sticker;
-            if (mCategory.isDefault()) {
+            if (index >= mCategory.getStickers().size()) {
+                return convertView;
+            }
+            if (mCategory.isDefault() && mCategory.getStickers().size() > 0) {
                 sticker = mCategory.getStickers().get(index - 1);
             } else {
                 sticker = mCategory.getStickers().get(index);
-            }
-            if (index >= mCategory.getStickers().size()) {
-                return convertView;
             }
             if (sticker == null) {
                 return convertView;

@@ -178,7 +178,7 @@ public class StickerManager {
             } else if (localName.equals("Emoticon")) {
                 String tag = attributes.getValue(uri, "Tag");
                 String filePath = attributes.getValue(uri, "File");
-                String path = stickerPath + File.separator + filePath;
+                String path = stickerPath + filePath;
                 if ("TabCover".equals(tag)) {
                     mCategory.setCoverPath(path);
                 } else {

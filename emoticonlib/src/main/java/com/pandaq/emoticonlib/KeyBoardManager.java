@@ -1,5 +1,6 @@
 package com.pandaq.emoticonlib;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -12,8 +13,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.LinearLayout;
 
+import com.pandaq.emoticonlib.base.BaseActivity;
 import com.pandaq.emoticonlib.listeners.OnMultiFixClickListener;
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
 import com.pandaq.emoticonlib.view.PandaEmoEditText;
@@ -35,28 +38,32 @@ public class KeyBoardManager {
     private PandaEmoView mEmotionView;//表情布局
     private PandaEmoEditText mEditText;
     private boolean interceptBackPress = false;
-    private boolean isSoftInputShown = false;
     private View lockView;
     private OnEmotionButtonOnClickListener mOnEmotionButtonOnClickListener; // 表情切换按钮点击回调
     private OnInputShowListener mOnInputShowListener; // 输入布局显示收起回调（包括系统自带和自定义表情键盘）
+    @SuppressLint("StaticFieldLeak")
+    private static KeyBoardManager sKeyBoardManager;
 
     public static KeyBoardManager with(Activity activity) {
-        KeyBoardManager emotionInputDetector = new KeyBoardManager();
-        emotionInputDetector.mActivity = activity;
-        emotionInputDetector.mInputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        emotionInputDetector.mSp = activity.getSharedPreferences(SHARE_PREFERENCE_NAME, Context.MODE_PRIVATE);
-        return emotionInputDetector;
+        if (sKeyBoardManager == null) {
+            synchronized (KeyBoardManager.class) {
+                if (sKeyBoardManager == null) {
+                    sKeyBoardManager = new KeyBoardManager();
+                }
+            }
+        }
+        sKeyBoardManager.mActivity = activity;
+        sKeyBoardManager.mInputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        sKeyBoardManager.mSp = activity.getSharedPreferences(SHARE_PREFERENCE_NAME, Context.MODE_PRIVATE);
+        return sKeyBoardManager;
     }
 
     /**
      * 绑定编辑框
      */
     private KeyBoardManager bindToEditText(final PandaEmoEditText editText) {
-        if (editText == null) {
-            throwAttachException();
-            return this;
-        }
         mEditText = editText;
+        mEditText.setKeyBoardManager(sKeyBoardManager);
         mEditText.requestFocus();
         mEditText.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -73,7 +80,6 @@ public class KeyBoardManager {
                             }
                         }, 200L);
                     }
-                    isSoftInputShown = true;
                     // 通知输入View显示
                     if (mOnInputShowListener != null) {
                         mOnInputShowListener.showInputView(true);
@@ -87,28 +93,24 @@ public class KeyBoardManager {
             @Override
             public void backPressed() {
                 interceptBackPress = mEmotionView.isShown();
-                if (interceptBackPress) {
-                    // 通知输入View关闭
-                    if (mOnInputShowListener != null) {
-                        mOnInputShowListener.showInputView(false);
-                    }
+                // 通知输入View关闭
+                if (mOnInputShowListener != null) {
+                    mOnInputShowListener.showInputView(false);
                 }
                 hideEmotionLayout(false);
                 unlockContentHeightDelayed();
-                // 并不是真的软键盘在显示，只是为了标识让下一次按键打开表情界面而不是输入法
-                isSoftInputShown = true;
             }
         });
-        return this;
+        return sKeyBoardManager;
     }
 
     /**
      * 绑定内容view，此view用于固定bar的高度，防止跳闪
      * contentView 界面布局为 内容和表情布局分开格式，contentView 为除表情外的所有内容布局
      */
-    public KeyBoardManager bindToLockContent(View contentView) {
-        lockView = contentView;
-        return this;
+    public KeyBoardManager bindToLockContent(View lockView) {
+        this.lockView = lockView;
+        return sKeyBoardManager;
     }
 
     /**
@@ -118,7 +120,7 @@ public class KeyBoardManager {
         for (View view : emotionButton) {
             view.setOnClickListener(getOnEmotionButtonOnClickListener());
         }
-        return this;
+        return sKeyBoardManager;
     }
 
     private View.OnClickListener getOnEmotionButtonOnClickListener() {
@@ -134,16 +136,14 @@ public class KeyBoardManager {
                     lockContentHeight();//显示软件盘时，锁定内容高度，防止跳闪。
                     hideEmotionLayout(true);//隐藏表情布局，显示软件盘
                     unlockContentHeightDelayed();
-                    isSoftInputShown = true;
                 } else {
-                    if (isSoftInputShown && getSupportSoftInputHeight() > 300) {
+                    if (getSupportSoftInputHeight() > 300) {
                         lockContentHeight();
                         showEmotionLayout();
                         unlockContentHeightDelayed();
                     } else {
                         showEmotionLayout();
                     }
-                    isSoftInputShown = false;
                 }
                 // 通知输入View显示
                 if (mOnInputShowListener != null) {
@@ -159,10 +159,18 @@ public class KeyBoardManager {
      * @param emotionView 表情布局
      */
     public KeyBoardManager setEmotionView(PandaEmoView emotionView) {
+        if (emotionView.getAttachEditText() == null) {
+            try {
+                throw new Exception("Please call PandaEmoView.attachEditText(PandaEmoEditText messageEditText) first");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
         mEmotionView = emotionView;
         PandaEmoManager.getInstance().manage(mEmotionView);
         bindToEditText(mEmotionView.getAttachEditText());
-        return this;
+        return sKeyBoardManager;
     }
 
     /**
@@ -180,10 +188,6 @@ public class KeyBoardManager {
      * 释放被锁定的内容高度
      */
     private void unlockContentHeightDelayed() {
-        if (mEditText == null) {
-            throwAttachException();
-            return;
-        }
         mEditText.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -227,10 +231,6 @@ public class KeyBoardManager {
      * 编辑框获取焦点，并显示软件盘
      */
     private void showSoftInput() {
-        if (mEditText == null) {
-            throwAttachException();
-            return;
-        }
         mEditText.requestFocus();
         mInputManager.showSoftInput(mEditText, 0);
     }
@@ -239,10 +239,6 @@ public class KeyBoardManager {
      * 隐藏软件盘
      */
     private void hideSoftInput() {
-        if (mEditText == null) {
-            throwAttachException();
-            return;
-        }
         mInputManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
     }
 
@@ -301,7 +297,7 @@ public class KeyBoardManager {
      *
      * @return 软键盘高度 px
      */
-    private int getKeyBoardHeight() {
+    public int getKeyBoardHeight() {
         int softInputHeight = getSupportSoftInputHeight();
         if (softInputHeight == 0) {
             softInputHeight = mSp.getInt(SHARE_PREFERENCE_SOFT_INPUT_HEIGHT, EmoticonUtils.dp2px(mActivity, 270));
@@ -332,30 +328,23 @@ public class KeyBoardManager {
 
     public KeyBoardManager setOnInputListener(OnInputShowListener onInputShowListener) {
         mOnInputShowListener = onInputShowListener;
-        return this;
+        return sKeyBoardManager;
     }
     /*================== 表情按钮点击事件回调 end ==================*/
 
-    public void hideInputLayout() {
-        lockContentHeight();
-        hideEmotionLayout(false);
-        unlockContentHeightDelayed();
-        // 并不是真的软键盘在显示，只是为了标识让下一次按键打开表情界面而不是输入法
-        isSoftInputShown = true;
+    public void hideInputLayout(boolean lock) {
+        if (lock) {
+            lockContentHeight();
+            hideEmotionLayout(false);
+            unlockContentHeightDelayed();
+        } else {
+            hideEmotionLayout(false);
+        }
     }
 
     public void showInputLayout() {
-        isSoftInputShown = true;
         lockContentHeight();
         showSoftInput();
         unlockContentHeightDelayed();
-    }
-
-    private void throwAttachException() {
-        try {
-            throw new Exception("Please call PandaEmoView.attachEditText(PandaEmoEditText messageEditText) first");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

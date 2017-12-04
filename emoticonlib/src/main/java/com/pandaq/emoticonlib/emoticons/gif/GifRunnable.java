@@ -82,7 +82,8 @@ public class GifRunnable implements Runnable {
     /**
      * 使用了表情转换的界面退出时调用，停止动态图handler
      */
-    public void stopHandler(String activityName) {
+    public void clearHandler(String activityName) {
+        currentActivity = null;
         //清除当前页的数据
         mGifDrawableMap.remove(activityName);
         // 当退出当前Activity后没表情显示时停止 Runable 清除所有动态表情数据
@@ -109,7 +110,7 @@ public class GifRunnable implements Runnable {
         }
     }
 
-    public boolean isRunning() {
+    boolean isRunning() {
         return isRunning;
     }
 }

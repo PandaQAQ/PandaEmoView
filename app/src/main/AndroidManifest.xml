@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name="com.pandaq.pandaemoview.BaseApplication"
@@ -14,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.pandaq.pandaemoview.MainActivity"
+            android:name="com.pandaq.pandaemoview.activity.MainActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -23,10 +24,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddEmoActivity"
+            android:name=".activity.AddEmoActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".SettingActivity"
+            android:name=".activity.SettingActivity"
             android:screenOrientation="portrait"/>
     </application>
 
