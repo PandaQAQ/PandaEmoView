@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 27
@@ -7,7 +8,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -18,6 +19,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    lintOptions{
+        abortOnError false
+    }
+}
+
+publish {
+    userOrg = 'huxinyu' //注册时候的用户名
+    groupId = 'com.pandaq'// //compile引用时的第1部分
+    artifactId = 'PandaEmoView'////发布到JCenter上的项目名字，compile引用时的第2部分项目名
+    publishVersion = '1.0.0'//版本号 ，compile引用时的最后部分，下次更新是只需要更改版本号即可
+    desc = 'emoticons input layout'//描述，不重要
+    website = 'http://www.jianshu.com/p/fddca2b0a26b' //项目的GitHub网站
 }
 
 dependencies {

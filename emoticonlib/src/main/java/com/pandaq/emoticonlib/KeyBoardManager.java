@@ -13,10 +13,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
 import android.widget.LinearLayout;
 
-import com.pandaq.emoticonlib.base.BaseActivity;
 import com.pandaq.emoticonlib.listeners.OnMultiFixClickListener;
 import com.pandaq.emoticonlib.utils.EmoticonUtils;
 import com.pandaq.emoticonlib.view.PandaEmoEditText;
@@ -35,7 +33,7 @@ public class KeyBoardManager {
     private Activity mActivity;
     private InputMethodManager mInputManager;//软键盘管理类
     private SharedPreferences mSp;
-    private PandaEmoView mEmotionView;//表情布局
+    private PandaEmoView mEmotionView; //表情布局
     private PandaEmoEditText mEditText;
     private boolean interceptBackPress = false;
     private View lockView;
@@ -43,6 +41,7 @@ public class KeyBoardManager {
     private OnInputShowListener mOnInputShowListener; // 输入布局显示收起回调（包括系统自带和自定义表情键盘）
     @SuppressLint("StaticFieldLeak")
     private static KeyBoardManager sKeyBoardManager;
+    private boolean inputViewShow;
 
     public static KeyBoardManager with(Activity activity) {
         if (sKeyBoardManager == null) {
@@ -80,10 +79,6 @@ public class KeyBoardManager {
                             }
                         }, 200L);
                     }
-                    // 通知输入View显示
-                    if (mOnInputShowListener != null) {
-                        mOnInputShowListener.showInputView(true);
-                    }
                 }
                 return false;
             }
@@ -93,10 +88,6 @@ public class KeyBoardManager {
             @Override
             public void backPressed() {
                 interceptBackPress = mEmotionView.isShown();
-                // 通知输入View关闭
-                if (mOnInputShowListener != null) {
-                    mOnInputShowListener.showInputView(false);
-                }
                 hideEmotionLayout(false);
                 unlockContentHeightDelayed();
             }
@@ -110,6 +101,22 @@ public class KeyBoardManager {
      */
     public KeyBoardManager bindToLockContent(View lockView) {
         this.lockView = lockView;
+        this.lockView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (bottom - oldBottom == getKeyBoardHeight()) {
+                    if (mOnInputShowListener != null) {
+                        mOnInputShowListener.showInputView(false);
+                    }
+                    inputViewShow = false;
+                } else if (oldBottom - bottom == getKeyBoardHeight()) {
+                    if (mOnInputShowListener != null) {
+                        mOnInputShowListener.showInputView(true);
+                    }
+                    inputViewShow = true;
+                }
+            }
+        });
         return sKeyBoardManager;
     }
 
@@ -137,17 +144,13 @@ public class KeyBoardManager {
                     hideEmotionLayout(true);//隐藏表情布局，显示软件盘
                     unlockContentHeightDelayed();
                 } else {
-                    if (getSupportSoftInputHeight() > 300) {
+                    if (inputViewShow) {
                         lockContentHeight();
                         showEmotionLayout();
                         unlockContentHeightDelayed();
                     } else {
                         showEmotionLayout();
                     }
-                }
-                // 通知输入View显示
-                if (mOnInputShowListener != null) {
-                    mOnInputShowListener.showInputView(true);
                 }
             }
         };
@@ -256,15 +259,10 @@ public class KeyBoardManager {
         int screenHeight = mActivity.getWindow().getDecorView().getRootView().getHeight();
         //计算软件盘的高度
         int softInputHeight = screenHeight - r.bottom;
-        /*
-         * 某些Android版本下，没有显示软键盘时减出来的高度总是144，而不是零，
-         * 这是因为高度是包括了虚拟按键栏的(例如华为系列)，所以在API Level高于20时，
-         * 我们需要减去底部虚拟按键栏的高度（如果有的话）
-         */
         // When SDK Level >= 20 (Android L), the softInputHeight will contain the height of softButtonsBar (if has)
         softInputHeight = softInputHeight - getSoftButtonsBarHeight();
         if (softInputHeight < 0) {
-            Log.w("LQR", "EmotionKeyboard--Warning: value of softInputHeight is below zero!");
+            Log.w("PandaQ", "EmotionKeyboard--Warning: value of softInputHeight is below zero!");
         }
         //存一份到本地
         if (softInputHeight > 0) {
@@ -290,6 +288,15 @@ public class KeyBoardManager {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * 获取底部输入控件的显示状态
+     *
+     * @return true 显示 false 关闭
+     */
+    public boolean isInputViewShow() {
+        return inputViewShow;
     }
 
     /**
@@ -332,8 +339,8 @@ public class KeyBoardManager {
     }
     /*================== 表情按钮点击事件回调 end ==================*/
 
-    public void hideInputLayout(boolean lock) {
-        if (lock) {
+    public void hideInputLayout() {
+        if (inputViewShow) {
             lockContentHeight();
             hideEmotionLayout(false);
             unlockContentHeightDelayed();
@@ -343,8 +350,12 @@ public class KeyBoardManager {
     }
 
     public void showInputLayout() {
-        lockContentHeight();
-        showSoftInput();
-        unlockContentHeightDelayed();
+        if (inputViewShow) {
+            lockContentHeight();
+            showSoftInput();
+            unlockContentHeightDelayed();
+        } else {
+            showSoftInput();
+        }
     }
 }
