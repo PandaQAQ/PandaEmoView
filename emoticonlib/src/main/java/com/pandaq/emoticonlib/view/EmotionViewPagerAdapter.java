@@ -135,7 +135,7 @@ public class EmotionViewPagerAdapter extends PagerAdapter {
                 index = position + (Integer) parent.getTag() * PandaEmoManager.getInstance().getStickerPerPage();
             }
             if (index >= stickers.size()) {
-                Log.i("CSDN_LQR", "index " + index + " larger than size " + stickers.size());
+                Log.i("PandaQ", "index " + index + " larger than size " + stickers.size());
                 return;
             }
             if (listener != null) {

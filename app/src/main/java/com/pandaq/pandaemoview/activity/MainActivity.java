@@ -36,7 +36,6 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-
     @BindView(R.id.toptitle)
     TextView mToptitle;
     @BindView(R.id.iv_call_menu)
@@ -64,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.tv_lru_size)
     TextView mTvLruSize;
     private KeyBoardManager emotionKeyboard;
-    private boolean inPutLayoutShow = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,27 +150,23 @@ public class MainActivity extends AppCompatActivity {
                 .setOnInputListener(new KeyBoardManager.OnInputShowListener() {
                     @Override
                     public void showInputView(boolean show) {
-                        inPutLayoutShow = show;
+
                     }
                 });
         emotionKeyboard.setOnEmotionButtonOnClickListener(new KeyBoardManager.OnEmotionButtonOnClickListener() {
             @Override
             public boolean onEmotionButtonOnClickListener(View view) {
                 if (view.getId() == R.id.iv_call_menu) {
+                    int softInputHeight = emotionKeyboard.getKeyBoardHeight();
+                    ViewGroup.LayoutParams params = mRlBottomLayout.getLayoutParams();
                     if (mRlBottomLayout.isShown()) {
                         mRlBottomLayout.setVisibility(View.GONE);
                         emotionKeyboard.showInputLayout();
                     } else {
-                        if (inPutLayoutShow) {
-                            emotionKeyboard.hideInputLayout(true);
-                        } else {
-                            emotionKeyboard.hideInputLayout(false);
-                        }
-                        ViewGroup.LayoutParams params = mRlBottomLayout.getLayoutParams();
-                        params.height = KeyBoardManager.with(MainActivity.this)
-                                .getKeyBoardHeight();
+                        params.height = softInputHeight;
                         mRlBottomLayout.setLayoutParams(params);
                         mRlBottomLayout.setVisibility(View.VISIBLE);
+                        emotionKeyboard.hideInputLayout();
                     }
                     // 重写逻辑时一定要返回 ture 拦截 KeyBoardManager 中的默认逻辑
                     return true;
