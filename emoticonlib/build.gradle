@@ -1,5 +1,86 @@
 apply plugin: 'com.android.library'
+//---------------------upload to jcenter---------------------
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
 
+def siteUrl = 'http://www.jianshu.com/p/fddca2b0a26b' // 项目的主页 这个是说明，可随便填
+def gitUrl = 'https://github.com/PandaQAQ/PandaEmoView' // Git仓库的url 这个是说明，可随便填
+group = "com.pandaq.pandaemoview" // 这里是groupId ,必须填写 一般填你唯一的包名，对应
+
+install {
+    repositories.mavenInstaller {
+// This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+// Add your description here
+                name 'PandaEmoView' //项目描述
+                url siteUrl
+// Set your license
+                licenses {
+                    license {
+                        name 'Panda OpenSource License, Version 1.0.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'PandaQ' //填写开发者的一些基本信息
+                        name 'huxinyu' //填写开发者的一些基本信息
+                        email 'huxinyujyy@gmail.com' //填写开发者的一些基本信息
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+task javadoc(type: Javadoc) {
+    options {
+        encoding "UTF-8"
+        charSet 'UTF-8'
+        author true
+        version true
+        links "http://docs.oracle.com/javase/7/docs/api"
+    }
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+Properties properties = new Properties()
+properties.load(project.file('local.properties').newDataInputStream())
+bintray {
+// userOrg=properties.getProperty("bintray.user")
+    user = properties.getProperty("bintray.user") //读取 local.properties 文件里面的 bintray.user
+    key = properties.getProperty("bintray.apikey") //读取 local.properties 文件里面的 bintray.apikey
+    configurations = ['archives']
+    pkg {
+        repo = "maven"
+        name = "PandaEmoView" //发布到JCenter上的项目名字，必须填写，对应com.squareup.okhttp3:okhttp:3.4.1中的okhttp
+        publishVersion = '1.0.0'//发布到JCenter上的项目版本号
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+    }
+}
+//---------------------upload to jcenter---------------------
 android {
     compileSdkVersion 25
     buildToolsVersion '25.0.3'
