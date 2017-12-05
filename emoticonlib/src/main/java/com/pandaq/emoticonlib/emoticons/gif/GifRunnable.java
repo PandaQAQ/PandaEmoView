@@ -103,7 +103,7 @@ public class GifRunnable implements Runnable {
     /**
      * 启动运行
      */
-    public void startHandler(String activityName) {
+    public void resumeHandler(String activityName) {
         currentActivity = activityName;
         if (mGifDrawableMap != null && mGifDrawableMap.size() > 0 && !isRunning) {
             run();

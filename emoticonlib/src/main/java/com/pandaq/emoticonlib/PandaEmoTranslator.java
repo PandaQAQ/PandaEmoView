@@ -187,9 +187,9 @@ public class PandaEmoTranslator {
      *
      * @param activityTag 停止界面 activity 的 Tag
      */
-    public void startGif(String activityTag) {
+    public void resumeGif(String activityTag) {
         if (mGifRunnable != null) {
-            mGifRunnable.startHandler(activityTag);
+            mGifRunnable.resumeHandler(activityTag);
         }
     }
 

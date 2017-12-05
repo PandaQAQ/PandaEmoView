@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        PandaEmoTranslator.getInstance().startGif(getLocalClassName());
+        PandaEmoTranslator.getInstance().resumeGif(getLocalClassName());
     }
 
     @Override

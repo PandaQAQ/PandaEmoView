@@ -14,7 +14,7 @@ public class AnimatedImageSpan extends DynamicDrawableSpan {
         super();
         mGifDrawable = gifDrawable;
         if (!runnable.isRunning()) {
-            runnable.startHandler(gifDrawable.getContainerTag());
+            runnable.resumeHandler(gifDrawable.getContainerTag());
         }
     }
 
