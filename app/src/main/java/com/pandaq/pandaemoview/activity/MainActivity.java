@@ -60,8 +60,6 @@ public class MainActivity extends AppCompatActivity {
     RelativeLayout mRlBottomLayout;
     @BindView(R.id.tv_send)
     TextView mTvSend;
-    @BindView(R.id.tv_lru_size)
-    TextView mTvLruSize;
     private KeyBoardManager emotionKeyboard;
 
     @Override
@@ -134,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }));
                 mEtInput.setText("");
-                mTvLruSize.setText(String.valueOf(EmoticonManager.getInstance().getGifLruSize()));
             }
         });
         initEmotionKeyboard();

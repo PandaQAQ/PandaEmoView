@@ -19,7 +19,7 @@
             android:id="@+id/toptitle"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="@dimen/margin_8dp"
             android:background="@color/colorPrimary"
             android:gravity="center"
             android:text="@string/string_title"
@@ -85,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/toptitle"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/margin_8dp"
             android:text="@string/string_text_test"/>
 
         <TextView
@@ -93,7 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/text_title"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/margin_8dp"
             />
 
         <TextView
@@ -101,7 +101,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_input_content"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/margin_8dp"
             android:text="@string/string_img_test"/>
 
         <ImageView
@@ -110,24 +110,8 @@
             android:layout_height="80dp"
             android:layout_below="@id/img_title"
             android:layout_centerHorizontal="true"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/margin_8dp"
             android:scaleType="centerInside"/>
-
-        <TextView
-            android:id="@+id/lru_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/iv_img_pic"
-            android:layout_margin="16dp"
-            android:text="@string/string_lru_test"/>
-
-        <TextView
-            android:id="@+id/tv_lru_size"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/lru_title"
-            android:layout_margin="16dp"
-            />
     </RelativeLayout>
 
     <RelativeLayout

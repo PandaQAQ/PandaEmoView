@@ -332,6 +332,7 @@ public class PandaEmoView extends RelativeLayout {
      * 新增了表情库后调用
      */
     public void reloadEmos(int position) {
+        mTabPosi = position;
         StickerManager.getInstance().loadStickerCategory();
         initTabs();
         initListener();
