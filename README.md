@@ -6,6 +6,12 @@
 ### 效果图：
 ![效果图][1]
 # 快速使用
+
+## 引入库
+``` groovy
+compile 'com.pandaq:PandaEmoView:1.0.0'
+```
+
 ## 表情资源及配置文件
 - 默认的 emoji 和 gif 表情以及他们的配置文件是放在开发包 assets 目录下的，若表情比较多比较大也可自行修改源码在 APP 启动时从服务器下载。
 
@@ -17,6 +23,7 @@
 
 ![sticker config 截图][4]
 ## 具体使用规则
+
 **与表情输入控件相关的 EditText 必须使用 PandaEditText**
 PandaEditText 只是重写了 onKeyPreIme() 获取按返回键的通知，继承自 EditText 的控件可继承 PandaEditText 自定义
 
